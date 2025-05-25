@@ -1,6 +1,5 @@
 import React, { useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import Footer from "../components/Footer";
 
 const BookingConfirmation = () => {
   const location = useLocation();
@@ -176,7 +175,6 @@ const BookingConfirmation = () => {
           </button>
         </div>
       </div>
-      <Footer />
       <style>
         {`
           @media print {

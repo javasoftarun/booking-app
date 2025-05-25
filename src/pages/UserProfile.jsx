@@ -16,6 +16,46 @@ import BookingReceipt from "../components/BookingReceipt";
 import { useReactToPrint } from "react-to-print";
 import { USER_DEFAULT_ROLE } from "../constants/appConstants";
 
+const ProfileSkeleton = () => (
+  <div className="bg-white rounded-4 shadow-sm p-5">
+    <div className="d-flex align-items-center mb-4">
+      <div
+        className="rounded-circle bg-secondary bg-opacity-25"
+        style={{ width: 90, height: 90 }}
+      ></div>
+      <div className="ms-4" style={{ flex: 1 }}>
+        <div
+          className="bg-secondary bg-opacity-25 rounded mb-2"
+          style={{ width: 180, height: 22 }}
+        ></div>
+        <div
+          className="bg-secondary bg-opacity-25 rounded"
+          style={{ width: 120, height: 16 }}
+        ></div>
+      </div>
+    </div>
+    <div className="row g-4">
+      {[...Array(4)].map((_, i) => (
+        <div className="col-md-6" key={i}>
+          <div
+            className="bg-secondary bg-opacity-25 rounded mb-2"
+            style={{ width: "70%", height: 18 }}
+          ></div>
+          <div
+            className="bg-secondary bg-opacity-25 rounded"
+            style={{ width: "100%", height: 38 }}
+          ></div>
+        </div>
+      ))}
+    </div>
+    <div className="mt-5">
+      <div
+        className="bg-secondary bg-opacity-25 rounded"
+        style={{ width: 120, height: 38 }}
+      ></div>
+    </div>
+  </div>
+);
 
 const sidebarItems = [
   { key: "profile", label: "Profile", icon: <FaUser /> },
@@ -54,6 +94,7 @@ const UserProfile = () => {
   const [bookingsLoading, setBookingsLoading] = useState(false);
   const [printBooking, setPrintBooking] = useState(null);
   const [avatarUploading, setAvatarUploading] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(true);
   const printRef = useRef();
 
   // Fetch user details on mount
@@ -86,7 +127,8 @@ const UserProfile = () => {
           }));
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setProfileLoading(false));
   }, []);
 
   // Fetch bookings after user is loaded
@@ -435,404 +477,408 @@ const UserProfile = () => {
             </div>
             {/* Main Content */}
             <div className="col-lg-9">
-              <div className="bg-white rounded-4 shadow-sm p-5">
-                {/* Show message on top */}
-                {message && (
-                  <div
-                    className={`alert ${
-                      messageType === "success"
-                        ? "alert-success"
-                        : "alert-danger"
-                    } mb-4 d-flex justify-content-between align-items-center`}
-                    role="alert"
-                  >
-                    <span>{message}</span>
-                    <button
-                      type="button"
-                      className="btn-close"
-                      aria-label="Close"
-                      onClick={() => setMessage("")}
-                      style={{ marginLeft: 16 }}
-                    ></button>
-                  </div>
-                )}
-                {activeTab === "profile" && (
-                  <>
-                    <h3 className="fw-bold mb-4" style={{ color: "#e57368" }}>
-                      Profile Information
-                    </h3>
-                    <form onSubmit={handleSave}>
-                      <div className="row g-4">
-                        <div className="col-md-6">
-                          <label className="form-label">Name</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="name"
-                            value={profile.name}
-                            onChange={handleChange}
-                            required
-                          />
-                        </div>
-                        <div className="col-md-6">
-                          <label className="form-label">Email</label>
-                          <input
-                            type="email"
-                            className="form-control"
-                            name="email"
-                            value={profile.email}
-                            onChange={handleChange}
-                            required
-                            readOnly
-                          />
-                        </div>
-                        <div className="col-md-6">
-                          <label className="form-label">Gender</label>
-                          <select
-                            className="form-select"
-                            name="gender"
-                            value={profile.gender}
-                            onChange={handleChange}
-                          >
-                            <option value="">Select</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
-                          </select>
-                        </div>
-                        <div className="col-md-6">
-                          <label className="form-label">Mobile Number</label>
-                          <div className="input-group">
-                            <span className="input-group-text">+91</span>
+              {profileLoading ? (
+                <ProfileSkeleton />
+              ) : (
+                <div className="bg-white rounded-4 shadow-sm p-5">
+                  {/* Show message on top */}
+                  {message && (
+                    <div
+                      className={`alert ${
+                        messageType === "success"
+                          ? "alert-success"
+                          : "alert-danger"
+                      } mb-4 d-flex justify-content-between align-items-center`}
+                      role="alert"
+                    >
+                      <span>{message}</span>
+                      <button
+                        type="button"
+                        className="btn-close"
+                        aria-label="Close"
+                        onClick={() => setMessage("")}
+                        style={{ marginLeft: 16 }}
+                      ></button>
+                    </div>
+                  )}
+                  {activeTab === "profile" && (
+                    <>
+                      <h3 className="fw-bold mb-4" style={{ color: "#e57368" }}>
+                        Profile Information
+                      </h3>
+                      <form onSubmit={handleSave}>
+                        <div className="row g-4">
+                          <div className="col-md-6">
+                            <label className="form-label">Name</label>
                             <input
                               type="text"
                               className="form-control"
-                              name="phone"
-                              value={profile.phone}
+                              name="name"
+                              value={profile.name}
                               onChange={handleChange}
-                              maxLength={10}
                               required
                             />
                           </div>
-                        </div>
-                        <div className="col-md-6">
-                          <label className="form-label">Date of Birth</label>
-                          <input
-                            type="date"
-                            className="form-control"
-                            name="dateOfBirth"
-                            value={profile.dateOfBirth}
-                            onChange={handleChange}
-                          />
-                        </div>
-                        <div className="col-12">
-                          <div className="form-check mt-2">
+                          <div className="col-md-6">
+                            <label className="form-label">Email</label>
                             <input
-                              className="form-check-input"
-                              type="checkbox"
-                              id="emailNotification"
-                              name="emailNotification"
-                              checked={profile.emailNotification || false}
-                              onChange={(e) =>
-                                setProfile((prev) => ({
-                                  ...prev,
-                                  emailNotification: e.target.checked,
-                                }))
-                              }
+                              type="email"
+                              className="form-control"
+                              name="email"
+                              value={profile.email}
+                              onChange={handleChange}
+                              required
+                              readOnly
                             />
-                            <label
-                              className="form-check-label"
-                              htmlFor="emailNotification"
-                            >
-                              Enable Email Notifications
-                            </label>
                           </div>
-                          <div className="form-check mt-2">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              id="mobileNotification"
-                              name="mobileNotification"
-                              checked={profile.mobileNotification || false}
-                              onChange={(e) =>
-                                setProfile((prev) => ({
-                                  ...prev,
-                                  mobileNotification: e.target.checked,
-                                }))
-                              }
-                            />
-                            <label
-                              className="form-check-label"
-                              htmlFor="mobileNotification"
+                          <div className="col-md-6">
+                            <label className="form-label">Gender</label>
+                            <select
+                              className="form-select"
+                              name="gender"
+                              value={profile.gender}
+                              onChange={handleChange}
                             >
-                              Enable Mobile Notifications
-                            </label>
+                              <option value="">Select</option>
+                              <option value="Male">Male</option>
+                              <option value="Female">Female</option>
+                              <option value="Other">Other</option>
+                            </select>
                           </div>
-                        </div>
-                      </div>
-                      <div className="mt-5">
-                        <button
-                          type="submit"
-                          className="btn"
-                          style={{
-                            background: "#e57368",
-                            color: "#fff",
-                            borderRadius: 14,
-                            fontWeight: 600,
-                            fontSize: 18,
-                            padding: "10px 48px",
-                          }}
-                        >
-                          Save
-                        </button>
-                      </div>
-                    </form>
-                  </>
-                )}
-                {activeTab === "ratings" && (
-                  <>
-                    <h3 className="fw-bold mb-4" style={{ color: "#e57368" }}>
-                      My Ratings
-                    </h3>
-                    {dummyRatings.length === 0 ? (
-                      <div className="text-muted">No ratings yet.</div>
-                    ) : (
-                      <div>
-                        {dummyRatings.map((rating) => (
-                          <div
-                            key={rating.id}
-                            className="mb-3 p-3 border rounded-3 d-flex align-items-center"
-                            style={{ background: "#f8f9fa" }}
-                          >
-                            <span
-                              className="me-3"
-                              style={{ color: "#FFD600", fontSize: 22 }}
-                            >
-                              {Array.from({ length: rating.rating }).map((_, i) => (
-                                <FaStar key={i} />
-                              ))}
-                            </span>
-                            <div>
-                              <div className="fw-semibold">{rating.comment}</div>
-                              <div className="text-muted small">{rating.date}</div>
+                          <div className="col-md-6">
+                            <label className="form-label">Mobile Number</label>
+                            <div className="input-group">
+                              <span className="input-group-text">+91</span>
+                              <input
+                                type="text"
+                                className="form-control"
+                                name="phone"
+                                value={profile.phone}
+                                onChange={handleChange}
+                                maxLength={10}
+                                required
+                              />
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    )}
-                  </>
-                )}
-                {activeTab === "bookings" && (
-                  <>
-                    <h3 className="fw-bold mb-4" style={{ color: "#e57368" }}>
-                      My Bookings
-                    </h3>
-                    <div className="mb-4">
-                      <ul className="nav nav-tabs">
-                        <li className="nav-item">
+                          <div className="col-md-6">
+                            <label className="form-label">Date of Birth</label>
+                            <input
+                              type="date"
+                              className="form-control"
+                              name="dateOfBirth"
+                              value={profile.dateOfBirth}
+                              onChange={handleChange}
+                            />
+                          </div>
+                          <div className="col-12">
+                            <div className="form-check mt-2">
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                id="emailNotification"
+                                name="emailNotification"
+                                checked={profile.emailNotification || false}
+                                onChange={(e) =>
+                                  setProfile((prev) => ({
+                                    ...prev,
+                                    emailNotification: e.target.checked,
+                                  }))
+                                }
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="emailNotification"
+                              >
+                                Enable Email Notifications
+                              </label>
+                            </div>
+                            <div className="form-check mt-2">
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                id="mobileNotification"
+                                name="mobileNotification"
+                                checked={profile.mobileNotification || false}
+                                onChange={(e) =>
+                                  setProfile((prev) => ({
+                                    ...prev,
+                                    mobileNotification: e.target.checked,
+                                  }))
+                                }
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="mobileNotification"
+                              >
+                                Enable Mobile Notifications
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mt-5">
                           <button
-                            className={`nav-link ${
-                              bookingsTab === "upcoming" ? "active" : ""
-                            }`}
-                            onClick={() => setBookingsTab("upcoming")}
-                            type="button"
+                            type="submit"
+                            className="btn"
+                            style={{
+                              background: "#e57368",
+                              color: "#fff",
+                              borderRadius: 14,
+                              fontWeight: 600,
+                              fontSize: 18,
+                              padding: "10px 48px",
+                            }}
                           >
-                            Upcoming
+                            Save
                           </button>
-                        </li>
-                        <li className="nav-item">
-                          <button
-                            className={`nav-link ${
-                              bookingsTab === "past" ? "active" : ""
-                            }`}
-                            onClick={() => setBookingsTab("past")}
-                            type="button"
-                          >
-                            Past
-                          </button>
-                        </li>
-                        <li className="nav-item">
-                          <button
-                            className={`nav-link ${
-                              bookingsTab === "cancelled" ? "active" : ""
-                            }`}
-                            onClick={() => setBookingsTab("cancelled")}
-                            type="button"
-                          >
-                            Cancelled
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
-                    <div>
-                      {bookingsLoading ? (
-                        <div>Loading bookings...</div>
-                      ) : filteredBookings.length === 0 ? (
-                        <div>No {bookingsTab} bookings.</div>
+                        </div>
+                      </form>
+                    </>
+                  )}
+                  {activeTab === "ratings" && (
+                    <>
+                      <h3 className="fw-bold mb-4" style={{ color: "#e57368" }}>
+                        My Ratings
+                      </h3>
+                      {dummyRatings.length === 0 ? (
+                        <div className="text-muted">No ratings yet.</div>
                       ) : (
-                        <div className="list-group">
-                          {filteredBookings.map((booking) => (
+                        <div>
+                          {dummyRatings.map((rating) => (
                             <div
-                              key={booking.bookingId}
-                              className="list-group-item mb-3"
+                              key={rating.id}
+                              className="mb-3 p-3 border rounded-3 d-flex align-items-center"
+                              style={{ background: "#f8f9fa" }}
                             >
-                              <div className="d-flex align-items-center">
-                                <img
-                                  src={booking.cabImageUrl}
-                                  alt={booking.cabName}
-                                  style={{
-                                    width: 80,
-                                    height: 50,
-                                    objectFit: "cover",
-                                    borderRadius: 8,
-                                    marginRight: 16,
-                                  }}
-                                />
-                                <div style={{ flex: 1 }}>
-                                  <div className="fw-bold">
-                                    {booking.cabName} ({booking.cabType})
-                                  </div>
-                                  <div className="small text-muted">
-                                    {booking.cabNumber} | {booking.cabModel} |{" "}
-                                    {booking.cabColor}
-                                  </div>
-                                  <div>
-                                    <span className="fw-semibold">Pickup:</span>{" "}
-                                    {booking.pickupLocation}
-                                  </div>
-                                  <div>
-                                    <span className="fw-semibold">Drop:</span>{" "}
-                                    {booking.dropLocation}
-                                  </div>
-                                  <div>
-                                    <span className="fw-semibold">Date:</span>{" "}
-                                    {new Date(
-                                      booking.pickupDateTime
-                                    ).toLocaleString()}
-                                  </div>
-                                  <div>
-                                    <span className="fw-semibold">Status:</span>{" "}
-                                    {booking.bookingStatus}
-                                  </div>
-                                  <div>
-                                    <span className="fw-semibold">Fare:</span> ₹
-                                    {booking.fare}
-                                  </div>
-                                  <div>
-                                    <span className="fw-semibold">Driver:</span>{" "}
-                                    {booking.driverName} ({booking.driverContact})
-                                  </div>
-                                </div>
-                                {/* Action buttons */}
-                                <div className="ms-3 d-flex flex-column gap-2">
-                                  <button
-                                    className="btn btn-light btn-sm d-flex align-items-center gap-2 border"
-                                    title="Modify Booking"
-                                    onClick={() => handleModifyBooking(booking)}
-                                    style={{ borderRadius: 8 }}
-                                  >
-                                    <FaEdit style={{ color: "#e57368" }} /> Modify
-                                  </button>
-                                  <button
-                                    className="btn btn-light btn-sm d-flex align-items-center gap-2 border"
-                                    title="Cancel Booking"
-                                    onClick={() => handleCancelBooking(booking)}
-                                    style={{ borderRadius: 8 }}
-                                  >
-                                    <FaTrash style={{ color: "#dc3545" }} /> Cancel
-                                  </button>
-                                  <button
-                                    className="btn btn-light btn-sm d-flex align-items-center gap-2 border"
-                                    title="Print Booking"
-                                    onClick={() => handlePrintBooking(booking)}
-                                    style={{ borderRadius: 8 }}
-                                  >
-                                    <FaPrint style={{ color: "#6c757d" }} /> Print
-                                  </button>
-                                </div>
+                              <span
+                                className="me-3"
+                                style={{ color: "#FFD600", fontSize: 22 }}
+                              >
+                                {Array.from({ length: rating.rating }).map((_, i) => (
+                                  <FaStar key={i} />
+                                ))}
+                              </span>
+                              <div>
+                                <div className="fw-semibold">{rating.comment}</div>
+                                <div className="text-muted small">{rating.date}</div>
                               </div>
                             </div>
                           ))}
                         </div>
                       )}
-                    </div>
-                  </>
-                )}
-                {activeTab === "deactivate" && (
-                  <>
-                    <h3 className="fw-bold mb-4 text-danger">
-                      Deactivate Account
-                    </h3>
-                    <div className="alert alert-warning">
-                      <strong>Warning:</strong> This action will permanently
-                      remove your account and all your bookings. This cannot be
-                      undone.
-                    </div>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => setShowDeactivate(true)}
-                    >
-                      Deactivate My Account
-                    </button>
-                    {/* Confirmation Modal */}
-                    {showDeactivate && (
-                      <div
-                        className="modal fade show"
-                        style={{ display: "block" }}
-                        tabIndex={-1}
+                    </>
+                  )}
+                  {activeTab === "bookings" && (
+                    <>
+                      <h3 className="fw-bold mb-4" style={{ color: "#e57368" }}>
+                        My Bookings
+                      </h3>
+                      <div className="mb-4">
+                        <ul className="nav nav-tabs">
+                          <li className="nav-item">
+                            <button
+                              className={`nav-link ${
+                                bookingsTab === "upcoming" ? "active" : ""
+                              }`}
+                              onClick={() => setBookingsTab("upcoming")}
+                              type="button"
+                            >
+                              Upcoming
+                            </button>
+                          </li>
+                          <li className="nav-item">
+                            <button
+                              className={`nav-link ${
+                                bookingsTab === "past" ? "active" : ""
+                              }`}
+                              onClick={() => setBookingsTab("past")}
+                              type="button"
+                            >
+                              Past
+                            </button>
+                          </li>
+                          <li className="nav-item">
+                            <button
+                              className={`nav-link ${
+                                bookingsTab === "cancelled" ? "active" : ""
+                              }`}
+                              onClick={() => setBookingsTab("cancelled")}
+                              type="button"
+                            >
+                              Cancelled
+                            </button>
+                          </li>
+                        </ul>
+                      </div>
+                      <div>
+                        {bookingsLoading ? (
+                          <div>Loading bookings...</div>
+                        ) : filteredBookings.length === 0 ? (
+                          <div>No {bookingsTab} bookings.</div>
+                        ) : (
+                          <div className="list-group">
+                            {filteredBookings.map((booking) => (
+                              <div
+                                key={booking.bookingId}
+                                className="list-group-item mb-3"
+                              >
+                                <div className="d-flex align-items-center">
+                                  <img
+                                    src={booking.cabImageUrl}
+                                    alt={booking.cabName}
+                                    style={{
+                                      width: 80,
+                                      height: 50,
+                                      objectFit: "cover",
+                                      borderRadius: 8,
+                                      marginRight: 16,
+                                    }}
+                                  />
+                                  <div style={{ flex: 1 }}>
+                                    <div className="fw-bold">
+                                      {booking.cabName} ({booking.cabType})
+                                    </div>
+                                    <div className="small text-muted">
+                                      {booking.cabNumber} | {booking.cabModel} |{" "}
+                                      {booking.cabColor}
+                                    </div>
+                                    <div>
+                                      <span className="fw-semibold">Pickup:</span>{" "}
+                                      {booking.pickupLocation}
+                                    </div>
+                                    <div>
+                                      <span className="fw-semibold">Drop:</span>{" "}
+                                      {booking.dropLocation}
+                                    </div>
+                                    <div>
+                                      <span className="fw-semibold">Date:</span>{" "}
+                                      {new Date(
+                                        booking.pickupDateTime
+                                      ).toLocaleString()}
+                                    </div>
+                                    <div>
+                                      <span className="fw-semibold">Status:</span>{" "}
+                                      {booking.bookingStatus}
+                                    </div>
+                                    <div>
+                                      <span className="fw-semibold">Fare:</span> ₹
+                                      {booking.fare}
+                                    </div>
+                                    <div>
+                                      <span className="fw-semibold">Driver:</span>{" "}
+                                      {booking.driverName} ({booking.driverContact})
+                                    </div>
+                                  </div>
+                                  {/* Action buttons */}
+                                  <div className="ms-3 d-flex flex-column gap-2">
+                                    <button
+                                      className="btn btn-light btn-sm d-flex align-items-center gap-2 border"
+                                      title="Modify Booking"
+                                      onClick={() => handleModifyBooking(booking)}
+                                      style={{ borderRadius: 8 }}
+                                    >
+                                      <FaEdit style={{ color: "#e57368" }} /> Modify
+                                    </button>
+                                    <button
+                                      className="btn btn-light btn-sm d-flex align-items-center gap-2 border"
+                                      title="Cancel Booking"
+                                      onClick={() => handleCancelBooking(booking)}
+                                      style={{ borderRadius: 8 }}
+                                    >
+                                      <FaTrash style={{ color: "#dc3545" }} /> Cancel
+                                    </button>
+                                    <button
+                                      className="btn btn-light btn-sm d-flex align-items-center gap-2 border"
+                                      title="Print Booking"
+                                      onClick={() => handlePrintBooking(booking)}
+                                      style={{ borderRadius: 8 }}
+                                    >
+                                      <FaPrint style={{ color: "#6c757d" }} /> Print
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+                  {activeTab === "deactivate" && (
+                    <>
+                      <h3 className="fw-bold mb-4 text-danger">
+                        Deactivate Account
+                      </h3>
+                      <div className="alert alert-warning">
+                        <strong>Warning:</strong> This action will permanently
+                        remove your account and all your bookings. This cannot be
+                        undone.
+                      </div>
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => setShowDeactivate(true)}
                       >
-                        <div className="modal-dialog">
-                          <div className="modal-content">
-                            <div className="modal-header">
-                              <h5 className="modal-title text-danger">
-                                Confirm Deactivation
-                              </h5>
-                              <button
-                                type="button"
-                                className="btn-close"
-                                onClick={() => setShowDeactivate(false)}
-                              ></button>
-                            </div>
-                            <div className="modal-body">
-                              Are you sure you want to deactivate your account?
-                              This action cannot be undone.
-                            </div>
-                            <div className="modal-footer">
-                              <button
-                                className="btn btn-secondary"
-                                onClick={() => setShowDeactivate(false)}
-                              >
-                                Cancel
-                              </button>
-                              <button
-                                className="btn btn-danger"
-                                onClick={handleDeactivate}
-                              >
-                                Yes, Deactivate
-                              </button>
+                        Deactivate My Account
+                      </button>
+                      {/* Confirmation Modal */}
+                      {showDeactivate && (
+                        <div
+                          className="modal fade show"
+                          style={{ display: "block" }}
+                          tabIndex={-1}
+                        >
+                          <div className="modal-dialog">
+                            <div className="modal-content">
+                              <div className="modal-header">
+                                <h5 className="modal-title text-danger">
+                                  Confirm Deactivation
+                                </h5>
+                                <button
+                                  type="button"
+                                  className="btn-close"
+                                  onClick={() => setShowDeactivate(false)}
+                                ></button>
+                              </div>
+                              <div className="modal-body">
+                                Are you sure you want to deactivate your account?
+                                This action cannot be undone.
+                              </div>
+                              <div className="modal-footer">
+                                <button
+                                  className="btn btn-secondary"
+                                  onClick={() => setShowDeactivate(false)}
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  className="btn btn-danger"
+                                  onClick={handleDeactivate}
+                                >
+                                  Yes, Deactivate
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </div>
+                      )}
+                    </>
+                  )}
+                  {/* Placeholder for other tabs */}
+                  {activeTab !== "profile" &&
+                    activeTab !== "ratings" &&
+                    activeTab !== "deactivate" &&
+                    activeTab !== "bookings" && (
+                      <div
+                        className="text-center py-5 text-muted"
+                        style={{ fontSize: 22 }}
+                      >
+                        {
+                          sidebarItems.find((i) => i.key === activeTab)?.label
+                        }{" "}
+                        section coming soon!
                       </div>
                     )}
-                  </>
-                )}
-                {/* Placeholder for other tabs */}
-                {activeTab !== "profile" &&
-                  activeTab !== "ratings" &&
-                  activeTab !== "deactivate" &&
-                  activeTab !== "bookings" && (
-                    <div
-                      className="text-center py-5 text-muted"
-                      style={{ fontSize: 22 }}
-                    >
-                      {
-                        sidebarItems.find((i) => i.key === activeTab)?.label
-                      }{" "}
-                      section coming soon!
-                    </div>
-                  )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
