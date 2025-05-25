@@ -68,17 +68,7 @@ const Navbar = () => {
               textShadow: "0 2px 8px #e5736810"
             }}
           >
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/854/854894.png"
-              alt="YatraNow"
-              width={40}
-              className="me-2"
-              style={{
-                borderRadius: 10,
-                background: "#fff",
-                boxShadow: "0 2px 8px #e5736820"
-              }}
-            />
+            
             <span>
               Yatra
               <span style={{ color: '#FFD600' }}>Now</span>
@@ -88,6 +78,23 @@ const Navbar = () => {
 
         {/* Right: Menu */}
         <ul className="navbar-nav flex-row align-items-center gap-4 mb-0">
+          {/* Home link */}
+          <li className="nav-item">
+            <Link
+              className="nav-link d-flex align-items-center fw-semibold px-2"
+              to="/"
+              style={{
+                color: "#23272f",
+                fontSize: 18,
+                borderRadius: 8,
+                transition: "background 0.2s",
+                textDecoration: "none",
+              }}
+            >
+              <i className="bi bi-house-door-fill me-1" style={{ fontSize: 20, color: "#e57368" }} />
+              Home
+            </Link>
+          </li>
           <li className="nav-item">
             <button
               type="button"

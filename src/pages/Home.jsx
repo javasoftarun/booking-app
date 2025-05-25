@@ -103,8 +103,11 @@ const Home = () => {
       <div
         style={{
           width: '100%',
-          height: 400,
-          background: 'url(http://res.cloudinary.com/djapc6r8k/image/upload/v1747736624/faskzlf6gk46hgj8v8go.png) center/cover no-repeat',
+          height: 500,
+          backgroundImage: 'url(http://res.cloudinary.com/djapc6r8k/image/upload/v1748178953/lky9iumzur2jbolzpykb.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
           position: 'relative',
           display: 'flex',
           alignItems: 'center',

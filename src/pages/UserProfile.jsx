@@ -4,25 +4,25 @@ import {
   FaBook,
   FaWallet,
   FaGift,
-  FaBell,
   FaCamera,
   FaStar,
   FaPowerOff,
   FaEdit,
   FaTrash,
   FaPrint,
-  FaShareAlt,
 } from "react-icons/fa";
 import API_ENDPOINTS from "../config/apiConfig";
 import BookingReceipt from "../components/BookingReceipt";
 import { useReactToPrint } from "react-to-print";
+import { USER_DEFAULT_ROLE } from "../constants/appConstants";
+
 
 const sidebarItems = [
   { key: "profile", label: "Profile", icon: <FaUser /> },
   { key: "bookings", label: "My Bookings", icon: <FaBook /> },
   { key: "wallet", label: "Wallet", icon: <FaWallet /> },
   { key: "refer", label: "Refer", icon: <FaGift /> },
-  { key: "notification", label: "Notification", icon: <FaBell /> },
+  // Removed Notification tab
   { key: "ratings", label: "My Ratings", icon: <FaStar /> },
   { key: "deactivate", label: "Deactivate Account", icon: <FaPowerOff /> },
 ];
@@ -53,6 +53,7 @@ const UserProfile = () => {
   const [bookings, setBookings] = useState([]);
   const [bookingsLoading, setBookingsLoading] = useState(false);
   const [printBooking, setPrintBooking] = useState(null);
+  const [avatarUploading, setAvatarUploading] = useState(false);
   const printRef = useRef();
 
   // Fetch user details on mount
@@ -116,14 +117,88 @@ const UserProfile = () => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };
 
-  const handleAvatarChange = (e) => {
+  const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfile((prev) => ({ ...prev, avatar: reader.result }));
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    // Convert image to base64
+    const toBase64 = (file) =>
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+      });
+
+    try {
+      setAvatarUploading(true); // Start spinner
+      setMessage("");
+      setMessageType("");
+      let base64Image = await toBase64(file);
+
+      // Remove 'data:image/*;base64,' prefix if present
+      const base64PrefixMatch = base64Image.match(/^data:(image\/\w+);base64,/);
+      if (base64PrefixMatch) {
+        base64Image = base64Image.replace(/^data:(image\/\w+);base64,/, "");
+      }
+
+      // 1. Upload base64 image to server with userId and base64Image
+      const uploadRes = await fetch(API_ENDPOINTS.UPLOAD_BASE64_IMAGE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: profile.id,
+          base64Image: base64Image,
+        }),
+      });
+      const uploadData = await uploadRes.json();
+
+      if (
+        uploadData &&
+        uploadData.responseMessage === "success" &&
+        uploadData.responseData
+      ) {
+        // 2. Update user profile with new image URL and all required fields
+        const updatedProfile = {
+          id: profile.id,
+          name: profile.name,
+          email: profile.email,
+          password: profile.password,
+          phone: profile.phone,
+          role: profile.role,
+          verified: profile.verified,
+          imageUrl: uploadData.responseData,
+          gender: profile.gender || "",
+          dateOfBirth: profile.dateOfBirth || "",
+          createdAt: profile.createdAt || new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        const updateRes = await fetch(API_ENDPOINTS.UPDATE_USER, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedProfile),
+        });
+        const updateData = await updateRes.json();
+
+        if (updateData && updateData.responseMessage === "success") {
+          setProfile(updatedProfile);
+          localStorage.setItem("userImage", uploadData.responseData);
+          localStorage.setItem("userName", profile.name);
+          window.dispatchEvent(new Event("userLogin"));
+          setMessageType("success");
+        } else {
+          setMessage(updateData.responseMessage || "Failed to update profile photo.");
+          setMessageType("error");
+        }
+      } else {
+        setMessage(uploadData.responseMessage || "Failed to upload image.");
+        setMessageType("error");
+      }
+    } catch (error) {
+      setMessage("Failed to update profile photo.");
+      setMessageType("error");
+    } finally {
+      setAvatarUploading(false); // Stop spinner
     }
   };
 
@@ -191,9 +266,41 @@ const UserProfile = () => {
     setMessageType("error");
   };
 
-  const handleCancelBooking = (booking) => {
-    setMessage("Cancel booking feature coming soon!");
-    setMessageType("error");
+  const handleCancelBooking = async (booking) => {
+    setMessage("");
+    setMessageType("");
+    try {
+      const response = await fetch(API_ENDPOINTS.UPDATE_BOOKING_STATUS, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bookingId: booking.bookingId,
+          cabRegistrationId: booking.cabRegistrationId,
+          bookingStatus: "Cancelled",
+          paymentStatus: null,
+          role: USER_DEFAULT_ROLE
+        }),
+      });
+      const data = await response.json();
+      if (data && data.responseMessage === "success") {
+        setMessage("Booking cancelled successfully!");
+        setMessageType("success");
+        // Optionally, refresh bookings list
+        setBookings((prev) =>
+          prev.map((b) =>
+            b.bookingId === booking.bookingId
+              ? { ...b, bookingStatus: "Cancelled" }
+              : b
+          )
+        );
+      } else {
+        setMessage(data.responseMessage || "Failed to cancel booking.");
+        setMessageType("error");
+      }
+    } catch (error) {
+      setMessage("Failed to cancel booking.");
+      setMessageType("error");
+    }
   };
 
   const handlePrint = useReactToPrint({
@@ -234,11 +341,6 @@ const UserProfile = () => {
     });
   };
 
-  const handleShareBooking = (booking) => {
-    setMessage("Share booking feature coming soon!");
-    setMessageType("error");
-  };
-
   return (
     <>
       <div style={{ background: "#f6f7fb", minHeight: "100vh", padding: "2rem 0" }}>
@@ -255,8 +357,10 @@ const UserProfile = () => {
                     <div style={{ position: "relative" }}>
                       <img
                         src={
-                          profile.imageUrl ||
-                          "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                          avatarUploading
+                            ? "https://i.gifer.com/ZZ5H.gif"
+                            : profile.imageUrl ||
+                              "https://cdn-icons-png.flaticon.com/512/149/149071.png"
                         }
                         alt="avatar"
                         className="rounded-circle border"
@@ -265,6 +369,8 @@ const UserProfile = () => {
                           height: 90,
                           objectFit: "cover",
                           background: "#eee",
+                          opacity: avatarUploading ? 0.7 : 1,
+                          transition: "opacity 0.2s",
                         }}
                       />
                       <label
@@ -642,14 +748,6 @@ const UserProfile = () => {
                                     style={{ borderRadius: 8 }}
                                   >
                                     <FaPrint style={{ color: "#6c757d" }} /> Print
-                                  </button>
-                                  <button
-                                    className="btn btn-light btn-sm d-flex align-items-center gap-2 border"
-                                    title="Share Booking"
-                                    onClick={() => handleShareBooking(booking)}
-                                    style={{ borderRadius: 8 }}
-                                  >
-                                    <FaShareAlt style={{ color: "#28a745" }} /> Share
                                   </button>
                                 </div>
                               </div>
