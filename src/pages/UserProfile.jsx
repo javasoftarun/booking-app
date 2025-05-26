@@ -418,7 +418,7 @@ const UserProfile = () => {
             </div>
           </div>
           {/* Tabs */}
-          <div className="d-flex flex-nowrap overflow-auto gap-2 mb-4 pb-1" style={{ WebkitOverflowScrolling: "touch" }}>
+          <div className="d-flex gap-2 mb-4 pb-1 justify-content-start flex-wrap">
             {sidebarItems.map((item) => (
               <button
                 key={item.key}
