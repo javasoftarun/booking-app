@@ -254,18 +254,21 @@ const CabBookingDetails = () => {
   const formattedDropDateTime = formatLocalDateTime(dropDateTime);
 
   return (
-    <div style={{ minHeight: "100vh", background: "#fff8f7" }}>
-      <div className="container py-5" style={{ maxWidth: 1200 }}>
+    <div className="cablist-bg" style={{ minHeight: "100vh", background: "linear-gradient(120deg, #e3f6ff 60%, #fffbe7 100%)" }}>
+      <div className="cablist-main-container" style={{ maxWidth: 1200, margin: "0 auto", borderRadius: 28, boxShadow: "0 8px 40px #00b8ff22, 0 2px 8px #FFD60033", padding: "40px 28px" }}>
         {/* Header */}
         <div className="mb-4">
           <h2 className="fw-bold" style={{ color: "#23272f" }}>Review Booking</h2>
           <div className="d-flex flex-wrap align-items-center gap-2" style={{ fontSize: 16, color: "#6b7280" }}>
-            <span>{pickup}</span>
+            <span className="badge rounded-pill bg-primary-subtle text-primary px-3 py-2" style={{ fontSize: 15 }}>
+              <i className="bi bi-geo-alt-fill me-1"></i> {pickup}
+            </span>
             <i className="bi bi-arrow-right mx-2" />
-            <span>{drop}</span>
-            <span className="ms-3" style={{ color: "#e57368", fontWeight: 500 }}>
-              <i className="bi bi-calendar-event me-1" />
-              Pickup: {datetime}
+            <span className="badge rounded-pill bg-danger-subtle text-danger px-3 py-2" style={{ fontSize: 15 }}>
+              <i className="bi bi-geo-alt-fill me-1"></i> {drop}
+            </span>
+            <span className="badge rounded-pill bg-info-subtle text-info px-3 py-2 ms-2" style={{ fontSize: 15 }}>
+              <i className="bi bi-calendar-event me-1"></i> {datetime}
             </span>
           </div>
         </div>
@@ -273,7 +276,7 @@ const CabBookingDetails = () => {
           {/* Left: Cab & Trip Details */}
           <div className="col-12 col-lg-8">
             {/* Cab Card */}
-            <div className="bg-white rounded-3 shadow-sm p-4 mb-4" style={{ border: "1px solid #e3e6ed" }}>
+            <div className="bg-white rounded-4 shadow-sm p-4 mb-4" style={{ border: "1px solid #e3e6ed" }}>
               <div className="d-flex align-items-center gap-4 mb-3">
                 <img
                   src={cab.cabImageUrl}
@@ -304,7 +307,7 @@ const CabBookingDetails = () => {
                   Free Cancellation until pickup time
                 </span>
               </div>
-              <div className="mb-2" style={{ color: "#e57368", fontWeight: 600, fontSize: 16 }}>
+              <div className="mb-2" style={{ color: "#FFD600", fontWeight: 600, fontSize: 16 }}>
                 Value + Fare
               </div>
               <div className="mb-2" style={{ color: "#6b7280", fontSize: 15 }}>
@@ -324,15 +327,15 @@ const CabBookingDetails = () => {
               </div>
             </div>
             {/* Driver & Cab Details */}
-            <div className="bg-white rounded-3 shadow-sm p-4 mb-4" style={{ border: "1px solid #e3e6ed" }}>
-              <div className="fw-bold mb-2" style={{ color: "#e57368", fontSize: 18 }}>Driver & Cab details</div>
+            <div className="bg-white rounded-4 shadow-sm p-4 mb-4" style={{ border: "1px solid #e3e6ed" }}>
+              <div className="fw-bold mb-2" style={{ color: "#1976d2", fontSize: 18 }}>Driver & Cab details</div>
               <div style={{ color: "#23272f", fontSize: 15 }}>
                 Cab operator will be assigned on booking completion. Cab and driver details will be shared up to 30 mins prior to departure.
               </div>
             </div>
             {/* Confirm Booking Form */}
-            <div className="bg-white rounded-3 shadow-sm p-4 mb-4" style={{ border: "1px solid #e3e6ed" }}>
-              <div className="fw-bold mb-3" style={{ color: "#e57368", fontSize: 18 }}>Trip Details</div>
+            <div className="bg-white rounded-4 shadow-sm p-4 mb-4" style={{ border: "1px solid #e3e6ed" }}>
+              <div className="fw-bold mb-3" style={{ color: "#1976d2", fontSize: 18 }}>Trip Details</div>
               <form>
                 <div className="row g-3 align-items-end">
                   <div className="col-md-6">
@@ -382,7 +385,7 @@ const CabBookingDetails = () => {
                   <div className="col-md-6">
                     <label className="form-label" htmlFor="contact">Contact Number <span className="text-danger">*</span></label>
                     <div className="input-group">
-                      <span className="input-group-text" style={{ background: "#f1f5f9" }}>+91</span>
+                      <span className="input-group-text" style={{ background: "#fffbe7" }}>+91</span>
                       <input
                         type="tel"
                         className="form-control"
@@ -409,8 +412,8 @@ const CabBookingDetails = () => {
           <div className="col-12 col-lg-4">
             {/* Coupon Section */}
             <div className="mb-3">
-              <div className="bg-white shadow-sm rounded-3 p-3 mb-3" style={{ border: "1px solid #e3e6ed" }}>
-                <div className="fw-bold mb-2" style={{ color: "#e57368", fontSize: 17 }}>Available Coupons</div>
+              <div className="bg-white shadow-sm rounded-4 p-3 mb-3" style={{ border: "1px solid #e3e6ed" }}>
+                <div className="fw-bold mb-2" style={{ color: "#FFD600", fontSize: 17 }}>Available Coupons</div>
                 {eligibleCoupons.length === 0 && (
                   <div className="text-secondary">No coupons available for this fare.</div>
                 )}
@@ -445,11 +448,11 @@ const CabBookingDetails = () => {
                   <div className="text-danger mt-2">{couponError}</div>
                 )}
               </div>
-              <div className="bg-info text-white text-center fw-semibold rounded-top-3 py-2" style={{ fontSize: 15 }}>
+              <div className="bg-info text-white text-center fw-semibold rounded-top-4 py-2" style={{ fontSize: 15 }}>
                 <i className="bi bi-check-circle-fill me-1" />
                 Free Cancellation until pickup time <i className="bi bi-info-circle ms-1" />
               </div>
-              <div className="bg-white shadow-sm rounded-bottom-3 p-4" style={{ border: "1px solid #e3e6ed" }}>
+              <div className="bg-white shadow-sm rounded-bottom-4 p-4" style={{ border: "1px solid #e3e6ed" }}>
                 {/* Fare Breakdown */}
                 <div className="mb-3">
                   <div className="d-flex justify-content-between mb-1" style={{ fontSize: 16 }}>
@@ -468,20 +471,29 @@ const CabBookingDetails = () => {
                     <span>Token Amount (10%)</span>
                     <span>₹{finalToken}</span>
                   </div>
+                  <div className="d-flex justify-content-between mb-1" style={{ fontSize: 16, color: "#1976d2" }}>
+                    <span>To Pay Driver During Trip</span>
+                    <span>₹{finalFare - finalToken}</span>
+                  </div>
+                  <div className="alert alert-info py-2 px-3 mt-2" style={{ fontSize: 14, background: "#e3f6ff", color: "#1976d2", border: "1px solid #b6e3fa" }}>
+                    <i className="bi bi-info-circle me-1"></i>
+                    <b>Note:</b> Token amount is just 10% of the total fare. The remaining amount (shown above) is payable directly to the driver at the time of pickup or drop.
+                  </div>
                 </div>
                 {/* Pay Button and Payment Options */}
                 <button
                   className="btn fw-bold w-100 mb-3"
                   style={{
-                    background: "#ff4d4f",
-                    color: "#fff",
+                    background: "#FFD600",
+                    color: "#23272f",
                     fontSize: 20,
                     borderRadius: 8,
-                    boxShadow: "0 2px 8px #f8bbd0",
+                    boxShadow: "0 2px 8px #ffd60040",
+                    border: "2px solid #FFD600"
                   }}
                   onClick={handlePay}
                 >
-                  PAY ₹{payFull ? finalFare : finalToken} Now
+                  PAY ₹{payFull ? finalFare : finalToken}
                 </button>
                 <div className="mb-3">
                   <div className="form-check">
