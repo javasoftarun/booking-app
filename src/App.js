@@ -12,17 +12,21 @@ import Footer from './components/Footer';
 
 const App = () => (
   <BrowserRouter>
-    <Navbar />
-    <main style={{ minHeight: 'calc(100vh - 64px)' }}>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/search-cab" element={<Home />} />
-        <Route path="/cabs" element={<CabsList />} />
-        <Route path="/profile" element={<UserProfile />} />
-        <Route path="/cab-booking-details" element={<CabBookingDetails />} />
-        <Route path="/confirmation" element={<BookingConfirmation />} />
-      </Routes>
-    </main>
+    <div className="with-mobile-footer">
+      <Navbar />
+      <div style={{ paddingBottom: '64px' }}>
+        <main style={{ minHeight: 'calc(100vh - 64px)' }}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/search-cab" element={<Home />} />
+            <Route path="/cabs" element={<CabsList />} />
+            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/cab-booking-details" element={<CabBookingDetails />} />
+            <Route path="/confirmation" element={<BookingConfirmation />} />
+          </Routes>
+        </main>
+      </div>
+    </div>
     <Footer />
   </BrowserRouter>
 );

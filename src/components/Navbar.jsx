@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import AuthModal from '../modal/AuthModal';
 import NeedHelpModal from '../modal/NeedHelpModal';
@@ -8,7 +8,10 @@ const Navbar = () => {
   const [showHelp, setShowHelp] = useState(false);
   const [user, setUser] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showMobileProfile, setShowMobileProfile] = useState(false);
   const dropdownRef = useRef();
+  const location = useLocation();
 
   const loadUserInfo = useCallback(() => {
     const userId = localStorage.getItem("userId");
@@ -43,6 +46,19 @@ const Navbar = () => {
     };
   }, [dropdownOpen]);
 
+  // Close mobile menu on route change or overlay click
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    function handleResize() {
+      if (window.innerWidth > 991) setMobileMenuOpen(false);
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [mobileMenuOpen]);
+
+  // Helper to check if on profile page
+  const isProfilePage = location.pathname === "/profile";
+
   return (
     <nav
       className="navbar navbar-expand-lg shadow-sm"
@@ -52,6 +68,7 @@ const Navbar = () => {
         minHeight: 72,
         zIndex: 100,
         padding: 0,
+        position: "relative"
       }}
     >
       <div className="container-fluid px-4 d-flex align-items-center justify-content-between">
@@ -67,17 +84,34 @@ const Navbar = () => {
               fontSize: 32,
               textShadow: "0 2px 8px #e5736810"
             }}
+            onClick={() => setMobileMenuOpen(false)}
           >
-            
             <span>
-              Yatra
+              <span style={{ color: "#FFD600" }}>🚕</span> Yatra
               <span style={{ color: '#FFD600' }}>Now</span>
             </span>
           </Link>
         </div>
 
-        {/* Right: Menu */}
-        <ul className="navbar-nav flex-row align-items-center gap-4 mb-0">
+        {/* Hamburger for mobile */}
+        <button
+          className="d-lg-none btn"
+          style={{
+            fontSize: 28,
+            color: "#e57368",
+            background: "none",
+            border: "none",
+            outline: "none",
+            boxShadow: "none",
+          }}
+          aria-label="Toggle navigation"
+          onClick={() => setMobileMenuOpen((open) => !open)}
+        >
+          <span className="navbar-toggler-icon" style={{ fontSize: 28 }} />
+        </button>
+
+        {/* Desktop Menu */}
+        <ul className="navbar-nav flex-row align-items-center gap-4 mb-0 d-none d-lg-flex">
           {/* Home link */}
           <li className="nav-item">
             <Link
@@ -166,11 +200,13 @@ const Navbar = () => {
                     zIndex: 1000,
                   }}
                 >
-                  <li>
-                    <Link className="dropdown-item" to="/profile" onClick={() => setDropdownOpen(false)}>
-                      View Profile
-                    </Link>
-                  </li>
+                  {!isProfilePage && (
+                    <li>
+                      <Link className="dropdown-item" to="/profile" onClick={() => setDropdownOpen(false)}>
+                        View Profile
+                      </Link>
+                    </li>
+                  )}
                   <li>
                     <button
                       className="dropdown-item"
@@ -188,9 +224,227 @@ const Navbar = () => {
             </li>
           ) : null}
         </ul>
+
+        {/* Mobile Menu Overlay */}
+        {mobileMenuOpen && (
+          <div
+            className="position-fixed top-0 start-0 w-100 h-100"
+            style={{
+              background: "#0005",
+              zIndex: 1050,
+            }}
+            onClick={() => {
+              setMobileMenuOpen(false);
+              setShowMobileProfile(false);
+            }}
+          />
+        )}
+
+        {/* Mobile Menu Drawer */}
+        <div
+          className={`d-lg-none position-fixed top-0 end-0 bg-white shadow`}
+          style={{
+            width: 270,
+            height: "100vh",
+            zIndex: 1100,
+            transform: mobileMenuOpen ? "translateX(0)" : "translateX(110%)",
+            transition: "transform 0.3s cubic-bezier(.4,2,.6,1)",
+            boxShadow: "0 0 24px #e5736822",
+            borderTopLeftRadius: 18,
+            borderBottomLeftRadius: 18,
+          }}
+        >
+          <div className="d-flex align-items-center justify-content-between px-3 py-3 border-bottom" style={{background:"#f8fafc"}}>
+            <span style={{
+              color: "#e57368",
+              fontWeight: 900,
+              fontSize: 26,
+              letterSpacing: 1,
+              display: "flex",
+              alignItems: "center"
+            }}>
+              <span style={{ color: "#FFD600", fontSize: 28, marginRight: 6 }}>🚕</span> Yatra
+              <span style={{ color: "#FFD600" }}>Now</span>
+            </span>
+            <button
+              className="btn"
+              style={{ fontSize: 26, color: "#e57368", background: "none", border: "none" }}
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setShowMobileProfile(false);
+              }}
+              aria-label="Close menu"
+            >
+              &times;
+            </button>
+          </div>
+          <ul className="navbar-nav flex-column gap-2 px-3 pt-3">
+            <li className="nav-item">
+              <Link
+                className="nav-link d-flex align-items-center fw-semibold px-2"
+                to="/"
+                style={{
+                  color: "#23272f",
+                  fontSize: 18,
+                  borderRadius: 8,
+                  transition: "background 0.2s",
+                  textDecoration: "none",
+                }}
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setShowMobileProfile(false);
+                }}
+              >
+                <i className="bi bi-house-door-fill me-1" style={{ fontSize: 20, color: "#e57368" }} />
+                Home
+              </Link>
+            </li>
+            <li className="nav-item">
+              <button
+                type="button"
+                className="nav-link d-flex align-items-center fw-semibold px-2 btn btn-link"
+                style={{
+                  color: "#23272f",
+                  fontSize: 18,
+                  borderRadius: 8,
+                  transition: "background 0.2s",
+                  textDecoration: "none",
+                }}
+                onClick={() => {
+                  setShowHelp(true);
+                  setMobileMenuOpen(false);
+                  setShowMobileProfile(false);
+                }}
+              >
+                <i className="bi bi-headset me-1" style={{ fontSize: 20, color: "#e57368" }} />
+                Need Help?
+              </button>
+            </li>
+            {!user && (
+              <li className="nav-item">
+                <button
+                  type="button"
+                  className="nav-link d-flex align-items-center fw-semibold px-2 btn btn-link"
+                  style={{
+                    color: "#23272f",
+                    fontSize: 18,
+                    borderRadius: 8,
+                    transition: "background 0.2s",
+                    textDecoration: "none",
+                  }}
+                  onClick={() => {
+                    setShowAuth(true);
+                    setMobileMenuOpen(false);
+                    setShowMobileProfile(false);
+                  }}
+                >
+                  <i className="bi bi-person-fill me-1" style={{ fontSize: 20, color: "#e57368" }} />
+                  Login/SignUp
+                </button>
+              </li>
+            )}
+            {user && (
+              <>
+                <li className="nav-item d-flex align-items-center gap-2 px-2 mt-2 mb-1">
+                  <button
+                    className="btn w-100 d-flex align-items-center gap-2"
+                    style={{
+                      background: "#f8fafc",
+                      border: "1.5px solid #FFD600",
+                      borderRadius: 10,
+                      padding: "8px 12px",
+                      fontWeight: 600,
+                      color: "#e57368",
+                      fontSize: 17,
+                    }}
+                    onClick={() => setShowMobileProfile((v) => !v)}
+                  >
+                    <img
+                      src={user.image}
+                      alt={user.name}
+                      className="rounded-circle"
+                      style={{ width: 36, height: 36, objectFit: "cover", background: "#eee" }}
+                      onError={e => { e.target.onerror = null; e.target.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png"; }}
+                    />
+                    <span>{user.name.split(" ")[0]}</span>
+                    <span style={{ marginLeft: "auto", fontSize: 18 }}>
+                      {showMobileProfile ? "▲" : "▼"}
+                    </span>
+                  </button>
+                </li>
+                {showMobileProfile && (
+                  <li className="nav-item px-2 py-2" style={{ background: "#fffbe7", borderRadius: 10, marginBottom: 8 }}>
+                    <div className="mb-2" style={{ fontWeight: 700, color: "#e57368", fontSize: 16 }}>
+                      {user.name}
+                    </div>
+                    <div className="mb-1" style={{ color: "#23272f", fontSize: 15 }}>
+                      <i className="bi bi-envelope me-2" style={{ color: "#e57368" }} />
+                      {localStorage.getItem("userEmail") || "No email"}
+                    </div>
+                    <div className="mb-2" style={{ color: "#23272f", fontSize: 15 }}>
+                      <i className="bi bi-telephone me-2" style={{ color: "#e57368" }} />
+                      {localStorage.getItem("userPhone") || "No phone"}
+                    </div>
+                    {!isProfilePage && (
+                      <Link
+                        className="btn btn-sm w-100 mb-2"
+                        to="/profile"
+                        style={{
+                          background: "#FFD600",
+                          color: "#23272f",
+                          borderRadius: 8,
+                          fontWeight: 600,
+                          fontSize: 15,
+                          border: "none"
+                        }}
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          setShowMobileProfile(false);
+                        }}
+                      >
+                        View Profile
+                      </Link>
+                    )}
+                    <button
+                      className="btn btn-sm w-100"
+                      style={{
+                        background: "#fff",
+                        color: "#dc3545",
+                        border: "1px solid #dc3545",
+                        borderRadius: 8,
+                        fontWeight: 600,
+                        fontSize: 15,
+                      }}
+                      onClick={() => {
+                        localStorage.clear();
+                        setMobileMenuOpen(false);
+                        setShowMobileProfile(false);
+                        window.location.reload();
+                      }}
+                    >
+                      Logout
+                    </button>
+                  </li>
+                )}
+              </>
+            )}
+          </ul>
+        </div>
       </div>
       <AuthModal show={showAuth && !user} onClose={() => setShowAuth(false)} />
       <NeedHelpModal show={showHelp} onClose={() => setShowHelp(false)} />
+      {/* Responsive styles */}
+      <style>
+        {`
+          @media (max-width: 991px) {
+            .navbar-nav.d-none.d-lg-flex { display: none !important; }
+            .d-lg-none { display: block !important; }
+          }
+          @media (min-width: 992px) {
+            .d-lg-none { display: none !important; }
+          }
+        `}
+      </style>
     </nav>
   );
 };

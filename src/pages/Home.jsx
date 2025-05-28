@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PlacesAutocomplete from 'react-places-autocomplete';
 import API_ENDPOINTS from '../config/apiConfig';
+import FaqSection from '../components/FaqSection';
 
 // Dummy data for offers, why choose, and FAQs
 const offers = [
@@ -13,21 +14,6 @@ const whyChoose = [
   { icon: "bi-shield-check", title: "Safe & Secure", desc: "Verified drivers and sanitized cabs." },
   { icon: "bi-currency-rupee", title: "Best Prices", desc: "Transparent fares, no hidden charges." },
   { icon: "bi-clock-history", title: "24x7 Support", desc: "We are here for you anytime." }
-];
-
-const faqs = [
-  {
-    q: "How do I book a cab?",
-    a: "Just fill the form above and click Search. Choose your cab and confirm your booking."
-  },
-  {
-    q: "Can I book for outstation?",
-    a: "Yes, you can book both local and outstation cabs with YatraNow."
-  },
-  {
-    q: "How do I pay?",
-    a: "You can pay online or directly to the driver after your ride."
-  }
 ];
 
 const Home = () => {
@@ -55,7 +41,6 @@ const Home = () => {
       if (datetime) setDatetime(datetime);
       if (hours) setHours(hours);
     }
-    // eslint-disable-next-line
   }, [location.state]);
 
   const handleSubmit = async (e) => {
@@ -291,35 +276,7 @@ const Home = () => {
       </section>
 
       {/* FAQ Section */}
-      <section className="container my-5">
-        <h3 className="fw-bold mb-4 text-center">Frequently Asked Questions</h3>
-        <div className="accordion" id="faqAccordion">
-          {faqs.map((faq, idx) => (
-            <div className="accordion-item" key={idx}>
-              <h2 className="accordion-header" id={`heading${idx}`}>
-                <button
-                  className="accordion-button collapsed"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target={`#collapse${idx}`}
-                  aria-expanded="false"
-                  aria-controls={`collapse${idx}`}
-                >
-                  {faq.q}
-                </button>
-              </h2>
-              <div
-                id={`collapse${idx}`}
-                className="accordion-collapse collapse"
-                aria-labelledby={`heading${idx}`}
-                data-bs-parent="#faqAccordion"
-              >
-                <div className="accordion-body">{faq.a}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      <FaqSection />
     </>
   );
 };

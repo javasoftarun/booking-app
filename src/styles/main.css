@@ -648,3 +648,8 @@ body, .cablist-bg {
     margin-right: 6px !important;
   }
 }
+@media (max-width: 991px) {
+  .with-mobile-footer {
+    padding-bottom: 64px; /* Adjust to match your footer height */
+  }
+}
