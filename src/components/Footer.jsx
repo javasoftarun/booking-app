@@ -80,13 +80,12 @@ const Footer = () => {
                 </button>
               </li>
               <li>
-                <a
-                  href="https://www.yatranow.com/about"
+                <Link
+                  to="/about"
                   className="text-decoration-none text-muted"
-                  target="_blank" rel="noopener noreferrer"
                 >
                   About Us
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

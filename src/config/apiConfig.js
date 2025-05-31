@@ -29,6 +29,8 @@ const API_ENDPOINTS = {
   // Common service endpoints
   UPLOAD_BASE64_IMAGE: `${API_COMMONSERVICE_BASE_URL}/common/uploadBase64Image`,
   ALL_OFFERS: `${API_COMMONSERVICE_BASE_URL}/common/offer/all`,
+  ADD_RATING: `${API_COMMONSERVICE_BASE_URL}/common/cab-rating/add`,
+  GET_RATINGS_BY_USER_ID: (userId) => `${API_COMMONSERVICE_BASE_URL}/common/cab-rating/user/${userId}`,
 };
 
 export default API_ENDPOINTS;

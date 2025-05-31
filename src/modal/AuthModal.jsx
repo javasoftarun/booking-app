@@ -38,19 +38,23 @@ const AuthModal = ({ show, onClose }) => {
             });
             const data = await res.json();
 
-            let userId =
+            const userObj =
                 (data.responseData &&
                     Array.isArray(data.responseData) &&
-                    data.responseData[0]?.id) ||
-                data.id ||
-                0;
+                    data.responseData[0]) ||
+                null;
 
-            if (userId) {
+            if (userObj) {
+                // Store the complete user object as a JSON string
+                localStorage.setItem("user", JSON.stringify(userObj));
                 // New user created, set info from payload
-                localStorage.setItem("userId", userId);
-                localStorage.setItem("userName", payload.name);
-                localStorage.setItem("userEmail", payload.email);
-                localStorage.setItem("userImage", payload.imageUrl);
+                localStorage.setItem("userId", userObj.id);
+                localStorage.setItem("userName", userObj.name);
+                localStorage.setItem("userEmail", userObj.email);
+                localStorage.setItem("userPhone", userObj.phone || "");
+                localStorage.setItem("userRole", userObj.role);
+                localStorage.setItem("userVerified", userObj.verified);
+                localStorage.setItem("userImage", userObj.imageUrl);
                 window.dispatchEvent(new Event("userLogin"));
                 onClose && onClose();
             } else if (data.responseMessage === "Email is already in use") {
@@ -64,9 +68,13 @@ const AuthModal = ({ show, onClose }) => {
                         userData.responseData[0]) ||
                     null;
                 if (existingUser) {
+                    localStorage.setItem("user", JSON.stringify(existingUser));
                     localStorage.setItem("userId", existingUser.id);
                     localStorage.setItem("userName", existingUser.name);
                     localStorage.setItem("userEmail", existingUser.email);
+                    localStorage.setItem("userPhone", existingUser.phone || "");
+                    localStorage.setItem("userRole", existingUser.role);
+                    localStorage.setItem("userVerified", existingUser.verified);
                     localStorage.setItem("userImage", existingUser.imageUrl);
                     console.log("User info fetched from existing user:", existingUser);
 

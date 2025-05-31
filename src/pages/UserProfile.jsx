@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   FaUser,
   FaBook,
@@ -15,6 +15,8 @@ import API_ENDPOINTS from "../config/apiConfig";
 import BookingReceipt from "../components/BookingReceipt";
 import { useReactToPrint } from "react-to-print";
 import { USER_DEFAULT_ROLE } from "../constants/appConstants";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 const sidebarItems = [
   { key: "profile", label: "Profile", icon: <FaUser /> },
@@ -34,12 +36,11 @@ const initialProfile = {
   role: "",
   verified: false,
   imageUrl: "",
+  gender: "",
+  dateOfBirth: "",
+  createdAt: "",
+  updatedAt: "",
 };
-
-const dummyRatings = [
-  { id: 1, date: "2024-05-01", rating: 5, comment: "Great ride!" },
-  { id: 2, date: "2024-04-15", rating: 4, comment: "Comfortable and on time." },
-];
 
 // Add this skeleton component
 const ProfileSkeleton = () => (
@@ -76,42 +77,49 @@ const UserProfile = () => {
   const [bookingsLoading, setBookingsLoading] = useState(false);
   const [printBooking, setPrintBooking] = useState(null);
   const [avatarUploading, setAvatarUploading] = useState(false);
-  const [profileLoading, setProfileLoading] = useState(true); // Change from [, setProfileLoading] to [profileLoading, setProfileLoading]
+  const [profileLoading, setProfileLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [cancelConfirm, setCancelConfirm] = useState({ show: false, booking: null });
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [downloadBooking, setDownloadBooking] = useState(null);
+  const [ratingBookings, setRatingBookings] = useState([]);
+  const [ratingLoading, setRatingLoading] = useState(false);
+  const [ratingComment, setRatingComment] = useState({});
+  const [ratingValue, setRatingValue] = useState({});
+  const [submittingRating, setSubmittingRating] = useState({});
+  const [givenRatings, setGivenRatings] = useState([]);
+  const [givenRatingsLoading, setGivenRatingsLoading] = useState(false);
   const printRef = useRef();
 
-  // Fetch user details on mount
+  // Load user from localStorage on mount
   useEffect(() => {
-    const userId = localStorage.getItem("userId");
-    if (!userId) return;
-    fetch(API_ENDPOINTS.GET_USER_BY_ID(userId))
-      .then((res) => res.json())
-      .then((data) => {
-        if (
-          data &&
-          data.responseMessage === "success" &&
-          data.responseData &&
-          data.responseData.length > 0
-        ) {
-          const user = data.responseData[0];
-          setProfile((prev) => ({
-            ...prev,
-            id: user.id,
-            name: user.name || "",
-            email: user.email || "",
-            phone: user.phone || "",
-            role: user.role || "",
-            gender: user.gender || "",
-            dateOfBirth: user.dateOfBirth || "",
-            verified: user.verified || false,
-            imageUrl: user.imageUrl || "",
-            createdAt: user.createdAt || "",
-            updatedAt: user.updatedAt || "",
-          }));
-        }
-      })
-      .catch(() => {})
-      .finally(() => setProfileLoading(false));
+    const userStr = localStorage.getItem("user");
+    if (!userStr) {
+      setProfileLoading(false);
+      return;
+    }
+    try {
+      const user = JSON.parse(userStr);
+      setProfile({
+        id: user.id || "",
+        name: user.name || "",
+        email: user.email || "",
+        password: user.password || "",
+        phone: user.phone || "",
+        role: user.role || "",
+        verified: user.verified || false,
+        imageUrl: user.imageUrl || "",
+        gender: user.gender || "",
+        dateOfBirth: user.dateOfBirth || "",
+        createdAt: user.createdAt || "",
+        updatedAt: user.updatedAt || "",
+        emailNotification: user.emailNotification || false,
+        mobileNotification: user.mobileNotification || false,
+      });
+    } catch {
+      setProfile(initialProfile);
+    }
+    setProfileLoading(false);
   }, []);
 
   // Fetch bookings after user is loaded
@@ -122,20 +130,96 @@ const UserProfile = () => {
     fetch(API_ENDPOINTS.GET_BOOKINGS_BY_USER_ID(userId))
       .then((res) => res.json())
       .then((data) => {
+        let bookingsArr = [];
         if (
           data &&
           data.responseMessage === "success" &&
           Array.isArray(data.responseData) &&
           Array.isArray(data.responseData[0])
         ) {
-          setBookings(data.responseData[0]);
-        } else {
-          setBookings([]);
+          bookingsArr = data.responseData[0];
         }
+        // Fill missing user details from localStorage if not present in booking
+        const userStr = localStorage.getItem("user");
+        let userObj = {};
+        try {
+          userObj = userStr ? JSON.parse(userStr) : {};
+        } catch {}
+        const filledBookings = bookingsArr.map((b) => ({
+          ...b,
+          name: b.name || userObj.name || "",
+          contact: b.contact || userObj.phone || "",
+          email: b.email || userObj.email || "",
+        }));
+        setBookings(filledBookings);
       })
       .catch(() => setBookings([]))
       .finally(() => setBookingsLoading(false));
   }, [activeTab]);
+
+  // Fetch cabs for rating when ratings tab is active
+  useEffect(() => {
+    if (activeTab !== "ratings") return;
+    setRatingLoading(true);
+    const userId = localStorage.getItem("userId");
+    fetch(API_ENDPOINTS.GET_BOOKINGS_BY_USER_ID(userId))
+      .then((res) => res.json())
+      .then((data) => {
+        let bookingsArr = [];
+        if (
+          data &&
+          data.responseMessage === "success" &&
+          Array.isArray(data.responseData) &&
+          Array.isArray(data.responseData[0])
+        ) {
+          bookingsArr = data.responseData[0];
+        }
+        // Only show bookings with status "Completed" and not yet rated
+        const completedBookings = bookingsArr.filter(
+          (b) =>
+            b.bookingStatus &&
+            ["Completed", "PAST"].includes(b.bookingStatus) &&
+            !b.userHasRated // Make sure your API provides this flag or filter by your own logic
+        );
+        setRatingBookings(completedBookings);
+      })
+      .catch(() => setRatingBookings([]))
+      .finally(() => setRatingLoading(false));
+  }, [activeTab]);
+
+  // Fetch user's given ratings when ratings tab is active
+  useEffect(() => {
+    if (activeTab !== "ratings") return;
+    setGivenRatingsLoading(true);
+    fetch(API_ENDPOINTS.GET_RATINGS_BY_USER_ID(profile.id))
+      .then((res) => res.json())
+      .then(async (data) => {
+        if (
+          data &&
+          data.responseMessage === "success" &&
+          Array.isArray(data.responseData)
+        ) {
+          // Fetch cab details for each rating
+          const ratingsWithCab = await Promise.all(
+            data.responseData.map(async (rating) => {
+              const cab = await fetchCabDetails(rating.cabRegistrationId);
+              return {
+                ...rating,
+                cabName: cab.cabName || "",
+                cabType: cab.cabType || "",
+                cabNumber: cab.cabNumber || "",
+                cabImageUrl: cab.cabImageUrl || "",
+              };
+            })
+          );
+          setGivenRatings(ratingsWithCab);
+        } else {
+          setGivenRatings([]);
+        }
+      })
+      .catch(() => setGivenRatings([]))
+      .finally(() => setGivenRatingsLoading(false));
+  }, [activeTab, profile.id]);
 
   const handleChange = (e) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
@@ -177,17 +261,8 @@ const UserProfile = () => {
         uploadData.responseData
       ) {
         const updatedProfile = {
-          id: profile.id,
-          name: profile.name,
-          email: profile.email,
-          password: profile.password,
-          phone: profile.phone,
-          role: profile.role,
-          verified: profile.verified,
+          ...profile,
           imageUrl: uploadData.responseData,
-          gender: profile.gender || "",
-          dateOfBirth: profile.dateOfBirth || "",
-          createdAt: profile.createdAt || new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
         const updateRes = await fetch(API_ENDPOINTS.UPDATE_USER, {
@@ -199,8 +274,9 @@ const UserProfile = () => {
 
         if (updateData && updateData.responseMessage === "success") {
           setProfile(updatedProfile);
+          localStorage.setItem("user", JSON.stringify(updatedProfile));
           localStorage.setItem("userImage", uploadData.responseData);
-          localStorage.setItem("userName", profile.name);
+          localStorage.setItem("userName", updatedProfile.name);
           window.dispatchEvent(new Event("userLogin"));
           setMessageType("success");
         } else {
@@ -236,6 +312,8 @@ const UserProfile = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data && data.responseMessage === "success") {
+          setProfile(updatedProfile);
+          localStorage.setItem("user", JSON.stringify(updatedProfile));
           setMessage("Profile updated successfully!");
           setMessageType("success");
           setTimeout(() => setMessage(""), 2500); // Auto-hide after 2.5s
@@ -282,9 +360,15 @@ const UserProfile = () => {
     setMessageType("error");
   };
 
-  const handleCancelBooking = async (booking) => {
+  const handleCancelBooking = (booking) => {
+    setCancelConfirm({ show: true, booking });
+  };
+
+  const confirmCancelBooking = async () => {
     setMessage("");
     setMessageType("");
+    setCancelLoading(true);
+    const booking = cancelConfirm.booking;
     try {
       const response = await fetch(API_ENDPOINTS.UPDATE_BOOKING_STATUS, {
         method: "PUT",
@@ -315,6 +399,9 @@ const UserProfile = () => {
     } catch (error) {
       setMessage("Failed to cancel booking.");
       setMessageType("error");
+    } finally {
+      setCancelLoading(false); // <-- hide loading
+      setCancelConfirm({ show: false, booking: null });
     }
   };
 
@@ -336,21 +423,105 @@ const UserProfile = () => {
     }
   }, [printBooking, handlePrint]);
 
-  const handlePrintBooking = (booking) => {
-    setPrintBooking({
-      ...booking,
-      name: profile.name,
-      contact: profile.phone,
-      email: profile.email,
-      paymentId: booking.paymentDetails?.transactionId || booking.paymentId || "N/A",
-      baseFare: booking.fare,
-      promoDiscount: booking.promoDiscount || 0,
-      finalFare: booking.fare - (booking.promoDiscount || 0),
-      tokenAmount: booking.tokenAmount,
-      balanceAmount: booking.balanceAmount,
-      cabFuel: booking.cabFuel,
-      cabCapacity: booking.cabCapacity,
+  const handleDownloadReceipt = async (booking) => {
+    setDownloadBooking(booking);
+    await new Promise((resolve) => setTimeout(resolve, 200)); // Wait for render
+
+    const element = document.getElementById("pdf-receipt-container");
+    if (!element) {
+      setMessage("Receipt not ready. Please try again.");
+      setMessageType("error");
+      setDownloadBooking(null);
+      return;
+    }
+
+    const canvas = await html2canvas(element, { useCORS: true, backgroundColor: "#fff" });
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "pt",
+      format: "a4",
     });
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save(`YatraNow-Booking-${booking.bookingId}.pdf`);
+    setDownloadBooking(null);
+  };
+
+  // Handle rating submit
+  const handleSubmitRating = useCallback(
+    async (bookingId) => {
+      setSubmittingRating((prev) => ({ ...prev, [bookingId]: true }));
+      setMessage("");
+      setMessageType("");
+      try {
+        // Find the booking to get cabRegistrationId
+        const booking = ratingBookings.find((b) => b.bookingId === bookingId);
+        if (!booking) {
+          setMessage("Booking not found.");
+          setMessageType("error");
+          setSubmittingRating((prev) => ({ ...prev, [bookingId]: false }));
+          return;
+        }
+        const reqBody = {
+          id: 0,
+          cabRegistrationId: booking.cabRegistrationId,
+          userId: profile.id,
+          rating: ratingValue[bookingId],
+          comment: ratingComment[bookingId] || "",
+        };
+        const res = await fetch(API_ENDPOINTS.ADD_RATING, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(reqBody),
+        });
+        const data = await res.json();
+        if (data && data.responseMessage === "success") {
+          setMessage("Thank you for your feedback! Your rating has been submitted.");
+          setMessageType("success");
+          setRatingBookings((prev) =>
+            prev.filter((b) => b.bookingId !== bookingId)
+          );
+        } else {
+          setMessage(data.responseMessage || "Failed to submit rating.");
+          setMessageType("error");
+        }
+      } catch {
+        setMessage("Failed to submit rating.");
+        setMessageType("error");
+      } finally {
+        setSubmittingRating((prev) => ({ ...prev, [bookingId]: false }));
+      }
+    },
+    [ratingValue, ratingComment, profile.id, ratingBookings]
+  );
+
+  // Add this helper function at the top (after imports)
+  const fetchCabDetails = async (cabRegistrationId) => {
+    try {
+      const res = await fetch(API_ENDPOINTS.GET_CAB_BY_ID(cabRegistrationId));
+      const data = await res.json();
+      if (
+        data &&
+        data.responseMessage === "success" &&
+        Array.isArray(data.responseData) &&
+        data.responseData.length > 0 &&
+        data.responseData[0].cab
+      ) {
+        const cab = data.responseData[0].cab;
+        return {
+          cabName: cab.cabName || "",
+          cabType: cab.cabType || "",
+          cabNumber: cab.cabNumber || "",
+          cabImageUrl: cab.cabImageUrl || "",
+          cabModel: cab.cabModel || "",
+          cabColor: cab.cabColor || "",
+        };
+      }
+    } catch {}
+    return {};
   };
 
   return (
@@ -617,27 +788,151 @@ const UserProfile = () => {
                     <h4 className="fw-bold mb-4" style={{ color: "#e57368" }}>
                       My Ratings
                     </h4>
-                    {dummyRatings.length === 0 ? (
-                      <div className="text-muted">No ratings yet.</div>
+                    {ratingLoading ? (
+                      <div>Loading cabs for rating...</div>
+                    ) : ratingBookings.length === 0 ? (
+                      <div className="text-muted">No cabs to rate.</div>
                     ) : (
                       <div>
-                        {dummyRatings.map((rating) => (
+                        {ratingBookings.map((booking) => (
+                          <div
+                            key={booking.bookingId}
+                            className="mb-3 p-3 border rounded-3"
+                            style={{ background: "#f8f9fa" }}
+                          >
+                            <div className="d-flex align-items-center gap-3 mb-2">
+                              <img
+                                src={booking.cabImageUrl}
+                                alt={booking.cabName}
+                                style={{
+                                  width: 60,
+                                  height: 40,
+                                  objectFit: "cover",
+                                  borderRadius: 6,
+                                  border: "1px solid #FFD600",
+                                  background: "#fff",
+                                }}
+                              />
+                              <div>
+                                <div className="fw-bold">{booking.cabName} ({booking.cabType})</div>
+                                <div className="small text-muted">{booking.cabNumber}</div>
+                                <div className="small text-muted">
+                                  Date: {new Date(booking.pickupDateTime).toLocaleString()}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="mb-2">
+                              <label className="form-label mb-1">Your Rating:</label>
+                              <div>
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <span
+                                    key={star}
+                                    style={{
+                                      cursor: "pointer",
+                                      color:
+                                        (ratingValue[booking.bookingId] || 0) >= star
+                                          ? "#FFD600"
+                                          : "#ccc",
+                                      fontSize: 22,
+                                    }}
+                                    onClick={() =>
+                                      setRatingValue((prev) => ({
+                                        ...prev,
+                                        [booking.bookingId]: star,
+                                      }))
+                                    }
+                                  >
+                                    <FaStar />
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            <div className="mb-2">
+                              <label className="form-label mb-1">Your Comment:</label>
+                              <textarea
+                                className="form-control"
+                                rows={2}
+                                value={ratingComment[booking.bookingId] || ""}
+                                onChange={(e) =>
+                                  setRatingComment((prev) => ({
+                                    ...prev,
+                                    [booking.bookingId]: e.target.value,
+                                  }))
+                                }
+                                placeholder="Write your feedback..."
+                              />
+                            </div>
+                            <button
+                              className="btn btn-warning"
+                              style={{ color: "#23272f", fontWeight: 600 }}
+                              disabled={
+                                submittingRating[booking.bookingId] ||
+                                !ratingValue[booking.bookingId]
+                              }
+                              onClick={() => handleSubmitRating(booking.bookingId)}
+                            >
+                              {submittingRating[booking.bookingId] ? "Submitting..." : "Submit Rating"}
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <h5 className="fw-bold mt-5 mb-3" style={{ color: "#1976d2" }}>
+                      Ratings Given
+                    </h5>
+                    {givenRatingsLoading ? (
+                      <div>Loading your ratings...</div>
+                    ) : givenRatings.length === 0 ? (
+                      <div className="text-muted">No ratings given yet.</div>
+                    ) : (
+                      <div>
+                        {givenRatings.map((rating) => (
                           <div
                             key={rating.id}
                             className="mb-3 p-3 border rounded-3 d-flex align-items-center"
                             style={{ background: "#f8f9fa" }}
                           >
-                            <span
-                              className="me-3"
-                              style={{ color: "#FFD600", fontSize: 22 }}
-                            >
-                              {Array.from({ length: rating.rating }).map((_, i) => (
-                                <FaStar key={i} />
+                            <img
+                              src={rating.cabImageUrl}
+                              alt={rating.cabName}
+                              style={{
+                                width: 60,
+                                height: 40,
+                                objectFit: "cover",
+                                borderRadius: 6,
+                                border: "1px solid #FFD600",
+                                background: "#fff",
+                                marginRight: 16,
+                              }}
+                            />
+                            <div style={{ flex: 1 }}>
+                              <div className="fw-bold">
+                                {rating.cabName} ({rating.cabType})
+                              </div>
+                              <div className="small text-muted">{rating.cabNumber}</div>
+                              <div className="small text-muted">
+                                {rating.ratingDate ? new Date(rating.ratingDate).toLocaleString() : ""}
+                              </div>
+                            </div>
+                            <div className="d-flex align-items-center" style={{ minWidth: 120 }}>
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <span
+                                  key={star}
+                                  style={{
+                                    color: rating.rating >= star ? "#FFD600" : "#ccc",
+                                    fontSize: 22,
+                                  }}
+                                >
+                                  <FaStar />
+                                </span>
                               ))}
-                            </span>
-                            <div>
-                              <div className="fw-semibold">{rating.comment}</div>
-                              <div className="text-muted small">{rating.date}</div>
+                            </div>
+                            <div
+                              className="border rounded p-2 bg-white ms-3"
+                              style={{ minWidth: 150, maxWidth: 250, fontSize: 15, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
+                              title={rating.comment}
+                            >
+                              {rating.comment || <span className="text-muted">No comment</span>}
                             </div>
                           </div>
                         ))}
@@ -688,86 +983,98 @@ const UserProfile = () => {
                         <div>No {bookingsTab} bookings.</div>
                       ) : (
                         <div className="list-group">
-                          {filteredBookings.map((booking) => (
-                            <div
-                              key={booking.bookingId}
-                              className="list-group-item mb-3"
-                              style={{
-                                border: "1.5px solid #e3e6ed",
-                                borderRadius: 16,
-                                background: "#f8fafc",
-                                boxShadow: "0 2px 8px #00b8ff11",
-                              }}
-                            >
-                              <div className="d-flex align-items-center">
-                                <img
-                                  src={booking.cabImageUrl}
-                                  alt={booking.cabName}
-                                  style={{
-                                    width: 80,
-                                    height: 50,
-                                    objectFit: "cover",
-                                    borderRadius: 8,
-                                    marginRight: 16,
-                                    border: "1px solid #FFD600",
-                                    background: "#fff",
-                                  }}
-                                />
-                                <div style={{ flex: 1 }}>
-                                  <div className="fw-bold" style={{ color: "#1976d2" }}>
-                                    {booking.cabName} ({booking.cabType})
+                          {filteredBookings.map((booking) => {
+                            const isCancelled =
+                              booking.bookingStatus &&
+                              ["Canceled", "Cancelled", "CANCELLED"].includes(booking.bookingStatus);
+
+                            return (
+                              <div
+                                key={booking.bookingId}
+                                className="list-group-item mb-3"
+                                style={{
+                                  border: "1.5px solid #e3e6ed",
+                                  borderRadius: 16,
+                                  background: "#f8fafc",
+                                  boxShadow: "0 2px 8px #00b8ff11",
+                                }}
+                              >
+                                <div className="d-flex align-items-center">
+                                  <img
+                                    src={booking.cabImageUrl}
+                                    alt={booking.cabName}
+                                    style={{
+                                      width: 80,
+                                      height: 50,
+                                      objectFit: "cover",
+                                      borderRadius: 8,
+                                      marginRight: 16,
+                                      border: "1px solid #FFD600",
+                                      background: "#fff",
+                                    }}
+                                  />
+                                  <div style={{ flex: 1 }}>
+                                    <div className="fw-bold" style={{ color: "#1976d2" }}>
+                                      {booking.cabName} ({booking.cabType})
+                                    </div>
+                                    <div className="small text-muted">
+                                      {booking.cabNumber} | {booking.cabModel} | {booking.cabColor}
+                                    </div>
+                                    <div>
+                                      <span className="fw-semibold">Pickup:</span> {booking.pickupLocation}
+                                    </div>
+                                    <div>
+                                      <span className="fw-semibold">Drop:</span> {booking.dropLocation}
+                                    </div>
+                                    <div>
+                                      <span className="fw-semibold">Date:</span> {new Date(booking.pickupDateTime).toLocaleString()}
+                                    </div>
+                                    <div>
+                                      <span className="fw-semibold">Status:</span> {booking.bookingStatus}
+                                    </div>
+                                    <div>
+                                      <span className="fw-semibold">Fare:</span> ₹{booking.fare}
+                                    </div>
+                                    <div>
+                                      <span className="fw-semibold">Driver:</span> {booking.driverName} ({booking.driverContact})
+                                    </div>
                                   </div>
-                                  <div className="small text-muted">
-                                    {booking.cabNumber} | {booking.cabModel} | {booking.cabColor}
+                                  <div className="ms-3 d-flex flex-column gap-2">
+                                    {/* Only show Modify and Cancel if not in Cancelled tab */}
+                                    {bookingsTab !== "cancelled" && !isCancelled && (
+                                      <>
+                                        <button
+                                          className="btn btn-light btn-sm d-flex align-items-center gap-2 border"
+                                          title="Modify Booking"
+                                          onClick={() => handleModifyBooking(booking)}
+                                          style={{ borderRadius: 8 }}
+                                        >
+                                          <FaEdit style={{ color: "#e57368" }} /> Modify
+                                        </button>
+                                        <button
+                                          className="btn btn-light btn-sm d-flex align-items-center gap-2 border"
+                                          title="Cancel Booking"
+                                          onClick={() => handleCancelBooking(booking)}
+                                          style={{ borderRadius: 8 }}
+                                        >
+                                          <FaTrash style={{ color: "#dc3545" }} /> Cancel
+                                        </button>
+                                      </>
+                                    )}
+                                    {/* Always show Print */}
+                                    <button
+                                      className="btn btn-light btn-sm d-flex align-items-center gap-2 border"
+                                      title="Download Receipt"
+                                      onClick={() => handleDownloadReceipt(booking)}
+                                      style={{ borderRadius: 8 }}
+                                    >
+                                      <FaPrint style={{ color: "#6c757d" }} /> Download Receipt
+                                    </button>
                                   </div>
-                                  <div>
-                                    <span className="fw-semibold">Pickup:</span> {booking.pickupLocation}
-                                  </div>
-                                  <div>
-                                    <span className="fw-semibold">Drop:</span> {booking.dropLocation}
-                                  </div>
-                                  <div>
-                                    <span className="fw-semibold">Date:</span> {new Date(booking.pickupDateTime).toLocaleString()}
-                                  </div>
-                                  <div>
-                                    <span className="fw-semibold">Status:</span> {booking.bookingStatus}
-                                  </div>
-                                  <div>
-                                    <span className="fw-semibold">Fare:</span> ₹{booking.fare}
-                                  </div>
-                                  <div>
-                                    <span className="fw-semibold">Driver:</span> {booking.driverName} ({booking.driverContact})
-                                  </div>
-                                </div>
-                                <div className="ms-3 d-flex flex-column gap-2">
-                                  <button
-                                    className="btn btn-light btn-sm d-flex align-items-center gap-2 border"
-                                    title="Modify Booking"
-                                    onClick={() => handleModifyBooking(booking)}
-                                    style={{ borderRadius: 8 }}
-                                  >
-                                    <FaEdit style={{ color: "#e57368" }} /> Modify
-                                  </button>
-                                  <button
-                                    className="btn btn-light btn-sm d-flex align-items-center gap-2 border"
-                                    title="Cancel Booking"
-                                    onClick={() => handleCancelBooking(booking)}
-                                    style={{ borderRadius: 8 }}
-                                  >
-                                    <FaTrash style={{ color: "#dc3545" }} /> Cancel
-                                  </button>
-                                  <button
-                                    className="btn btn-light btn-sm d-flex align-items-center gap-2 border"
-                                    title="Print Booking"
-                                    onClick={() => handlePrintBooking(booking)}
-                                    style={{ borderRadius: 8 }}
-                                  >
-                                    <FaPrint style={{ color: "#6c757d" }} /> Print
-                                  </button>
                                 </div>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       )}
                     </div>
@@ -857,6 +1164,52 @@ const UserProfile = () => {
           <BookingReceipt ref={printRef} booking={printBooking} />
         </div>
       )}
+      {/* Cancel Booking Confirmation Modal */}
+      {cancelConfirm.show && (
+        <div className="modal fade show" style={{ display: "block" }} tabIndex={-1}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title text-danger">
+                  Confirm Cancellation
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setCancelConfirm({ show: false, booking: null })}
+                  disabled={cancelLoading}
+                ></button>
+              </div>
+              <div className="modal-body">
+                {cancelLoading ? (
+                  <div className="text-center py-3">
+                    <div className="spinner-border text-danger" role="status" />
+                    <div className="mt-2">Cancelling booking...</div>
+                  </div>
+                ) : (
+                  "Are you sure you want to cancel this booking?"
+                )}
+              </div>
+              {!cancelLoading && (
+                <div className="modal-footer">
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => setCancelConfirm({ show: false, booking: null })}
+                  >
+                    No
+                  </button>
+                  <button
+                    className="btn btn-danger"
+                    onClick={confirmCancelBooking}
+                  >
+                    Yes, Cancel Booking
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
       {/* Responsive tweaks */}
       <style>
         {`
@@ -873,6 +1226,27 @@ const UserProfile = () => {
           }
         `}
       </style>
+      {/* Hidden receipts for PDF download */}
+      {filteredBookings.map((booking) => (
+        <div key={booking.bookingId} style={{ display: "none" }}>
+          <div id={`receipt-${booking.bookingId}`}>
+            <BookingReceipt booking={booking} />
+          </div>
+        </div>
+      ))}
+      <div
+        id="pdf-receipt-container"
+        style={{
+          position: "fixed",
+          left: "-9999px",
+          top: 0,
+          width: 800,
+          background: "#fff",
+          zIndex: -1,
+        }}
+      >
+        {downloadBooking && <BookingReceipt booking={downloadBooking} />}
+      </div>
     </div>
   );
 };

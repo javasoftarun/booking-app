@@ -16,7 +16,7 @@ const BookingReceipt = forwardRef(({ booking }, ref) => (
     <div style={{ marginBottom: 16 }}>
       <b>Payment Details</b>
       <div><b>Payment ID:</b> {booking.paymentId}</div>
-      <div><b>Status:</b> Paid</div>
+      <div><b>Token Status:</b> Paid</div>
       <div><b>Amount Paid:</b> ₹{booking.tokenAmount} (Balance: ₹{booking.balanceAmount})</div>
     </div>
     <div style={{ marginBottom: 16 }}>
@@ -38,9 +38,9 @@ const BookingReceipt = forwardRef(({ booking }, ref) => (
     </div>
     <div style={{ marginBottom: 16 }}>
       <b>Fare Summary</b>
-      <div>Base Fare <span style={{ float: "right" }}>₹{booking.baseFare}</span></div>
+      <div>Base Fare <span style={{ float: "right" }}>₹{booking.fare}</span></div>
       <div>Promo Discount <span style={{ float: "right" }}>-₹{booking.promoDiscount}</span></div>
-      <div style={{ fontWeight: 700 }}>Final Fare <span style={{ float: "right" }}>₹{booking.finalFare}</span></div>
+      <div style={{ fontWeight: 700 }}>Final Fare <span style={{ float: "right" }}>₹{booking.fare - booking.promoDiscount}</span></div>
       <div>Token Paid <span style={{ float: "right" }}>₹{booking.tokenAmount}</span></div>
       <div>Balance to Pay <span style={{ float: "right" }}>₹{booking.balanceAmount}</span></div>
     </div>

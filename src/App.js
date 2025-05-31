@@ -9,6 +9,7 @@ import CabBookingDetails from './pages/CabBookingDetails';
 import BookingConfirmation from './pages/BookingConfirmation';
 import UserProfile from './pages/UserProfile';
 import Footer from './components/Footer';
+import AboutUs from './pages/AboutUs';
 
 const App = () => (
   <BrowserRouter>
@@ -19,6 +20,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/search-cab" element={<Home />} />
+            <Route path="/about" element={<AboutUs />} />
             <Route path="/cabs" element={<CabsList />} />
             <Route path="/profile" element={<UserProfile />} />
             <Route path="/cab-booking-details" element={<CabBookingDetails />} />
