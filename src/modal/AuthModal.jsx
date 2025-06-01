@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { auth, provider } from "../config/firebase";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { signInWithPopup } from "firebase/auth";
@@ -15,6 +15,19 @@ const AuthModal = ({ show, onClose }) => {
     const [referral, setReferral] = useState("");
     const [showPrivacy, setShowPrivacy] = useState(false);
     const [showTerms, setShowTerms] = useState(false);
+
+    // Reset Terms/Privacy modal state when AuthModal is closed
+    useEffect(() => {
+        if (!show) {
+            setShowPrivacy(false);
+            setShowTerms(false);
+            setStep("mobile");
+            setMobile("");
+            setOtp("");
+            setConfirmationResult(null);
+            setReferral("");
+        }
+    }, [show]);
 
     if (!show) return null;
 
@@ -144,7 +157,6 @@ const AuthModal = ({ show, onClose }) => {
                 justifyContent: "center",
                 backdropFilter: "blur(3px)",
             }}
-            onMouseDown={onClose}
             tabIndex={-1}
         >
             <div
