@@ -1,9 +1,9 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
 import API_ENDPOINTS from '../config/apiConfig';
+import AuthModal from '../modal/AuthModal';
 
-// Dummy icons for cab types (replace with your own or use react-icons)
 const cabTypeIcons = {
     Sedan: <i className="bi bi-car-front-fill me-2" style={{ fontSize: 24 }}></i>,
     Hatchback: <i className="bi bi-car-front-fill me-2" style={{ fontSize: 24 }}></i>,
@@ -34,6 +34,10 @@ const CabsList = () => {
 
     // Add state to store ratings for cabs
     const [cabRatings, setCabRatings] = useState({});
+    const cabRatingsRef = useRef({});
+
+    // Auth modal state
+    const [showAuthModal, setShowAuthModal] = useState(false);
 
     // Optional: handle window resize to auto-toggle filter on resize
     React.useEffect(() => {
@@ -79,8 +83,8 @@ const CabsList = () => {
         }
     };
 
-    // Add this helper function inside your UserProfile component (after fetchCabDetails)
-    const fetchCabRating = async (cabRegistrationId) => {
+    // Wrap fetchCabRating in useCallback to avoid warning and unnecessary effect runs
+    const fetchCabRating = useCallback(async (cabRegistrationId) => {
       try {
         const res = await fetch(API_ENDPOINTS.GET_RATINGS_BY_CAB_REG_ID(cabRegistrationId));
         const data = await res.json();
@@ -96,7 +100,7 @@ const CabsList = () => {
         }
       } catch {}
       return { averageRating: null, totalRatings: null };
-    };
+    }, []);
 
     // When fetching givenRatings, also fetch cab rating for each cab
     useEffect(() => {
@@ -129,23 +133,32 @@ const CabsList = () => {
         .finally(() => setGivenRatingsLoading(false));
     }, [activeTab, profile.id]);
 
-    // Fetch ratings for visible cabs
     useEffect(() => {
+      let isMounted = true;
       const fetchRatings = async () => {
-        const ratingsObj = { ...cabRatings };
+        const ratingsToFetch = pagedCabs.filter(
+          cab => cabRatingsRef.current[cab.cabRegistrationId] === undefined
+        );
+        if (ratingsToFetch.length === 0) return;
+
+        const newRatings = {};
         await Promise.all(
-          pagedCabs.map(async (cab) => {
-            if (ratingsObj[cab.cabRegistrationId] === undefined) {
-              const rating = await fetchCabRating(cab.cabRegistrationId);
-              ratingsObj[cab.cabRegistrationId] = rating;
-            }
+          ratingsToFetch.map(async (cab) => {
+            const rating = await fetchCabRating(cab.cabRegistrationId);
+            newRatings[cab.cabRegistrationId] = rating;
           })
         );
-        setCabRatings(ratingsObj);
+        if (isMounted && Object.keys(newRatings).length > 0) {
+          setCabRatings(prev => {
+            const updated = { ...prev, ...newRatings };
+            cabRatingsRef.current = updated;
+            return updated;
+          });
+        }
       };
       fetchRatings();
-      // eslint-disable-next-line
-    }, [pagedCabs]);
+      return () => { isMounted = false; };
+    }, [pagedCabs, fetchCabRating]);
 
     if (!cabs.length) {
         return (
@@ -606,6 +619,7 @@ const CabsList = () => {
                       </div>
                   </div>
               )}
+              <AuthModal show={showAuthModal} onClose={() => setShowAuthModal(false)} />
             </div>
         </div>
     );

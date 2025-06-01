@@ -144,6 +144,8 @@ const AuthModal = ({ show, onClose }) => {
                 justifyContent: "center",
                 backdropFilter: "blur(3px)",
             }}
+            onMouseDown={onClose}
+            tabIndex={-1}
         >
             <div
                 style={{
@@ -161,6 +163,7 @@ const AuthModal = ({ show, onClose }) => {
                     padding: 0,
                     animation: "fadeInUp .4s cubic-bezier(.4,2,.6,1)",
                 }}
+                onMouseDown={e => e.stopPropagation()}
             >
                 {/* Subtle Top Bar */}
                 <div
