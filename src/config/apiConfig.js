@@ -31,6 +31,8 @@ const API_ENDPOINTS = {
   ALL_OFFERS: `${API_COMMONSERVICE_BASE_URL}/common/offer/all`,
   ADD_RATING: `${API_COMMONSERVICE_BASE_URL}/common/cab-rating/add`,
   GET_RATINGS_BY_USER_ID: (userId) => `${API_COMMONSERVICE_BASE_URL}/common/cab-rating/user/${userId}`,
+  GET_RATINGS_BY_CAB_REG_ID: (cabRegistrationId) => `${API_COMMONSERVICE_BASE_URL}/common/cab-rating/${cabRegistrationId}`,
+  GET_ALL_COUPONS: `${API_COMMONSERVICE_BASE_URL}/common/offer/all`,
 };
 
 export default API_ENDPOINTS;

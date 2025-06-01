@@ -4,7 +4,7 @@ import NeedHelpModal from "../modal/NeedHelpModal";
 import CancellationPolicyModal from "../modal/CancellationPolicyModal";
 import RefundPolicyModal from "../modal/RefundPolicyModal";
 import TermsAndConditionsModal from "../modal/TermsAndConditionsModal";
-import PrivacyPolicyModal from "../modal/PrivacyPolicyModal"; // <-- Add this import
+import PrivacyPolicyModal from "../modal/PrivacyPolicyModal";
 
 const Footer = () => {
   const location = useLocation();

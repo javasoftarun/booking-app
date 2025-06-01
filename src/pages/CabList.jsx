@@ -1,5 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { FaStar } from 'react-icons/fa';
+import API_ENDPOINTS from '../config/apiConfig';
 
 // Dummy icons for cab types (replace with your own or use react-icons)
 const cabTypeIcons = {
@@ -25,6 +27,13 @@ const CabsList = () => {
     const [showImg, setShowImg] = useState(false);
     const [imgSrc, setImgSrc] = useState('');
     const [filterOpen, setFilterOpen] = useState(window.innerWidth >= 768); // open by default on desktop
+    const [, setGivenRatings] = useState([]);
+    const [, setGivenRatingsLoading] = useState(false);
+    const [activeTab] = useState('available'); // or 'ratings' based on your tab logic
+    const [profile] = useState({ id: 1 }); // Dummy profile, replace with actual
+
+    // Add state to store ratings for cabs
+    const [cabRatings, setCabRatings] = useState({});
 
     // Optional: handle window resize to auto-toggle filter on resize
     React.useEffect(() => {
@@ -70,6 +79,74 @@ const CabsList = () => {
         }
     };
 
+    // Add this helper function inside your UserProfile component (after fetchCabDetails)
+    const fetchCabRating = async (cabRegistrationId) => {
+      try {
+        const res = await fetch(API_ENDPOINTS.GET_RATINGS_BY_CAB_REG_ID(cabRegistrationId));
+        const data = await res.json();
+        if (
+          data &&
+          data.responseMessage === "success" &&
+          data.responseData
+        ) {
+          return {
+            averageRating: data.responseData.averageRating,
+            totalRatings: data.responseData.totalRatings,
+          };
+        }
+      } catch {}
+      return { averageRating: null, totalRatings: null };
+    };
+
+    // When fetching givenRatings, also fetch cab rating for each cab
+    useEffect(() => {
+      if (activeTab !== "ratings") return;
+      setGivenRatingsLoading(true);
+      fetch(API_ENDPOINTS.GET_RATINGS_BY_USER_ID(profile.id))
+        .then((res) => res.json())
+        .then(async (data) => {
+          if (
+            data &&
+            data.responseMessage === "success" &&
+            Array.isArray(data.responseData)
+          ) {
+            // Fetch cab details and cab rating for each rating
+            const ratingsWithCab = await Promise.all(
+              data.responseData.map(async (rating) => {
+                const cabRating = await fetchCabRating(rating.cabRegistrationId);
+                return {
+                  ...rating,
+                  ...cabRating,
+                };
+              })
+            );
+            setGivenRatings(ratingsWithCab);
+          } else {
+            setGivenRatings([]);
+          }
+        })
+        .catch(() => setGivenRatings([]))
+        .finally(() => setGivenRatingsLoading(false));
+    }, [activeTab, profile.id]);
+
+    // Fetch ratings for visible cabs
+    useEffect(() => {
+      const fetchRatings = async () => {
+        const ratingsObj = { ...cabRatings };
+        await Promise.all(
+          pagedCabs.map(async (cab) => {
+            if (ratingsObj[cab.cabRegistrationId] === undefined) {
+              const rating = await fetchCabRating(cab.cabRegistrationId);
+              ratingsObj[cab.cabRegistrationId] = rating;
+            }
+          })
+        );
+        setCabRatings(ratingsObj);
+      };
+      fetchRatings();
+      // eslint-disable-next-line
+    }, [pagedCabs]);
+
     if (!cabs.length) {
         return (
             <div className="container py-5">
@@ -95,6 +172,9 @@ const CabsList = () => {
                 </span>
                 <span className="badge rounded-pill bg-warning-subtle text-warning px-3 py-2" style={{ fontSize: 15 }}>
                   <i className="bi bi-clock me-1"></i> {hours}
+                </span>
+                <span className="badge rounded-pill bg-success-subtle text-success px-3 py-2" style={{ fontSize: 15 }}>
+                  <i className="bi bi-arrow-repeat me-1"></i> Round Trip
                 </span>
                 <button
                   type="button"
@@ -148,6 +228,13 @@ const CabsList = () => {
                             <div className="text-muted small">Hours</div>
                             <div className="fw-semibold text-dark">{hours}</div>
                         </div>
+                    </div>
+                    <div className="mb-2 d-flex align-items-center gap-2">
+                      <i className="bi bi-arrow-repeat text-success fs-5"></i>
+                      <div>
+                          <div className="text-muted small">Trip Type</div>
+                          <div className="fw-semibold text-success">Round Trip</div>
+                      </div>
                     </div>
                   </div>
                   {/* Desktop: Filter in sidebar */}
@@ -360,28 +447,61 @@ const CabsList = () => {
                           <div className="flex-grow-1 px-md-3 w-100">
                             <div className="d-flex align-items-center gap-3 mb-2 flex-wrap">
                               <span className="fw-bold" style={{ fontSize: 22, color: '#23272f', letterSpacing: 0.5 }}>{cab.cabName}</span>
-                              <span className="badge bg-light text-danger fw-semibold" style={{ fontSize: 15 }}>
-                                4.0/5 <span className="text-muted" style={{ fontSize: 13 }}>(3k reviews)</span>
+                              <span className="d-flex align-items-center gap-1">
+                                {cabRatings[cab.cabRegistrationId]?.averageRating
+                                  ? [...Array(5)].map((_, i) => (
+                                      <FaStar
+                                        key={i}
+                                        style={{
+                                          color:
+                                            i < cabRatings[cab.cabRegistrationId].averageRating
+                                              ? "#FFD600"
+                                              : "#ccc",
+                                          fontSize: 18,
+                                          marginRight: 2,
+                                        }}
+                                      />
+                                    ))
+                                  : [...Array(5)].map((_, i) => (
+                                      <FaStar
+                                        key={i}
+                                        style={{
+                                          color: "#ccc",
+                                          fontSize: 18,
+                                          marginRight: 2,
+                                        }}
+                                      />
+                                    ))}
+                                <span className="ms-2 fw-semibold" style={{ fontSize: 15, color: "#e57368" }}>
+                                  {cabRatings[cab.cabRegistrationId]?.averageRating ?? "N/A"}
+                                </span>
+                                <span className="text-muted" style={{ fontSize: 13 }}>
+                                  ({cabRatings[cab.cabRegistrationId]?.totalRatings ?? 0} reviews)
+                                </span>
                               </span>
                             </div>
                             <div className="mb-2" style={{ fontSize: 16, color: '#5a5a5a', fontWeight: 500 }}>
                               <span>{cab.cabType}</span>
                               <span className="mx-2">•</span>
-                              <span>AC</span>
+                              <span>{cab.ac ? "AC" : "Non-AC"}</span>
                               <span className="mx-2">•</span>
                               <span>{cab.cabCapacity} Seats</span>
+                              <span className="mx-2">•</span>
+                              <span>Model: {cab.cabModel}</span>
                             </div>
                             <div className="mb-1" style={{ fontSize: 15, color: '#7b7b7b', fontWeight: 400 }}>
                               <i className="bi bi-currency-rupee"></i>
                               <span style={{ marginLeft: 4 }}>Extra km fare: <span style={{ color: '#e57368', fontWeight: 600 }}>INR {cab.perKmRate}</span> per kilometer</span>
                             </div>
                             <div className="mb-1" style={{ fontSize: 15, color: '#7b7b7b', fontWeight: 400 }}>
-                              <i className="bi bi-fuel-pump"></i>
-                              <span style={{ marginLeft: 4 }}>Fuel Type: <span style={{ color: '#23272f', fontWeight: 500 }}>{cab.cabFuelType || 'Petrol, CNG'}</span></span>
+                              <i className="bi bi-shield-check"></i>
+                              <span style={{ marginLeft: 4 }}>Insurance: <span style={{ color: '#23272f', fontWeight: 500 }}>{cab.cabInsurance}</span></span>
                             </div>
                             <div className="mb-1" style={{ fontSize: 15, color: '#7b7b7b', fontWeight: 400 }}>
-                              <i className="bi bi-x-circle"></i>
-                              <span style={{ marginLeft: 4 }}>Cancellation: <span style={{ color: '#43a047', fontWeight: 500 }}>Free cancellation until pickup time</span></span>
+                              <i className="bi bi-cash-coin"></i>
+                              <span style={{ marginLeft: 4 }}>
+                                <span style={{ color: '#e57368', fontWeight: 500 }}>Toll tax not included</span>
+                              </span>
                             </div>
                           </div>
                           {/* Price & Book */}
@@ -394,7 +514,19 @@ const CabsList = () => {
                               </div>
                               <button
                                   className="btn btn-book fw-bold"
-                                  onClick={() => navigate('/cab-booking-details', { state: { cab, pickup, drop, datetime, hours } })}
+                                  onClick={() =>
+                                    navigate('/cab-booking-details', {
+                                      state: {
+                                        cab,
+                                        pickup,
+                                        drop,
+                                        datetime,
+                                        hours,
+                                        roundTrip: true,
+                                        cabRating: cabRatings[cab.cabRegistrationId]
+                                      }
+                                    })
+                                  }
                               >
                                   BOOK
                               </button>
