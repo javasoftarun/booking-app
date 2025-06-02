@@ -213,7 +213,7 @@ const Navbar = () => {
                       onClick={() => {
                         localStorage.clear();
                         setDropdownOpen(false);
-                        window.location.reload();
+                        setUser(null); 
                       }}
                     >
                       Logout
@@ -417,9 +417,9 @@ const Navbar = () => {
                       }}
                       onClick={() => {
                         localStorage.clear();
+                        setUser(null);
                         setMobileMenuOpen(false);
                         setShowMobileProfile(false);
-                        window.location.reload();
                       }}
                     >
                       Logout

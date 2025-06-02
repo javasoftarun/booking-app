@@ -10,6 +10,8 @@ import {
   FaEdit,
   FaTrash,
   FaPrint,
+  FaChevronDown,
+  FaChevronUp,
 } from "react-icons/fa";
 import API_ENDPOINTS from "../config/apiConfig";
 import BookingReceipt from "../components/BookingReceipt";
@@ -89,6 +91,7 @@ const UserProfile = () => {
   const [submittingRating, setSubmittingRating] = useState({});
   const [givenRatings, setGivenRatings] = useState([]);
   const [givenRatingsLoading, setGivenRatingsLoading] = useState(false);
+  const [expandedBooking, setExpandedBooking] = useState(null);
   const printRef = useRef();
 
   // Load user from localStorage on mount
@@ -987,91 +990,224 @@ const UserProfile = () => {
                             const isCancelled =
                               booking.bookingStatus &&
                               ["Canceled", "Cancelled", "CANCELLED"].includes(booking.bookingStatus);
+                            const isExpanded = expandedBooking === booking.bookingId;
 
                             return (
                               <div
                                 key={booking.bookingId}
-                                className="list-group-item mb-3"
+                                className="mb-3 booking-card"
                                 style={{
                                   border: "1.5px solid #e3e6ed",
-                                  borderRadius: 16,
-                                  background: "#f8fafc",
-                                  boxShadow: "0 2px 8px #00b8ff11",
+                                  borderRadius: 18,
+                                  background: "#fff",
+                                  boxShadow: isExpanded
+                                    ? "0 4px 24px #00b8ff22, 0 2px 8px #FFD60033"
+                                    : "0 2px 8px #00b8ff11",
+                                  overflow: "hidden",
+                                  transition: "box-shadow 0.2s, border 0.2s",
+                                  position: "relative",
                                 }}
                               >
-                                <div className="d-flex align-items-center">
-                                  <img
-                                    src={booking.cabImageUrl}
-                                    alt={booking.cabName}
+                                {/* Summary Row */}
+                                <div
+                                  className="d-flex align-items-center px-3 py-2 booking-summary-row"
+                                  style={{
+                                    cursor: "pointer",
+                                    background: isExpanded ? "#f8fafc" : "#fff",
+                                    borderBottom: isExpanded ? "1px solid #e3e6ed" : "none",
+                                    transition: "background 0.2s",
+                                  }}
+                                  onClick={() => setExpandedBooking(isExpanded ? null : booking.bookingId)}
+                                >
+                                  <div
                                     style={{
-                                      width: 80,
-                                      height: 50,
-                                      objectFit: "cover",
-                                      borderRadius: 8,
+                                      border: "2px solid #FFD600",
+                                      borderRadius: 10,
+                                      padding: 2,
                                       marginRight: 16,
-                                      border: "1px solid #FFD600",
                                       background: "#fff",
+                                      minWidth: 60,
+                                      minHeight: 44,
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
                                     }}
-                                  />
-                                  <div style={{ flex: 1 }}>
-                                    <div className="fw-bold" style={{ color: "#1976d2" }}>
-                                      {booking.cabName} ({booking.cabType})
-                                    </div>
-                                    <div className="small text-muted">
-                                      {booking.cabNumber} | {booking.cabModel} | {booking.cabColor}
-                                    </div>
-                                    <div>
-                                      <span className="fw-semibold">Pickup:</span> {booking.pickupLocation}
-                                    </div>
-                                    <div>
-                                      <span className="fw-semibold">Drop:</span> {booking.dropLocation}
-                                    </div>
-                                    <div>
-                                      <span className="fw-semibold">Date:</span> {new Date(booking.pickupDateTime).toLocaleString()}
-                                    </div>
-                                    <div>
-                                      <span className="fw-semibold">Status:</span> {booking.bookingStatus}
-                                    </div>
-                                    <div>
-                                      <span className="fw-semibold">Fare:</span> ₹{booking.fare}
-                                    </div>
-                                    <div>
-                                      <span className="fw-semibold">Driver:</span> {booking.driverName} ({booking.driverContact})
-                                    </div>
+                                  >
+                                    <img
+                                      src={booking.cabImageUrl}
+                                      alt={booking.cabName}
+                                      style={{
+                                        width: 54,
+                                        height: 38,
+                                        objectFit: "cover",
+                                        borderRadius: 8,
+                                      }}
+                                    />
                                   </div>
-                                  <div className="ms-3 d-flex flex-column gap-2">
-                                    {/* Only show Modify and Cancel if not in Cancelled tab */}
-                                    {bookingsTab !== "cancelled" && !isCancelled && (
-                                      <>
-                                        <button
-                                          className="btn btn-light btn-sm d-flex align-items-center gap-2 border"
-                                          title="Modify Booking"
-                                          onClick={() => handleModifyBooking(booking)}
-                                          style={{ borderRadius: 8 }}
-                                        >
-                                          <FaEdit style={{ color: "#e57368" }} /> Modify
-                                        </button>
-                                        <button
-                                          className="btn btn-light btn-sm d-flex align-items-center gap-2 border"
-                                          title="Cancel Booking"
-                                          onClick={() => handleCancelBooking(booking)}
-                                          style={{ borderRadius: 8 }}
-                                        >
-                                          <FaTrash style={{ color: "#dc3545" }} /> Cancel
-                                        </button>
-                                      </>
-                                    )}
-                                    {/* Always show Print */}
-                                    <button
-                                      className="btn btn-light btn-sm d-flex align-items-center gap-2 border"
-                                      title="Download Receipt"
-                                      onClick={() => handleDownloadReceipt(booking)}
-                                      style={{ borderRadius: 8 }}
+                                  <div style={{ flex: 1, minWidth: 0 }}>
+                                    <div
+                                      className="fw-bold"
+                                      style={{
+                                        color: "#1976d2",
+                                        fontSize: 17,
+                                        textOverflow: "ellipsis",
+                                        overflow: "hidden",
+                                        whiteSpace: "nowrap",
+                                        maxWidth: 200,
+                                        fontWeight: 700,
+                                        letterSpacing: 0.2,
+                                      }}
                                     >
-                                      <FaPrint style={{ color: "#6c757d" }} /> Download Receipt
-                                    </button>
+                                      {booking.cabName} <span style={{ fontWeight: 400, color: "#1976d2" }}>({booking.cabType})</span>
+                                    </div>
+                                    <div className="small text-muted" style={{ fontSize: 14 }}>
+                                      {new Date(booking.pickupDateTime).toLocaleDateString()} &nbsp;|&nbsp; 
+                                      <span style={{
+                                        color:
+                                          booking.bookingStatus === "Pending"
+                                            ? "#e57368"
+                                            : booking.bookingStatus === "Confirmed"
+                                            ? "#1976d2"
+                                            : booking.bookingStatus === "Completed"
+                                            ? "#388e3c"
+                                            : "#888",
+                                        fontWeight: 600,
+                                        letterSpacing: 0.1,
+                                      }}>
+                                        {booking.bookingStatus}
+                                      </span>
+                                    </div>
                                   </div>
+                                  <span style={{ color: "#e57368", fontSize: 22, marginLeft: 8 }}>
+                                    {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
+                                  </span>
                                 </div>
+                                {/* Expanded Details */}
+                                {isExpanded && (
+                                  <div
+                                    className="px-3 pb-3 pt-2"
+                                    style={{
+                                      background: "#f9fafb",
+                                      borderTop: "1px solid #eee",
+                                      animation: "fadeIn 0.3s",
+                                    }}
+                                  >
+                                    <div className="row g-2 mb-2" style={{ fontSize: 14 }}>
+                                      <div className="col-12 col-md-6">
+                                        <strong>Cab Number:</strong> {booking.cabNumber} <br />
+                                        <strong>Model:</strong> {booking.cabModel} <br />
+                                        <strong>Color:</strong> {booking.cabColor} <br />
+                                        <strong>Pickup:</strong> {booking.pickupLocation} <br />
+                                        <strong>Drop:</strong> {booking.dropLocation} <br />
+                                        <strong>Date & Time:</strong>{" "}
+                                        {new Date(booking.pickupDateTime).toLocaleString()} <br />
+                                        <strong>Driver:</strong> {booking.driverName} ({booking.driverContact})
+                                      </div>
+                                      <div className="col-12 col-md-6">
+                                        <div
+                                          style={{
+                                            background: "#fff",
+                                            borderRadius: 10,
+                                            border: "1px solid #e3e6ed",
+                                            padding: "16px 18px",
+                                            marginTop: 4,
+                                            boxShadow: "0 2px 8px #ffd60011",
+                                            minWidth: 220,
+                                            maxWidth: 340,
+                                          }}
+                                        >
+                                          <div style={{ fontWeight: 700, color: "#23272f", marginBottom: 8, fontSize: 15 }}>
+                                            Fare Summary
+                                          </div>
+                                          <div className="d-flex justify-content-between mb-1">
+                                            <span>Base Fare</span>
+                                            <span>
+                                              ₹{Number(booking.baseFare || booking.fare || 0).toFixed(2)}
+                                            </span>
+                                          </div>
+                                          <div className="d-flex justify-content-between mb-1">
+                                            <span>Promo Discount</span>
+                                            <span>
+                                              -₹{Number(booking.promoDiscount || 0).toFixed(2)}
+                                            </span>
+                                          </div>
+                                          <div className="d-flex justify-content-between mb-2" style={{ fontWeight: 700 }}>
+                                            <span>Final Fare</span>
+                                            <span>
+                                              ₹{Number((booking.fare || 0) - (booking.promoDiscount || 0)).toFixed(2)}
+                                            </span>
+                                          </div>
+                                          <div className="d-flex justify-content-between mb-1">
+                                            <span>Token Paid</span>
+                                            <span>
+                                              ₹{Number(booking.tokenAmount || 0).toFixed(2)}
+                                            </span>
+                                          </div>
+                                          <div className="d-flex justify-content-between" style={{ fontWeight: 500 }}>
+                                            <span>Balance to Pay</span>
+                                            <span>
+                                              ₹{Number((booking.balanceAmount || 0)).toFixed(2)}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="d-flex flex-column flex-md-row gap-2 mt-3">
+                                      {bookingsTab !== "cancelled" && !isCancelled && (
+                                        <>
+                                          <button
+                                            className="btn btn-outline-primary btn-sm flex-fill"
+                                            title="Modify Booking"
+                                            onClick={() => handleModifyBooking(booking)}
+                                            style={{
+                                              borderRadius: 8,
+                                              fontWeight: 600,
+                                              minWidth: 110,
+                                              display: "flex",
+                                              alignItems: "center",
+                                              justifyContent: "center",
+                                              gap: 6,
+                                            }}
+                                          >
+                                            <FaEdit /> Modify
+                                          </button>
+                                          <button
+                                            className="btn btn-outline-danger btn-sm flex-fill"
+                                            title="Cancel Booking"
+                                            onClick={() => handleCancelBooking(booking)}
+                                            style={{
+                                              borderRadius: 8,
+                                              fontWeight: 600,
+                                              minWidth: 110,
+                                              display: "flex",
+                                              alignItems: "center",
+                                              justifyContent: "center",
+                                              gap: 6,
+                                            }}
+                                          >
+                                            <FaTrash /> Cancel
+                                          </button>
+                                        </>
+                                      )}
+                                      <button
+                                        className="btn btn-outline-secondary btn-sm flex-fill"
+                                        title="Download Receipt"
+                                        onClick={() => handleDownloadReceipt(booking)}
+                                        style={{
+                                          borderRadius: 8,
+                                          fontWeight: 600,
+                                          minWidth: 140,
+                                          display: "flex",
+                                          alignItems: "center",
+                                          justifyContent: "center",
+                                          gap: 6,
+                                        }}
+                                      >
+                                        <FaPrint /> Download Receipt
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                             );
                           })}

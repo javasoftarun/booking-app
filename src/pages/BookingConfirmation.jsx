@@ -40,43 +40,61 @@ const BookingConfirmation = () => {
       style={{
         minHeight: "100vh",
         background: "linear-gradient(120deg, #e3f6ff 60%, #fffbe7 100%)",
+        padding: "16px 0",
       }}
     >
       <div
-        className="cablist-main-container py-5"
+        className="cablist-main-container py-4"
         style={{
           maxWidth: 900,
           margin: "0 auto",
-          borderRadius: 28,
+          borderRadius: 22,
           boxShadow: "0 8px 40px #00b8ff22, 0 2px 8px #FFD60033",
-          padding: "40px 18px",
+          padding: "24px 8px",
         }}
       >
         <div
           ref={printRef}
-          className="bg-white rounded-4 shadow p-4 p-md-5 mb-4"
+          className="bg-white rounded-4 p-3 p-md-4 mb-4"
           style={{
-            border: "1px solid #e3e6ed",
             maxWidth: 750,
             margin: "0 auto",
             fontFamily: "Segoe UI, Arial, sans-serif",
           }}
         >
           {/* Header */}
-          <div className="d-flex align-items-center justify-content-between mb-4">
-            <div>
-              <h3 className="fw-bold mb-1" style={{ color: "#1976d2" }}>
-                <i className="bi bi-check-circle-fill text-success me-2" />
-                Booking Confirmed!
-              </h3>
-              <div style={{ fontSize: 15, color: "#888" }}>
-                Booking Date: {new Date().toLocaleString()}
+          <div className="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+            <div className="d-flex align-items-center gap-2">
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "#e6f9ed",
+                  borderRadius: "50%",
+                  width: 48,
+                  height: 48,
+                  marginRight: 8,
+                }}
+              >
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="#43a047">
+                  <circle cx="12" cy="12" r="12" fill="#43a047" opacity="0.12" />
+                  <path d="M17.5 8.5L11 15L7.5 11.5" stroke="#43a047" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                </svg>
+              </span>
+              <div>
+                <h3 className="fw-bold mb-1" style={{ color: "#1976d2", fontSize: 22 }}>
+                  Booking Confirmed!
+                </h3>
+                <div style={{ fontSize: 14, color: "#888" }}>
+                  Booking Date: {new Date().toLocaleString()}
+                </div>
               </div>
             </div>
             <div>
               <span style={{
                 fontWeight: 700,
-                fontSize: 32,
+                fontSize: 28,
                 fontFamily: "Segoe UI, Arial, sans-serif",
                 letterSpacing: 1
               }}>
@@ -86,35 +104,35 @@ const BookingConfirmation = () => {
             </div>
           </div>
           {/* Trip Summary Tags */}
-          <div className="d-flex flex-wrap align-items-center gap-2 mb-4">
+          <div className="d-flex flex-wrap align-items-center gap-2 mb-4 justify-content-center">
             <span
               className="badge rounded-pill bg-primary-subtle text-primary px-3 py-2"
-              style={{ fontSize: 15 }}
+              style={{ fontSize: 15, minWidth: 90, textAlign: "center" }}
             >
               <i className="bi bi-geo-alt-fill me-1"></i> {pickup}
             </span>
             <i className="bi bi-arrow-right mx-2" />
             <span
               className="badge rounded-pill bg-danger-subtle text-danger px-3 py-2"
-              style={{ fontSize: 15 }}
+              style={{ fontSize: 15, minWidth: 90, textAlign: "center" }}
             >
               <i className="bi bi-geo-alt-fill me-1"></i> {drop}
             </span>
             <span
               className="badge rounded-pill bg-info-subtle text-info px-3 py-2 ms-2"
-              style={{ fontSize: 15 }}
+              style={{ fontSize: 15, minWidth: 120, textAlign: "center" }}
             >
               <i className="bi bi-calendar-event me-1"></i> {datetime}
             </span>
           </div>
           <hr />
-          <div className="row mb-4">
+          <div className="row mb-4 gy-3">
             {/* Passenger Details */}
-            <div className="col-md-6 mb-3 mb-md-0">
+            <div className="col-md-6 mb-2 mb-md-0">
               <h5 className="fw-semibold mb-2" style={{ color: "#23272f" }}>
                 Passenger Details
               </h5>
-              <div style={{ fontSize: 16 }}>
+              <div style={{ fontSize: 15 }}>
                 <div>
                   <b>Name:</b> {user.name}
                 </div>
@@ -131,13 +149,13 @@ const BookingConfirmation = () => {
               <h5 className="fw-semibold mb-2" style={{ color: "#23272f" }}>
                 Payment Details
               </h5>
-              <div style={{ fontSize: 16 }}>
+              <div style={{ fontSize: 15 }}>
                 <div>
                   <b>Payment ID:</b>{" "}
                   <span className="text-break">{razorpay_payment_id}</span>
                 </div>
                 <div>
-                  <b>Status:</b> <span className="text-success">Paid</span>
+                  <b>Token Status:</b> <span className="text-success">Paid</span>
                 </div>
                 <div>
                   <b>Amount Paid:</b> ₹{tokenAmount}
@@ -150,13 +168,13 @@ const BookingConfirmation = () => {
               </div>
             </div>
           </div>
-          <div className="row mb-4">
+          <div className="row mb-4 gy-3">
             {/* Trip Details */}
-            <div className="col-md-6 mb-3 mb-md-0">
+            <div className="col-md-6 mb-2 mb-md-0">
               <h5 className="fw-semibold mb-2" style={{ color: "#23272f" }}>
                 Trip Details
               </h5>
-              <div style={{ fontSize: 16 }}>
+              <div style={{ fontSize: 15 }}>
                 <div>
                   <i
                     className="bi bi-geo-alt-fill me-1"
@@ -187,8 +205,8 @@ const BookingConfirmation = () => {
                   src={cab.cabImageUrl}
                   alt={cab.cabName}
                   style={{
-                    width: 60,
-                    height: 40,
+                    width: 54,
+                    height: 38,
                     objectFit: "contain",
                     borderRadius: 8,
                     background: "#f8fafc",
@@ -196,15 +214,15 @@ const BookingConfirmation = () => {
                   }}
                 />
                 <div>
-                  <div className="fw-semibold" style={{ fontSize: 17 }}>
+                  <div className="fw-semibold" style={{ fontSize: 16 }}>
                     {cab.cabName}
                   </div>
-                  <div className="text-secondary" style={{ fontSize: 15 }}>
+                  <div className="text-secondary" style={{ fontSize: 14 }}>
                     {cab.cabType} • {cab.cabCapacity} Seats
                   </div>
                 </div>
               </div>
-              <div style={{ fontSize: 15 }}>
+              <div style={{ fontSize: 14 }}>
                 <b>Fuel:</b> {cab.cabFuelType || "N/A"}
               </div>
             </div>
@@ -215,60 +233,78 @@ const BookingConfirmation = () => {
             <h5 className="fw-semibold mb-2" style={{ color: "#23272f" }}>
               Fare Summary
             </h5>
-            <div className="d-flex justify-content-between" style={{ fontSize: 16 }}>
+            <div className="d-flex justify-content-between" style={{ fontSize: 15 }}>
               <span>Base Fare</span>
               <span>₹{cab.fare}</span>
             </div>
-            <div className="d-flex justify-content-between" style={{ fontSize: 16 }}>
+            <div className="d-flex justify-content-between" style={{ fontSize: 15 }}>
               <span>Promo Discount</span>
               <span className={couponDiscount ? "text-success" : "text-secondary"}>
                 -₹{couponDiscount || 0}
               </span>
             </div>
-            <div className="d-flex justify-content-between fw-bold" style={{ fontSize: 17 }}>
+            <div className="d-flex justify-content-between fw-bold" style={{ fontSize: 16 }}>
               <span>Final Fare</span>
               <span>₹{finalFare}</span>
             </div>
             {!payFull && (
               <>
-                <div className="d-flex justify-content-between" style={{ fontSize: 16 }}>
+                <div className="d-flex justify-content-between" style={{ fontSize: 15 }}>
                   <span>Token Paid (10%)</span>
                   <span>₹{tokenAmount}</span>
                 </div>
-                <div className="d-flex justify-content-between" style={{ fontSize: 16, color: "#1976d2" }}>
+                <div className="d-flex justify-content-between" style={{ fontSize: 15, color: "#1976d2" }}>
                   <span>To Pay Driver During Trip</span>
                   <span>₹{finalFare - tokenAmount}</span>
                 </div>
-                <div className="alert alert-info py-2 px-3 mt-2" style={{ fontSize: 14, background: "#e3f6ff", color: "#1976d2", border: "1px solid #b6e3fa" }}>
+                <div className="alert alert-info py-2 px-3 mt-2" style={{ fontSize: 13, background: "#e3f6ff", color: "#1976d2", border: "1px solid #b6e3fa" }}>
                   <i className="bi bi-info-circle me-1"></i>
                   <b>Note:</b> Token amount is just 10% of the total fare. The remaining amount (shown above) is payable directly to the driver at the time of pickup or drop.
                 </div>
               </>
             )}
             {payFull && (
-              <div className="d-flex justify-content-between" style={{ fontSize: 16 }}>
+              <div className="d-flex justify-content-between" style={{ fontSize: 15 }}>
                 <span>Paid Amount</span>
                 <span>₹{finalFare}</span>
               </div>
             )}
           </div>
-          <div className="alert alert-info mt-4 mb-0" style={{ fontSize: 15 }}>
+          <div className="alert alert-info mt-4 mb-0" style={{ fontSize: 14 }}>
             <i className="bi bi-info-circle me-1" />
             Cab and driver details will be shared up to 1 day before your pickup time.<br />
             For help, contact our support.
           </div>
         </div>
-        <div className="d-flex justify-content-center gap-3 d-print-none">
-          <button className="btn btn-outline-primary" onClick={handlePrint}>
+        <div className="d-flex flex-column flex-md-row justify-content-center gap-3 d-print-none mt-2">
+          <button className="btn btn-outline-primary flex-fill" onClick={handlePrint}>
             <i className="bi bi-printer me-1" /> Print / Download
           </button>
-          <button className="btn btn-outline-secondary" onClick={() => navigate("/")}>
+          <button className="btn btn-outline-secondary flex-fill" onClick={() => navigate("/")}>
             Book Another Cab
           </button>
         </div>
       </div>
       <style>
         {`
+          @media (max-width: 767px) {
+            .cablist-main-container {
+              padding: 0 !important;
+              border-radius: 0 !important;
+              box-shadow: none !important;
+            }
+            .bg-white.rounded-4.shadow {
+              padding: 1.1rem 0.4rem !important;
+              border-radius: 10px !important;
+              max-width: 99vw !important;
+            }
+            .d-flex.flex-md-row {
+              flex-direction: column !important;
+            }
+            .row > [class*='col-'] {
+              margin-bottom: 1.2rem !important;
+            }
+          }
           @media print {
             body * {
               visibility: hidden !important;

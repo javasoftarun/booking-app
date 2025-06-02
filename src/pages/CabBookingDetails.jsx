@@ -61,6 +61,7 @@ const CabBookingDetails = () => {
   const [showRedirecting, setShowRedirecting] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
+  const [isBookingProcessing, setIsBookingProcessing] = useState(false);
 
   // On mount, if userId in localStorage, fetch user details and prefill form
   useEffect(() => {
@@ -155,6 +156,8 @@ const CabBookingDetails = () => {
       alert("Please enter a valid 10-digit contact number.");
       return;
     }
+
+    setIsBookingProcessing(true); // Disable UI and blur
 
     // Amount in paise
     const amount = (payFull ? finalFare : finalToken) * 100;
@@ -251,13 +254,14 @@ const CabBookingDetails = () => {
                   razorpay_payment_id: response.razorpay_payment_id,
                 },
               });
-            }, 1200); // Show loading for at least 1.2 seconds
+            }, 1200);
           } else {
             setShowBookingError(true);
+            setIsBookingProcessing(false); // Re-enable UI on error
           }
         } catch (err) {
-          console.error("Booking insertion failed", err);
-          setShowBookingError(true); // Show popup on error
+          setShowBookingError(true);
+          setIsBookingProcessing(false); // Re-enable UI on error
         }
       },
       prefill: {
@@ -279,7 +283,22 @@ const CabBookingDetails = () => {
 
   return (
     <div className="cablist-bg" style={{ minHeight: "100vh", background: "linear-gradient(120deg, #e3f6ff 60%, #fffbe7 100%)" }}>
-      <div className="cablist-main-container" style={{ maxWidth: 1200, margin: "0 auto", borderRadius: 28, boxShadow: "0 8px 40px #00b8ff22, 0 2px 8px #FFD60033", padding: "40px 28px" }}>
+      <div
+        className="cablist-main-container"
+        style={{
+          maxWidth: 1200,
+          margin: "0 auto",
+          borderRadius: 28,
+          boxShadow: "0 8px 40px #00b8ff22, 0 2px 8px #FFD60033",
+          padding: "40px 28px",
+          position: "relative",
+          filter: isBookingProcessing ? "blur(2px)" : "none",
+          pointerEvents: isBookingProcessing ? "none" : "auto",
+          userSelect: isBookingProcessing ? "none" : "auto",
+          opacity: isBookingProcessing ? 0.7 : 1,
+          transition: "filter 0.2s, opacity 0.2s"
+        }}
+      >
         {/* Header */}
         <div className="mb-4">
           <h2 className="fw-bold" style={{ color: "#23272f" }}>Review Booking</h2>

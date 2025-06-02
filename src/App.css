@@ -36,3 +36,35 @@
     transform: rotate(360deg);
   }
 }
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 767px) {
+  .list-group-item {
+    padding: 10px !important;
+  }
+  .fw-bold {
+    font-size: 1rem !important;
+  }
+  .btn-sm {
+    font-size: 15px !important;
+  }
+}
+
+.booking-card:hover {
+  box-shadow: 0 6px 32px #00b8ff33, 0 2px 8px #ffd60044;
+  border-color: #ffd600;
+}
+
+.booking-summary-row:active {
+  background: #fffbe7 !important;
+}
