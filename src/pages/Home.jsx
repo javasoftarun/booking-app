@@ -49,8 +49,14 @@ const Home = () => {
     try {
       const pickupDate = new Date(datetime);
       const dropDate = new Date(pickupDate.getTime() + Number(hours) * 60 * 60 * 1000);
-      const pickupDateStr = pickupDate.toISOString().slice(0, 19);
-      const dropDateStr = dropDate.toISOString().slice(0, 19);
+
+      // --- Fix: Format as local time string, not UTC ---
+      const pad = n => n.toString().padStart(2, '0');
+      const formatLocal = d =>
+        `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:00`; // <-- add :00 for seconds
+
+      const pickupDateStr = formatLocal(pickupDate);
+      const dropDateStr = formatLocal(dropDate);
 
       const requestBody = {
         pickupLocation: pickup,

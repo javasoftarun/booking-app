@@ -7,7 +7,6 @@ import {
   FaCamera,
   FaStar,
   FaPowerOff,
-  FaEdit,
   FaTrash,
   FaPrint,
   FaChevronDown,
@@ -357,11 +356,6 @@ const UserProfile = () => {
       return false;
     })
     .sort((a, b) => new Date(a.pickupDateTime) - new Date(b.pickupDateTime));
-
-  const handleModifyBooking = (booking) => {
-    setMessage("Modify booking feature coming soon!");
-    setMessageType("error");
-  };
 
   const handleCancelBooking = (booking) => {
     setCancelConfirm({ show: true, booking });
@@ -1155,22 +1149,6 @@ const UserProfile = () => {
                                     <div className="d-flex flex-column flex-md-row gap-2 mt-3">
                                       {bookingsTab !== "cancelled" && !isCancelled && (
                                         <>
-                                          <button
-                                            className="btn btn-outline-primary btn-sm flex-fill"
-                                            title="Modify Booking"
-                                            onClick={() => handleModifyBooking(booking)}
-                                            style={{
-                                              borderRadius: 8,
-                                              fontWeight: 600,
-                                              minWidth: 110,
-                                              display: "flex",
-                                              alignItems: "center",
-                                              justifyContent: "center",
-                                              gap: 6,
-                                            }}
-                                          >
-                                            <FaEdit /> Modify
-                                          </button>
                                           <button
                                             className="btn btn-outline-danger btn-sm flex-fill"
                                             title="Cancel Booking"
