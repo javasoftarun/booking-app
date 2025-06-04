@@ -26,11 +26,11 @@ const CabsList = () => {
     const [page, setPage] = useState(1);
     const [showImg, setShowImg] = useState(false);
     const [imgSrc, setImgSrc] = useState('');
-    const [filterOpen, setFilterOpen] = useState(window.innerWidth >= 768); // open by default on desktop
+    const [filterOpen, setFilterOpen] = useState(window.innerWidth >= 768);
     const [, setGivenRatings] = useState([]);
     const [, setGivenRatingsLoading] = useState(false);
-    const [activeTab] = useState('available'); // or 'ratings' based on your tab logic
-    const [profile] = useState({ id: 1 }); // Dummy profile, replace with actual
+    const [activeTab] = useState('available'); 
+    const [profile] = useState({ id: 1 }); 
 
     // Add state to store ratings for cabs
     const [cabRatings, setCabRatings] = useState({});
@@ -252,7 +252,7 @@ const CabsList = () => {
                   </div>
                   {/* Desktop: Filter in sidebar */}
                   <div className="cablist-sidebar d-none d-md-block">
-                    <div className="bg-white shadow rounded-4 p-3 p-md-4" style={{ border: '1px solid #e3e6ed' }}>
+                    <div className="bg-white shadow rounded-4 p-3 p-md-4">
                       <div className="d-flex justify-content-between align-items-center mb-3">
                         <h5 className="fw-bold mb-0" style={{ color: '#333', fontSize: 18 }}>Select Cab Types</h5>
                       </div>
@@ -304,11 +304,11 @@ const CabsList = () => {
                           className="form-control"
                           style={{
                             borderRadius: '30px 0 0 30px',
-                            border: '1.5px solid #1976d2',
+                            border: '1.5px solid #d32f2f',
                             background: '#fff',
                             fontSize: 17,
                             fontWeight: 500,
-                            color: '#1a237e',
+                            color: '#e57368',
                             letterSpacing: '0.5px',
                           }}
                           placeholder="Search cabs by name or model"
@@ -323,10 +323,10 @@ const CabsList = () => {
                           className="btn"
                           style={{
                             borderRadius: '0 30px 30px 0',
-                            background: '#1976d2',
+                            background: '#e57368',
                             color: '#fff',
                             fontWeight: 600,
-                            border: '1.5px solid #1976d2',
+                            border: '1.5px solid #d32f2f',
                             borderLeft: 0
                           }}
                         >

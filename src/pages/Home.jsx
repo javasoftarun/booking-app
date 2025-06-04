@@ -82,155 +82,170 @@ const Home = () => {
 
   return (
     <>
-      {/* Booking Form Hero Section */}
+      {/* HERO SECTION */}
       <section className="hero-form-section">
-        <div className="hero-form-card">
-          <div className="hero-form-title">
-            <i className="bi bi-taxi-front-fill me-2" style={{ color: "#FFD600", fontSize: 32, verticalAlign: "middle" }} />
-            Cabs
-          </div>
-          
-          <form onSubmit={handleSubmit} className="mt-4">
-            <div className="row g-3 align-items-end">
-              <div className="col-12 col-md-3">
-                <label className="form-label fw-semibold text-secondary">From</label>
-                <PlacesAutocomplete value={pickup} onChange={setPickup} onSelect={setPickup}>
-                  {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-                    <div style={{ position: 'relative', width: '100%' }}>
-                      <input
-                        {...getInputProps({
-                          placeholder: 'Pickup Location',
-                          className: 'form-control fw-bold',
-                          required: true,
-                        })}
-                      />
-                      {suggestions.length > 0 && (
-                        <div className="position-absolute w-100 bg-white rounded shadow" style={{ zIndex: 1000, top: '100%' }}>
-                          {loading && <div className="p-2 text-muted">Loading...</div>}
-                          {suggestions.map((suggestion, idx) => (
-                            <div
-                              {...getSuggestionItemProps(suggestion, {
-                                className: "p-2",
-                                style: {
-                                  cursor: "pointer",
-                                  background: suggestion.active ? "#fffbe7" : "#fff",
-                                  fontWeight: suggestion.active ? 600 : 400,
-                                }
-                              })}
-                              key={suggestion.placeId}
-                            >
-                              <i className="bi bi-geo-alt-fill text-warning me-2" />
-                              {suggestion.description}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </PlacesAutocomplete>
-              </div>
-              <div className="col-12 col-md-3">
-                <label className="form-label fw-semibold text-secondary">To</label>
-                <PlacesAutocomplete value={drop} onChange={setDrop} onSelect={setDrop}>
-                  {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-                    <div style={{ position: 'relative', width: '100%' }}>
-                      <input
-                        {...getInputProps({
-                          placeholder: 'Drop Location',
-                          className: 'form-control fw-bold',
-                          required: true,
-                        })}
-                      />
-                      {suggestions.length > 0 && (
-                        <div className="position-absolute w-100 bg-white rounded shadow" style={{ zIndex: 1000, top: '100%' }}>
-                          {loading && <div className="p-2 text-muted">Loading...</div>}
-                          {suggestions.map((suggestion, idx) => (
-                            <div
-                              {...getSuggestionItemProps(suggestion, {
-                                className: "p-2",
-                                style: {
-                                  cursor: "pointer",
-                                  background: suggestion.active ? "#fffbe7" : "#fff",
-                                  fontWeight: suggestion.active ? 600 : 400,
-                                }
-                              })}
-                              key={suggestion.placeId}
-                            >
-                              <i className="bi bi-geo-alt-fill text-warning me-2" />
-                              {suggestion.description}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </PlacesAutocomplete>
-              </div>
-              <div className="col-6 col-md-2">
-                <label className="form-label fw-semibold text-secondary">Pickup Date</label>
-                <input
-                  type="date"
-                  className="form-control fw-bold"
-                  value={datetime ? datetime.split('T')[0] : ''}
-                  onChange={e => {
-                    const date = e.target.value;
-                    let time = "09:00";
-                    if (datetime && datetime.includes("T") && datetime.split("T")[1]) {
-                      time = datetime.split("T")[1].slice(0, 5);
-                    }
-                    setDatetime(date ? `${date}T${time}` : "");
-                  }}
-                  required
-                />
-              </div>
-              <div className="col-6 col-md-2">
-                <label className="form-label fw-semibold text-secondary">Pickup Time</label>
-                <input
-                  type="time"
-                  className="form-control fw-bold"
-                  value={datetime && datetime.includes('T') ? datetime.split('T')[1]?.slice(0, 5) || '' : ''}
-                  onChange={e => {
-                    let date = datetime ? datetime.split('T')[0] : '';
-                    setDatetime(date && e.target.value ? `${date}T${e.target.value}` : '');
-                  }}
-                  required
-                />
-              </div>
-              <div className="col-6 col-md-1">
-                <label className="form-label fw-semibold text-secondary">Travel Time</label>
-                <select
-                  className="form-select fw-bold"
-                  value={hours}
-                  onChange={e => setHours(e.target.value)}
-                  required
-                >
-                  <option value="">Select</option>
-                  <option value="3">3 Hours</option>
-                  <option value="6">6 Hours</option>
-                  <option value="9">9 Hours</option>
-                  <option value="12">12 Hours</option>
-                  <option value="24">1 Day</option>
-                  <option value="48">2 Days</option>
-                </select>
-              </div>
-              <div className="col-6 col-md-1 d-grid">
-                <button
-                  type="submit"
-                  className="btn btn-yellow fw-bold"
-                  disabled={loading}
-                  style={{ minHeight: 40 }}
-                >
-                  {loading ? 'Searching...' : <>Search <i className="bi bi-arrow-right ms-2"></i></>}
-                </button>
-              </div>
+        <img
+          src="https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1200&q=80"
+          alt="Banner"
+          className="hero-banner-bg"
+        />
+        <div className="hero-banner-overlay"></div>
+        <div className="container hero-form-content">
+          <div className="text-center mb-4">
+            <h1 className="hero-title-main">
+              Book Your Cab <span className="red">Anywhere</span> <span className="yellow">Anytime</span>
+            </h1>
+            <div className="hero-desc">
+              Fast, <span className="yellow">safe</span>, and <span className="red">affordable</span> rides at your fingertips.
             </div>
-          </form>
+          </div>
+          <div className="hero-form-card">
+            <div className="hero-form-title">
+              <i className="bi bi-taxi-front-fill" style={{ color: "#FFD600", fontSize: 32, verticalAlign: "middle" }} />
+              Cabs Booking
+            </div>
+            <form onSubmit={handleSubmit} className="mt-4">
+              <div className="row g-3 align-items-end">
+                <div className="col-12 col-md-3">
+                  <label className="form-label fw-semibold text-secondary">From</label>
+                  <PlacesAutocomplete value={pickup} onChange={setPickup} onSelect={setPickup}>
+                    {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                      <div style={{ position: 'relative', width: '100%' }}>
+                        <input
+                          {...getInputProps({
+                            placeholder: 'Pickup Location',
+                            className: 'form-control fw-bold',
+                            required: true,
+                          })}
+                        />
+                        {suggestions.length > 0 && (
+                          <div className="position-absolute w-100 bg-white rounded shadow" style={{ zIndex: 1000, top: '100%' }}>
+                            {loading && <div className="p-2 text-muted">Loading...</div>}
+                            {suggestions.map((suggestion, idx) => (
+                              <div
+                                {...getSuggestionItemProps(suggestion, {
+                                  className: "p-2",
+                                  style: {
+                                    cursor: "pointer",
+                                    background: suggestion.active ? "#fffbe7" : "#fff",
+                                    fontWeight: suggestion.active ? 600 : 400,
+                                  }
+                                })}
+                                key={suggestion.placeId}
+                              >
+                                <i className="bi bi-geo-alt-fill text-warning me-2" />
+                                {suggestion.description}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </PlacesAutocomplete>
+                </div>
+                <div className="col-12 col-md-3">
+                  <label className="form-label fw-semibold text-secondary">To</label>
+                  <PlacesAutocomplete value={drop} onChange={setDrop} onSelect={setDrop}>
+                    {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                      <div style={{ position: 'relative', width: '100%' }}>
+                        <input
+                          {...getInputProps({
+                            placeholder: 'Drop Location',
+                            className: 'form-control fw-bold',
+                            required: true,
+                          })}
+                        />
+                        {suggestions.length > 0 && (
+                          <div className="position-absolute w-100 bg-white rounded shadow" style={{ zIndex: 1000, top: '100%' }}>
+                            {loading && <div className="p-2 text-muted">Loading...</div>}
+                            {suggestions.map((suggestion, idx) => (
+                              <div
+                                {...getSuggestionItemProps(suggestion, {
+                                  className: "p-2",
+                                  style: {
+                                    cursor: "pointer",
+                                    background: suggestion.active ? "#fffbe7" : "#fff",
+                                    fontWeight: suggestion.active ? 600 : 400,
+                                  }
+                                })}
+                                key={suggestion.placeId}
+                              >
+                                <i className="bi bi-geo-alt-fill text-warning me-2" />
+                                {suggestion.description}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </PlacesAutocomplete>
+                </div>
+                <div className="col-6 col-md-2">
+                  <label className="form-label fw-semibold text-secondary">Pickup Date</label>
+                  <input
+                    type="date"
+                    className="form-control fw-bold"
+                    value={datetime ? datetime.split('T')[0] : ''}
+                    onChange={e => {
+                      const date = e.target.value;
+                      let time = "09:00";
+                      if (datetime && datetime.includes("T") && datetime.split("T")[1]) {
+                        time = datetime.split("T")[1].slice(0, 5);
+                      }
+                      setDatetime(date ? `${date}T${time}` : "");
+                    }}
+                    required
+                  />
+                </div>
+                <div className="col-6 col-md-2">
+                  <label className="form-label fw-semibold text-secondary">Pickup Time</label>
+                  <input
+                    type="time"
+                    className="form-control fw-bold"
+                    value={datetime && datetime.includes('T') ? datetime.split('T')[1]?.slice(0, 5) || '' : ''}
+                    onChange={e => {
+                      let date = datetime ? datetime.split('T')[0] : '';
+                      setDatetime(date && e.target.value ? `${date}T${e.target.value}` : '');
+                    }}
+                    required
+                  />
+                </div>
+                <div className="col-6 col-md-1">
+                  <label className="form-label fw-semibold text-secondary">Travel Time</label>
+                  <select
+                    className="form-select fw-bold"
+                    value={hours}
+                    onChange={e => setHours(e.target.value)}
+                    required
+                  >
+                    <option value="">Select</option>
+                    <option value="3">3 Hours</option>
+                    <option value="6">6 Hours</option>
+                    <option value="9">9 Hours</option>
+                    <option value="12">12 Hours</option>
+                    <option value="24">1 Day</option>
+                    <option value="48">2 Days</option>
+                  </select>
+                </div>
+                <div className="col-6 col-md-1 d-grid">
+                  <button
+                    type="submit"
+                    className="btn btn-yellow fw-bold"
+                    disabled={loading}
+                    style={{ minHeight: 40 }}
+                  >
+                    {loading ? 'Searching...' : <>Search <i className="bi bi-arrow-right ms-2"></i></>}
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
       </section>
 
-      {/* Horizontal Steps */}
+      {/* STEPS SECTION */}
       <section className="container my-5">
-        <h3 className="fw-bold mb-4 text-center">How YatraNow Works</h3>
+        <h3 className="fw-bold mb-4 text-center" style={{ color: "#d32f2f" }}>How YatraNow Works</h3>
         <div className="steps-horizontal">
           <div className="step-h">
             <div className="step-h-icon"><i className="bi bi-search"></i></div>
@@ -250,9 +265,9 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Offers Section */}
+      {/* OFFERS SECTION */}
       <section className="container my-5">
-        <h3 className="fw-bold mb-4 text-center">Exciting Offers</h3>
+        <h3 className="fw-bold mb-4 text-center" style={{ color: "#FFD600" }}>Exciting Offers</h3>
         <div className="card-grid">
           {offers.map((offer, idx) => (
             <div key={idx} className="card-grid-item">
@@ -267,9 +282,9 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Why Choose YatraNow Section */}
+      {/* WHY CHOOSE SECTION */}
       <section className="container my-5">
-        <h3 className="fw-bold mb-4 text-center">Why Choose YatraNow?</h3>
+        <h3 className="fw-bold mb-4 text-center" style={{ color: "#d32f2f" }}>Why Choose YatraNow?</h3>
         <div className="card-grid">
           {whyChoose.map((item, idx) => (
             <div key={idx} className="card-grid-item text-center">
@@ -281,7 +296,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* FAQ Section */}
+      {/* FAQ SECTION */}
       <FaqSection />
     </>
   );

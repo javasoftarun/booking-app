@@ -17,6 +17,7 @@ const BookingConfirmation = () => {
     finalFare,
     user,
     razorpay_payment_id,
+    bookingId, 
   } = location.state || {};
 
   if (!cab || !user) {
@@ -39,7 +40,7 @@ const BookingConfirmation = () => {
     <div
       style={{
         minHeight: "100vh",
-        background: "linear-gradient(120deg, #e3f6ff 60%, #fffbe7 100%)",
+        background: "#fff",
         padding: "16px 0",
       }}
     >
@@ -49,8 +50,9 @@ const BookingConfirmation = () => {
           maxWidth: 900,
           margin: "0 auto",
           borderRadius: 22,
-          boxShadow: "0 8px 40px #00b8ff22, 0 2px 8px #FFD60033",
+          background: "#fff",
           padding: "24px 8px",
+          boxShadow: "none",
         }}
       >
         <div
@@ -60,6 +62,8 @@ const BookingConfirmation = () => {
             maxWidth: 750,
             margin: "0 auto",
             fontFamily: "Segoe UI, Arial, sans-serif",
+            boxShadow: "none",
+            border: "1.5px solid #f3f3f3",
           }}
         >
           {/* Header */}
@@ -70,38 +74,37 @@ const BookingConfirmation = () => {
                   display: "inline-flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  background: "#e6f9ed",
+                  background: "#fffbe7",
                   borderRadius: "50%",
                   width: 48,
                   height: 48,
                   marginRight: 8,
                 }}
               >
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="#43a047">
-                  <circle cx="12" cy="12" r="12" fill="#43a047" opacity="0.12" />
-                  <path d="M17.5 8.5L11 15L7.5 11.5" stroke="#43a047" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="#FFD600">
+                  <circle cx="12" cy="12" r="12" fill="#FFD600" opacity="0.12" />
+                  <path d="M12 7v5l3 3" stroke="#FFD600" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
                 </svg>
               </span>
+              
               <div>
-                <h3 className="fw-bold mb-1" style={{ color: "#1976d2", fontSize: 22 }}>
-                  Booking Confirmed!
+                <h3 className="fw-bold mb-1" style={{ color: "#e57368", fontSize: 22 }}>
+                  Booking Request Received
                 </h3>
                 <div style={{ fontSize: 14, color: "#888" }}>
-                  Booking Date: {new Date().toLocaleString()}
+                  Your booking request has been sent. You will receive a confirmation once a driver accepts your booking.
+                </div>
+                {bookingId && (
+                  <div style={{ fontSize: 15, color: "#1976d2", marginTop: 4 }}>
+                    <b>Booking ID:</b> {bookingId}
+                  </div>
+                )}
+                <div style={{ fontSize: 13, color: "#aaa" }}>
+                  Request Date: {new Date().toLocaleString()}
                 </div>
               </div>
             </div>
-            <div>
-              <span style={{
-                fontWeight: 700,
-                fontSize: 28,
-                fontFamily: "Segoe UI, Arial, sans-serif",
-                letterSpacing: 1
-              }}>
-                <span style={{ color: "#e57368" }}>Yatra</span>
-                <span style={{ color: "#FFD600" }}>Now</span>
-              </span>
-            </div>
+            
           </div>
           {/* Trip Summary Tags */}
           <div className="d-flex flex-wrap align-items-center gap-2 mb-4 justify-content-center">
