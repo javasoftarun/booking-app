@@ -34,15 +34,15 @@ const CancellationPolicyModal = ({ show, onClose }) => {
       <div
         className="modal-dialog"
         style={{
-          maxWidth: isMobile ? 360 : 420,
+          maxWidth: isMobile ? 420 : 540, 
           width: "98vw",
           margin: isMobile ? "0 0 1.5rem 0" : "2.5rem auto",
-          borderRadius: isMobile ? 14 : 18,
+          borderRadius: isMobile ? 16 : 22,
           background: "transparent",
           zIndex: 2,
           boxShadow: isMobile
             ? "0 -2px 24px #e5736822"
-            : "0 8px 32px #e5736822, 0 2px 8px #FFD60033",
+            : "0 8px 32px #e5736822, 0 2px 8px #e5736822",
           overflow: "visible",
         }}
         onClick={e => e.stopPropagation()}
@@ -52,12 +52,12 @@ const CancellationPolicyModal = ({ show, onClose }) => {
           style={{
             border: "none",
             boxShadow: isMobile
-              ? "0 2px 12px #00b8ff11"
-              : "0 8px 32px #e5736822, 0 2px 8px #FFD60033",
+              ? "0 2px 12px #e5736811"
+              : "0 8px 32px #e5736822, 0 2px 8px #e5736822",
             padding: 0,
             overflow: "visible",
             background: "#fff",
-            fontFamily: "Inter, Arial, sans-serif", // Match RefundPolicyModal
+            fontFamily: "Inter, Arial, sans-serif",
           }}
         >
           <div
@@ -71,7 +71,7 @@ const CancellationPolicyModal = ({ show, onClose }) => {
             <div
               className="modal-header"
               style={{
-                background: "linear-gradient(90deg, #e3f6ff 60%, #fffbe7 100%)",
+                background: "linear-gradient(90deg, #e3f6ff 60%, #fff 100%)", // removed yellow, kept blue and white
                 borderBottom: "1px solid #f3e9e7",
                 padding: isMobile
                   ? "0.8rem 1rem 0.8rem 1rem"

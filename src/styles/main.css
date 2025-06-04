@@ -635,3 +635,33 @@ body {
     padding: 1.2rem !important;
   }
 }
+@media (max-width: 767.98px) {
+  .cab-card .flex-grow-1 {
+    align-items: center !important;
+    text-align: center !important;
+  }
+}
+
+/* Center cab image and make it bigger on mobile */
+@media (max-width: 900px) {
+  .cab-card > .d-flex.align-items-center.justify-content-center {
+    justify-content: center !important;
+    align-items: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100% !important;
+    max-width: 260px !important;
+    min-width: 180px !important;
+    min-height: 140px !important;
+    height: 160px !important;
+  }
+  .cab-card .cab-img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 260px !important;
+    max-height: 160px !important;
+    object-fit: cover !important;
+    margin: 0 auto !important;
+    border-radius: 16px !important;
+  }
+}

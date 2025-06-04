@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import API_ENDPOINTS from "../config/apiConfig";
 import { USER_DEFAULT_IMAGE, USER_DEFAULT_ROLE, DEFAULT_BOOKING_STATUS } from "../constants/appConstants";
-import { FaStar } from "react-icons/fa"; // Add this import
+import { FaStar } from "react-icons/fa";
 import axios from "axios";
 import CouponListModal from "./CouponListModal";
 import TermsAndConditionsModal from "../modal/TermsAndConditionsModal";
@@ -293,25 +293,42 @@ const CabBookingDetails = () => {
         {/* Header */}
         <div className="mb-4">
           <h2 className="fw-bold" style={{ color: "#e57368" }}>Review Booking</h2>
-          <div className="d-flex flex-wrap align-items-center gap-2" style={{ fontSize: 16, color: "#6b7280" }}>
-            <span className="badge rounded-pill bg-primary-subtle text-primary px-3 py-2" style={{ fontSize: 15 }}>
-              <i className="bi bi-geo-alt-fill me-1"></i> {pickup}
-            </span>
-            <i className="bi bi-arrow-right mx-2" />
-            <span className="badge rounded-pill bg-danger-subtle text-danger px-3 py-2" style={{ fontSize: 15 }}>
-              <i className="bi bi-geo-alt-fill me-1"></i> {drop}
-            </span>
-            <span className="badge rounded-pill bg-info-subtle text-info px-3 py-2 ms-2" style={{ fontSize: 15 }}>
-              <i className="bi bi-calendar-event me-1"></i> {datetime}
-            </span>
-            <span className="badge rounded-pill bg-warning-subtle text-warning px-3 py-2" style={{ fontSize: 15 }}>
-              <i className="bi bi-clock me-1"></i> {hours}
-            </span>
+          <div
+            className="d-flex flex-wrap align-items-center justify-content-start gap-2 gap-md-3 mb-2"
+            style={{ fontSize: 16 }}
+          >
+            <div className="d-flex align-items-center bg-white shadow-sm rounded-4 px-3 py-2" style={{ fontWeight: 600, color: "#23272f", fontSize: 16 }}>
+              <i className="bi bi-geo-alt-fill text-primary me-2"></i>
+              <span>{pickup}</span>
+            </div>
+            <i className="bi bi-arrow-right mx-2 text-secondary" />
+            <div className="d-flex align-items-center bg-white shadow-sm rounded-4 px-3 py-2" style={{ fontWeight: 600, color: "#23272f", fontSize: 16 }}>
+              <i className="bi bi-geo-alt-fill text-danger me-2"></i>
+              <span>{drop}</span>
+            </div>
+            <div className="d-flex align-items-center bg-white shadow-sm rounded-4 px-3 py-2" style={{ fontWeight: 600, color: "#23272f", fontSize: 16 }}>
+              <i className="bi bi-calendar-event text-info me-2"></i>
+              <span>{datetime}</span>
+            </div>
+            <div className="d-flex align-items-center bg-white shadow-sm rounded-4 px-3 py-2" style={{ fontWeight: 600, color: "#23272f", fontSize: 16 }}>
+              <i className="bi bi-clock text-primary me-2"></i>
+              <span>{hours}</span>
+            </div>
             {roundTrip && (
-              <span className="badge rounded-pill bg-success-subtle text-success px-3 py-2" style={{ fontSize: 15 }}>
-                <i className="bi bi-arrow-repeat me-1"></i> Round Trip
-              </span>
+              <div className="d-flex align-items-center bg-white shadow-sm rounded-4 px-3 py-2" style={{ fontWeight: 600, color: "#43a047", fontSize: 16 }}>
+                <i className="bi bi-arrow-repeat text-success me-2"></i>
+                <span>Round Trip</span>
+              </div>
             )}
+            <button
+              type="button"
+              className="btn btn-link p-0 ms-2"
+              style={{ fontSize: 18 }}
+              title="Edit Trip Info"
+              onClick={() => navigate('/search-cab', { state: { pickup, drop, datetime, hours } })}
+            >
+              <i className="bi bi-pencil-square text-primary"></i>
+            </button>
           </div>
         </div>
         <div className="row g-4">

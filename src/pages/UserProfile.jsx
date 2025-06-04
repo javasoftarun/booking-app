@@ -524,374 +524,283 @@ const UserProfile = () => {
   return (
     <div
       style={{
-        minHeight: "100vh",
-        background: "linear-gradient(120deg, #e3f6ff 60%, #fffbe7 100%)",
+        height: "auto",
+        background: "#fff",
         padding: "0",
-        marginTop: 32, 
-        marginBottom: -50,
+        marginTop: 0,
+        marginBottom: 0,
+        display: "flex",
+        alignItems: "flex-start",
+        justifyContent: "center",
       }}
     >
       <div
-        className="container-fluid px-1 px-md-3"
+        className="cablist-main-container"
         style={{
-          maxWidth: 1100,
-          paddingTop: 24,
-          paddingBottom: 8,
+          maxWidth: 1200,
+          width: "100%",
+          margin: "40px auto",
+          borderRadius: 28,
+          boxShadow: "0 8px 40px #e5736822, 0 2px 8px #FFD60033",
+          padding: "40px 20px",
+          background: "#fff",
+          height: "auto",
         }}
       >
-        <div
-          className="bg-white rounded-4 shadow p-2 p-md-4"
-          style={{
-            border: "1.5px solid #e3e6ed",
-            boxShadow: "0 8px 40px #00b8ff22, 0 2px 8px #FFD60033",
-            minHeight: 600,
-          }}
-        >
-          {/* Show skeleton while loading */}
-          {profileLoading ? (
-            <ProfileSkeleton />
-          ) : (
-            <>
-              {/* Header */}
-              <div className="row align-items-center mb-3 g-3">
-                <div className="col-12 col-md-8 d-flex align-items-center gap-3 flex-wrap">
-                  <div style={{ position: "relative" }}>
-                    <img
-                      src={
-                        avatarUploading
-                          ? "https://i.gifer.com/ZZ5H.gif"
-                          : profile.imageUrl ||
-                            "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                      }
-                      alt="avatar"
-                      className="rounded-circle border"
-                      style={{
-                        width: 70,
-                        height: 70,
-                        objectFit: "cover",
-                        background: "#eee",
-                        opacity: avatarUploading ? 0.7 : 1,
-                        border: "2px solid #FFD600",
-                      }}
+        {/* Show skeleton while loading */}
+        {profileLoading ? (
+          <ProfileSkeleton />
+        ) : (
+          <>
+            {/* Header */}
+            <div className="row align-items-center mb-3 g-3">
+              <div className="col-12 col-md-8 d-flex align-items-center gap-3 flex-wrap">
+                <div style={{ position: "relative" }}>
+                  <img
+                    src={
+                      avatarUploading
+                        ? "https://i.gifer.com/ZZ5H.gif"
+                        : profile.imageUrl ||
+                          "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                    }
+                    alt="avatar"
+                    className="rounded-circle border"
+                    style={{
+                      width: 70,
+                      height: 70,
+                      objectFit: "cover",
+                      background: "#eee",
+                      opacity: avatarUploading ? 0.7 : 1,
+                      border: "2px solid #FFD600",
+                    }}
+                  />
+                  <label
+                    htmlFor="avatar-upload"
+                    style={{
+                      position: "absolute",
+                      bottom: 0,
+                      right: 0,
+                      background: "#e57368",
+                      borderRadius: "50%",
+                      width: 28,
+                      height: 28,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer",
+                      border: "2px solid #fff",
+                    }}
+                  >
+                    <FaCamera color="#fff" />
+                    <input
+                      id="avatar-upload"
+                      type="file"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={handleAvatarChange}
                     />
-                    <label
-                      htmlFor="avatar-upload"
-                      style={{
-                        position: "absolute",
-                        bottom: 0,
-                        right: 0,
-                        background: "#e57368",
-                        borderRadius: "50%",
-                        width: 28,
-                        height: 28,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        cursor: "pointer",
-                        border: "2px solid #fff",
-                      }}
-                    >
-                      <FaCamera color="#fff" />
-                      <input
-                        id="avatar-upload"
-                        type="file"
-                        accept="image/*"
-                        style={{ display: "none" }}
-                        onChange={handleAvatarChange}
-                      />
-                    </label>
+                  </label>
+                </div>
+                <div>
+                  <div className="fw-bold" style={{ fontSize: 20, color: "#e57368" }}>
+                    {profile.name}
                   </div>
-                  <div>
-                    <div className="fw-bold" style={{ fontSize: 20, color: "#e57368" }}>
-                      {profile.name}
-                    </div>
-                    <div className="text-muted" style={{ fontSize: 14 }}>
-                      {profile.email}
-                    </div>
-                    <div className="badge rounded-pill bg-warning text-dark mt-2" style={{ fontWeight: 600 }}>
-                      {profile.role ? profile.role.toUpperCase() : "USER"}
-                    </div>
+                  <div className="text-muted" style={{ fontSize: 14 }}>
+                    {profile.email}
+                  </div>
+                  <div className="badge rounded-pill bg-warning text-dark mt-2" style={{ fontWeight: 600 }}>
+                    {profile.role ? profile.role.toUpperCase() : "USER"}
                   </div>
                 </div>
               </div>
-              {/* Tabs */}
-              <div className="d-flex gap-2 mb-4 pb-1 justify-content-start flex-wrap">
-                {sidebarItems.map((item) => (
+            </div>
+            {/* Tabs */}
+            <div className="d-flex gap-2 mb-4 pb-1 justify-content-start flex-wrap">
+              {sidebarItems.map((item) => (
+                <button
+                  key={item.key}
+                  className={`btn px-3 py-2 fw-semibold d-flex align-items-center gap-2 ${activeTab === item.key ? "shadow" : ""}`}
+                  style={{
+                    background: activeTab === item.key ? "#FFD600" : "#f8fafc",
+                    color: activeTab === item.key ? "#23272f" : "#e57368",
+                    border: activeTab === item.key ? "2px solid #FFD600" : "1.5px solid #e3e6ed",
+                    borderRadius: 10,
+                    fontSize: 15,
+                    minWidth: 120,
+                    whiteSpace: "nowrap",
+                    transition: "all 0.2s",
+                    boxShadow: activeTab === item.key ? "0 2px 8px #ffd60040" : "none"
+                  }}
+                  onClick={() => setActiveTab(item.key)}
+                >
+                  <span style={{ fontSize: 17 }}>{item.icon}</span>
+                  {item.label}
+                </button>
+              ))}
+            </div>
+            {/* Main Content */}
+            <div>
+              {message && (
+                <div
+                  className={`alert ${messageType === "success" ? "alert-success" : "alert-danger"} mb-4 d-flex justify-content-between align-items-center`}
+                  role="alert"
+                >
+                  <span>{message}</span>
                   <button
-                    key={item.key}
-                    className={`btn px-3 py-2 fw-semibold d-flex align-items-center gap-2 ${activeTab === item.key ? "shadow" : ""}`}
-                    style={{
-                      background: activeTab === item.key ? "#FFD600" : "#f8fafc",
-                      color: activeTab === item.key ? "#23272f" : "#e57368",
-                      border: activeTab === item.key ? "2px solid #FFD600" : "1.5px solid #e3e6ed",
-                      borderRadius: 10,
-                      fontSize: 15,
-                      minWidth: 120,
-                      whiteSpace: "nowrap",
-                      transition: "all 0.2s",
-                      boxShadow: activeTab === item.key ? "0 2px 8px #ffd60040" : "none"
-                    }}
-                    onClick={() => setActiveTab(item.key)}
-                  >
-                    <span style={{ fontSize: 17 }}>{item.icon}</span>
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-              {/* Main Content */}
-              <div>
-                {message && (
-                  <div
-                    className={`alert ${messageType === "success" ? "alert-success" : "alert-danger"} mb-4 d-flex justify-content-between align-items-center`}
-                    role="alert"
-                  >
-                    <span>{message}</span>
-                    <button
-                      type="button"
-                      className="btn-close"
-                      aria-label="Close"
-                      onClick={() => setMessage("")}
-                      style={{ marginLeft: 16 }}
-                    ></button>
-                  </div>
-                )}
-                {activeTab === "profile" && (
-                  <form onSubmit={handleSave}>
-                    <div className="row g-3">
-                      <div className="col-12 col-md-6">
-                        <label className="form-label">Name</label>
+                    type="button"
+                    className="btn-close"
+                    aria-label="Close"
+                    onClick={() => setMessage("")}
+                    style={{ marginLeft: 16 }}
+                  ></button>
+                </div>
+              )}
+              {activeTab === "profile" && (
+                <form onSubmit={handleSave}>
+                  <div className="row g-3">
+                    <div className="col-12 col-md-6">
+                      <label className="form-label">Name</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="name"
+                        value={profile.name}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                    <div className="col-12 col-md-6">
+                      <label className="form-label">Email</label>
+                      <input
+                        type="email"
+                        className="form-control"
+                        name="email"
+                        value={profile.email}
+                        onChange={handleChange}
+                        required
+                        readOnly
+                      />
+                    </div>
+                    <div className="col-12 col-md-6">
+                      <label className="form-label">Gender</label>
+                      <select
+                        className="form-select"
+                        name="gender"
+                        value={profile.gender}
+                        onChange={handleChange}
+                      >
+                        <option value="">Select</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                    <div className="col-12 col-md-6">
+                      <label className="form-label">Mobile Number</label>
+                      <div className="input-group">
+                        <span className="input-group-text" style={{ background: "#fffbe7" }}>+91</span>
                         <input
                           type="text"
                           className="form-control"
-                          name="name"
-                          value={profile.name}
+                          name="phone"
+                          value={profile.phone}
                           onChange={handleChange}
+                          maxLength={10}
                           required
                         />
                       </div>
-                      <div className="col-12 col-md-6">
-                        <label className="form-label">Email</label>
+                    </div>
+                    <div className="col-12 col-md-6">
+                      <label className="form-label">Date of Birth</label>
+                      <input
+                        type="date"
+                        className="form-control"
+                        name="dateOfBirth"
+                        value={profile.dateOfBirth}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="col-12">
+                      <div className="form-check mt-2">
                         <input
-                          type="email"
-                          className="form-control"
-                          name="email"
-                          value={profile.email}
-                          onChange={handleChange}
-                          required
-                          readOnly
+                          className="form-check-input"
+                          type="checkbox"
+                          id="emailNotification"
+                          name="emailNotification"
+                          checked={profile.emailNotification || false}
+                          onChange={(e) =>
+                            setProfile((prev) => ({
+                              ...prev,
+                              emailNotification: e.target.checked,
+                            }))
+                          }
                         />
+                        <label className="form-check-label" htmlFor="emailNotification">
+                          Enable Email Notifications
+                        </label>
                       </div>
-                      <div className="col-12 col-md-6">
-                        <label className="form-label">Gender</label>
-                        <select
-                          className="form-select"
-                          name="gender"
-                          value={profile.gender}
-                          onChange={handleChange}
+                      <div className="form-check mt-2">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          id="mobileNotification"
+                          name="mobileNotification"
+                          checked={profile.mobileNotification || false}
+                          onChange={(e) =>
+                            setProfile((prev) => ({
+                              ...prev,
+                              mobileNotification: e.target.checked,
+                            }))
+                          }
+                        />
+                        <label className="form-check-label" htmlFor="mobileNotification">
+                          Enable Mobile Notifications
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-4 text-center text-md-end">
+                    <button
+                      type="submit"
+                      className="btn"
+                      disabled={saving}
+                      style={{
+                        background: "#FFD600",
+                        color: "#23272f",
+                        borderRadius: 14,
+                        fontWeight: 700,
+                        fontSize: 17,
+                        padding: "10px 40px",
+                        boxShadow: "0 2px 8px #ffd60040",
+                        border: "2px solid #FFD600"
+                      }}
+                    >
+                      {saving ? "Saving..." : "Save"}
+                    </button>
+                  </div>
+                </form>
+              )}
+              {activeTab === "ratings" && (
+                <>
+                  <h4 className="fw-bold mb-4" style={{ color: "#e57368" }}>
+                    My Ratings
+                  </h4>
+                  {ratingLoading ? (
+                    <div>Loading cabs for rating...</div>
+                  ) : ratingBookings.length === 0 ? (
+                    <div className="text-muted">No cabs to rate.</div>
+                  ) : (
+                    <div>
+                      {ratingBookings.map((booking) => (
+                        <div
+                          key={booking.bookingId}
+                          className="mb-3 p-3 border rounded-3"
+                          style={{ background: "#f8f9fa" }}
                         >
-                          <option value="">Select</option>
-                          <option value="Male">Male</option>
-                          <option value="Female">Female</option>
-                          <option value="Other">Other</option>
-                        </select>
-                      </div>
-                      <div className="col-12 col-md-6">
-                        <label className="form-label">Mobile Number</label>
-                        <div className="input-group">
-                          <span className="input-group-text" style={{ background: "#fffbe7" }}>+91</span>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="phone"
-                            value={profile.phone}
-                            onChange={handleChange}
-                            maxLength={10}
-                            required
-                          />
-                        </div>
-                      </div>
-                      <div className="col-12 col-md-6">
-                        <label className="form-label">Date of Birth</label>
-                        <input
-                          type="date"
-                          className="form-control"
-                          name="dateOfBirth"
-                          value={profile.dateOfBirth}
-                          onChange={handleChange}
-                        />
-                      </div>
-                      <div className="col-12">
-                        <div className="form-check mt-2">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            id="emailNotification"
-                            name="emailNotification"
-                            checked={profile.emailNotification || false}
-                            onChange={(e) =>
-                              setProfile((prev) => ({
-                                ...prev,
-                                emailNotification: e.target.checked,
-                              }))
-                            }
-                          />
-                          <label className="form-check-label" htmlFor="emailNotification">
-                            Enable Email Notifications
-                          </label>
-                        </div>
-                        <div className="form-check mt-2">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            id="mobileNotification"
-                            name="mobileNotification"
-                            checked={profile.mobileNotification || false}
-                            onChange={(e) =>
-                              setProfile((prev) => ({
-                                ...prev,
-                                mobileNotification: e.target.checked,
-                              }))
-                            }
-                          />
-                          <label className="form-check-label" htmlFor="mobileNotification">
-                            Enable Mobile Notifications
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-4 text-center text-md-end">
-                      <button
-                        type="submit"
-                        className="btn"
-                        disabled={saving}
-                        style={{
-                          background: "#FFD600",
-                          color: "#23272f",
-                          borderRadius: 14,
-                          fontWeight: 700,
-                          fontSize: 17,
-                          padding: "10px 40px",
-                          boxShadow: "0 2px 8px #ffd60040",
-                          border: "2px solid #FFD600"
-                        }}
-                      >
-                        {saving ? "Saving..." : "Save"}
-                      </button>
-                    </div>
-                  </form>
-                )}
-                {activeTab === "ratings" && (
-                  <>
-                    <h4 className="fw-bold mb-4" style={{ color: "#e57368" }}>
-                      My Ratings
-                    </h4>
-                    {ratingLoading ? (
-                      <div>Loading cabs for rating...</div>
-                    ) : ratingBookings.length === 0 ? (
-                      <div className="text-muted">No cabs to rate.</div>
-                    ) : (
-                      <div>
-                        {ratingBookings.map((booking) => (
-                          <div
-                            key={booking.bookingId}
-                            className="mb-3 p-3 border rounded-3"
-                            style={{ background: "#f8f9fa" }}
-                          >
-                            <div className="d-flex align-items-center gap-3 mb-2">
-                              <img
-                                src={booking.cabImageUrl}
-                                alt={booking.cabName}
-                                style={{
-                                  width: 60,
-                                  height: 40,
-                                  objectFit: "cover",
-                                  borderRadius: 6,
-                                  border: "1px solid #FFD600",
-                                  background: "#fff",
-                                }}
-                              />
-                              <div>
-                                <div className="fw-bold">{booking.cabName} ({booking.cabType})</div>
-                                <div className="small text-muted">{booking.cabNumber}</div>
-                                <div className="small text-muted">
-                                  Date: {new Date(booking.pickupDateTime).toLocaleString()}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="mb-2">
-                              <label className="form-label mb-1">Your Rating:</label>
-                              <div>
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                  <span
-                                    key={star}
-                                    style={{
-                                      cursor: "pointer",
-                                      color:
-                                        (ratingValue[booking.bookingId] || 0) >= star
-                                          ? "#FFD600"
-                                          : "#ccc",
-                                      fontSize: 22,
-                                    }}
-                                    onClick={() =>
-                                      setRatingValue((prev) => ({
-                                        ...prev,
-                                        [booking.bookingId]: star,
-                                      }))
-                                    }
-                                  >
-                                    <FaStar />
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
-                            <div className="mb-2">
-                              <label className="form-label mb-1">Your Comment:</label>
-                              <textarea
-                                className="form-control"
-                                rows={2}
-                                value={ratingComment[booking.bookingId] || ""}
-                                onChange={(e) =>
-                                  setRatingComment((prev) => ({
-                                    ...prev,
-                                    [booking.bookingId]: e.target.value,
-                                  }))
-                                }
-                                placeholder="Write your feedback..."
-                              />
-                            </div>
-                            <button
-                              className="btn btn-warning"
-                              style={{ color: "#23272f", fontWeight: 600 }}
-                              disabled={
-                                submittingRating[booking.bookingId] ||
-                                !ratingValue[booking.bookingId]
-                              }
-                              onClick={() => handleSubmitRating(booking.bookingId)}
-                            >
-                              {submittingRating[booking.bookingId] ? "Submitting..." : "Submit Rating"}
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <h5 className="fw-bold mt-5 mb-3" style={{ color: "#1976d2" }}>
-                      Ratings Given
-                    </h5>
-                    {givenRatingsLoading ? (
-                      <div>Loading your ratings...</div>
-                    ) : givenRatings.length === 0 ? (
-                      <div className="text-muted">No ratings given yet.</div>
-                    ) : (
-                      <div>
-                        {givenRatings.map((rating) => (
-                          <div
-                            key={rating.id}
-                            className="mb-3 p-3 border rounded-3 d-flex align-items-center"
-                            style={{ background: "#f8f9fa" }}
-                          >
+                          <div className="d-flex align-items-center gap-3 mb-2">
                             <img
-                              src={rating.cabImageUrl}
-                              alt={rating.cabName}
+                              src={booking.cabImageUrl}
+                              alt={booking.cabName}
                               style={{
                                 width: 60,
                                 height: 40,
@@ -899,378 +808,468 @@ const UserProfile = () => {
                                 borderRadius: 6,
                                 border: "1px solid #FFD600",
                                 background: "#fff",
-                                marginRight: 16,
                               }}
                             />
-                            <div style={{ flex: 1 }}>
-                              <div className="fw-bold">
-                                {rating.cabName} ({rating.cabType})
-                              </div>
-                              <div className="small text-muted">{rating.cabNumber}</div>
+                            <div>
+                              <div className="fw-bold">{booking.cabName} ({booking.cabType})</div>
+                              <div className="small text-muted">{booking.cabNumber}</div>
                               <div className="small text-muted">
-                                {rating.ratingDate ? new Date(rating.ratingDate).toLocaleString() : ""}
+                                Date: {new Date(booking.pickupDateTime).toLocaleString()}
                               </div>
                             </div>
-                            <div className="d-flex align-items-center" style={{ minWidth: 120 }}>
+                          </div>
+                          <div className="mb-2">
+                            <label className="form-label mb-1">Your Rating:</label>
+                            <div>
                               {[1, 2, 3, 4, 5].map((star) => (
                                 <span
                                   key={star}
                                   style={{
-                                    color: rating.rating >= star ? "#FFD600" : "#ccc",
+                                    cursor: "pointer",
+                                    color:
+                                      (ratingValue[booking.bookingId] || 0) >= star
+                                        ? "#FFD600"
+                                        : "#ccc",
                                     fontSize: 22,
                                   }}
+                                  onClick={() =>
+                                    setRatingValue((prev) => ({
+                                      ...prev,
+                                      [booking.bookingId]: star,
+                                    }))
+                                  }
                                 >
                                   <FaStar />
                                 </span>
                               ))}
                             </div>
-                            <div
-                              className="border rounded p-2 bg-white ms-3"
-                              style={{ minWidth: 150, maxWidth: 250, fontSize: 15, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
-                              title={rating.comment}
-                            >
-                              {rating.comment || <span className="text-muted">No comment</span>}
+                          </div>
+                          <div className="mb-2">
+                            <label className="form-label mb-1">Your Comment:</label>
+                            <textarea
+                              className="form-control"
+                              rows={2}
+                              value={ratingComment[booking.bookingId] || ""}
+                              onChange={(e) =>
+                                setRatingComment((prev) => ({
+                                  ...prev,
+                                  [booking.bookingId]: e.target.value,
+                                }))
+                              }
+                              placeholder="Write your feedback..."
+                            />
+                          </div>
+                          <button
+                            className="btn btn-warning"
+                            style={{ color: "#23272f", fontWeight: 600 }}
+                            disabled={
+                              submittingRating[booking.bookingId] ||
+                              !ratingValue[booking.bookingId]
+                            }
+                            onClick={() => handleSubmitRating(booking.bookingId)}
+                          >
+                            {submittingRating[booking.bookingId] ? "Submitting..." : "Submit Rating"}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <h5 className="fw-bold mt-5 mb-3" style={{ color: "#1976d2" }}>
+                    Ratings Given
+                  </h5>
+                  {givenRatingsLoading ? (
+                    <div>Loading your ratings...</div>
+                  ) : givenRatings.length === 0 ? (
+                    <div className="text-muted">No ratings given yet.</div>
+                  ) : (
+                    <div>
+                      {givenRatings.map((rating) => (
+                        <div
+                          key={rating.id}
+                          className="mb-3 p-3 border rounded-3 d-flex align-items-center"
+                          style={{ background: "#f8f9fa" }}
+                        >
+                          <img
+                            src={rating.cabImageUrl}
+                            alt={rating.cabName}
+                            style={{
+                              width: 60,
+                              height: 40,
+                              objectFit: "cover",
+                              borderRadius: 6,
+                              border: "1px solid #FFD600",
+                              background: "#fff",
+                              marginRight: 16,
+                            }}
+                          />
+                          <div style={{ flex: 1 }}>
+                            <div className="fw-bold">
+                              {rating.cabName} ({rating.cabType})
+                            </div>
+                            <div className="small text-muted">{rating.cabNumber}</div>
+                            <div className="small text-muted">
+                              {rating.ratingDate ? new Date(rating.ratingDate).toLocaleString() : ""}
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    )}
-                  </>
-                )}
-                {activeTab === "bookings" && (
-                  <>
-                    <h4 className="fw-bold mb-4" style={{ color: "#e57368" }}>
-                      My Bookings
-                    </h4>
-                    <div className="mb-4">
-                      <ul className="nav nav-tabs">
-                        <li className="nav-item">
-                          <button
-                            className={`nav-link ${bookingsTab === "upcoming" ? "active" : ""}`}
-                            onClick={() => setBookingsTab("upcoming")}
-                            type="button"
-                          >
-                            Upcoming
-                          </button>
-                        </li>
-                        <li className="nav-item">
-                          <button
-                            className={`nav-link ${bookingsTab === "past" ? "active" : ""}`}
-                            onClick={() => setBookingsTab("past")}
-                            type="button"
-                          >
-                            Past
-                          </button>
-                        </li>
-                        <li className="nav-item">
-                          <button
-                            className={`nav-link ${bookingsTab === "cancelled" ? "active" : ""}`}
-                            onClick={() => setBookingsTab("cancelled")}
-                            type="button"
-                          >
-                            Cancelled
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
-                    <div>
-                      {bookingsLoading ? (
-                        <div>Loading bookings...</div>
-                      ) : filteredBookings.length === 0 ? (
-                        <div>No {bookingsTab} bookings.</div>
-                      ) : (
-                        <div className="list-group">
-                          {filteredBookings.map((booking) => {
-                            const isCancelled =
-                              booking.bookingStatus &&
-                              ["Canceled", "Cancelled", "CANCELLED"].includes(booking.bookingStatus);
-                            const isExpanded = expandedBooking === booking.bookingId;
-
-                            return (
-                              <div
-                                key={booking.bookingId}
-                                className="mb-3 booking-card"
+                          <div className="d-flex align-items-center" style={{ minWidth: 120 }}>
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <span
+                                key={star}
                                 style={{
-                                  border: "1.5px solid #e3e6ed",
-                                  borderRadius: 18,
-                                  background: "#fff",
-                                  boxShadow: isExpanded
-                                    ? "0 4px 24px #00b8ff22, 0 2px 8px #FFD60033"
-                                    : "0 2px 8px #00b8ff11",
-                                  overflow: "hidden",
-                                  transition: "box-shadow 0.2s, border 0.2s",
-                                  position: "relative",
+                                  color: rating.rating >= star ? "#FFD600" : "#ccc",
+                                  fontSize: 22,
                                 }}
                               >
-                                {/* Summary Row */}
+                                <FaStar />
+                              </span>
+                            ))}
+                          </div>
+                          <div
+                            className="border rounded p-2 bg-white ms-3"
+                            style={{ minWidth: 150, maxWidth: 250, fontSize: 15, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
+                            title={rating.comment}
+                          >
+                            {rating.comment || <span className="text-muted">No comment</span>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+              {activeTab === "bookings" && (
+                <>
+                  <h4 className="fw-bold mb-4" style={{ color: "#e57368" }}>
+                    My Bookings
+                  </h4>
+                  <div className="mb-4">
+                    <ul className="nav nav-tabs">
+                      <li className="nav-item">
+                        <button
+                          className={`nav-link ${bookingsTab === "upcoming" ? "active" : ""}`}
+                          onClick={() => setBookingsTab("upcoming")}
+                          type="button"
+                        >
+                          Upcoming
+                        </button>
+                      </li>
+                      <li className="nav-item">
+                        <button
+                          className={`nav-link ${bookingsTab === "past" ? "active" : ""}`}
+                          onClick={() => setBookingsTab("past")}
+                          type="button"
+                        >
+                          Past
+                        </button>
+                      </li>
+                      <li className="nav-item">
+                        <button
+                          className={`nav-link ${bookingsTab === "cancelled" ? "active" : ""}`}
+                          onClick={() => setBookingsTab("cancelled")}
+                          type="button"
+                        >
+                          Cancelled
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
+                    {bookingsLoading ? (
+                      <div>Loading bookings...</div>
+                    ) : filteredBookings.length === 0 ? (
+                      <div>No {bookingsTab} bookings.</div>
+                    ) : (
+                      <div className="list-group">
+                        {filteredBookings.map((booking) => {
+                          const isCancelled =
+                            booking.bookingStatus &&
+                            ["Canceled", "Cancelled", "CANCELLED"].includes(booking.bookingStatus);
+                          const isExpanded = expandedBooking === booking.bookingId;
+
+                          return (
+                            <div
+                              key={booking.bookingId}
+                              className="mb-3 booking-card"
+                              style={{
+                                border: "1.5px solid #e3e6ed",
+                                borderRadius: 18,
+                                background: "#fff",
+                                boxShadow: isExpanded
+                                  ? "0 4px 24px #00b8ff22, 0 2px 8px #FFD60033"
+                                  : "0 2px 8px #00b8ff11",
+                                overflow: "hidden",
+                                transition: "box-shadow 0.2s, border 0.2s",
+                                position: "relative",
+                              }}
+                            >
+                              {/* Summary Row */}
+                              <div
+                                className="d-flex align-items-center px-3 py-2 booking-summary-row"
+                                style={{
+                                  cursor: "pointer",
+                                  background: isExpanded ? "#f8fafc" : "#fff",
+                                  borderBottom: isExpanded ? "1px solid #e3e6ed" : "none",
+                                  transition: "background 0.2s",
+                                }}
+                                onClick={() => setExpandedBooking(isExpanded ? null : booking.bookingId)}
+                              >
                                 <div
-                                  className="d-flex align-items-center px-3 py-2 booking-summary-row"
                                   style={{
-                                    cursor: "pointer",
-                                    background: isExpanded ? "#f8fafc" : "#fff",
-                                    borderBottom: isExpanded ? "1px solid #e3e6ed" : "none",
-                                    transition: "background 0.2s",
+                                    border: "2px solid #FFD600",
+                                    borderRadius: 10,
+                                    padding: 2,
+                                    marginRight: 16,
+                                    background: "#fff",
+                                    minWidth: 60,
+                                    minHeight: 44,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
                                   }}
-                                  onClick={() => setExpandedBooking(isExpanded ? null : booking.bookingId)}
                                 >
-                                  <div
+                                  <img
+                                    src={booking.cabImageUrl}
+                                    alt={booking.cabName}
                                     style={{
-                                      border: "2px solid #FFD600",
-                                      borderRadius: 10,
-                                      padding: 2,
-                                      marginRight: 16,
-                                      background: "#fff",
-                                      minWidth: 60,
-                                      minHeight: 44,
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
+                                      width: 54,
+                                      height: 38,
+                                      objectFit: "cover",
+                                      borderRadius: 8,
                                     }}
-                                  >
-                                    <img
-                                      src={booking.cabImageUrl}
-                                      alt={booking.cabName}
-                                      style={{
-                                        width: 54,
-                                        height: 38,
-                                        objectFit: "cover",
-                                        borderRadius: 8,
-                                      }}
-                                    />
-                                  </div>
-                                  <div style={{ flex: 1, minWidth: 0 }}>
-                                    <div
-                                      className="fw-bold"
-                                      style={{
-                                        color: "#1976d2",
-                                        fontSize: 17,
-                                        textOverflow: "ellipsis",
-                                        overflow: "hidden",
-                                        whiteSpace: "nowrap",
-                                        maxWidth: 200,
-                                        fontWeight: 700,
-                                        letterSpacing: 0.2,
-                                      }}
-                                    >
-                                      {booking.cabName} <span style={{ fontWeight: 400, color: "#1976d2" }}>({booking.cabType})</span>
-                                    </div>
-                                    <div className="small text-muted" style={{ fontSize: 14 }}>
-                                      {new Date(booking.pickupDateTime).toLocaleDateString()} &nbsp;|&nbsp; 
-                                      <span style={{
-                                        color:
-                                          booking.bookingStatus === "Pending"
-                                            ? "#e57368"
-                                            : booking.bookingStatus === "Confirmed"
-                                            ? "#1976d2"
-                                            : booking.bookingStatus === "Completed"
-                                            ? "#388e3c"
-                                            : "#888",
-                                        fontWeight: 600,
-                                        letterSpacing: 0.1,
-                                      }}>
-                                        {booking.bookingStatus}
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <span style={{ color: "#e57368", fontSize: 22, marginLeft: 8 }}>
-                                    {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
-                                  </span>
+                                  />
                                 </div>
-                                {/* Expanded Details */}
-                                {isExpanded && (
+                                <div style={{ flex: 1, minWidth: 0 }}>
                                   <div
-                                    className="px-3 pb-3 pt-2"
+                                    className="fw-bold"
                                     style={{
-                                      background: "#f9fafb",
-                                      borderTop: "1px solid #eee",
-                                      animation: "fadeIn 0.3s",
+                                      color: "#1976d2",
+                                      fontSize: 17,
+                                      textOverflow: "ellipsis",
+                                      overflow: "hidden",
+                                      whiteSpace: "nowrap",
+                                      maxWidth: 200,
+                                      fontWeight: 700,
+                                      letterSpacing: 0.2,
                                     }}
                                   >
-                                    <div className="row g-2 mb-2" style={{ fontSize: 14 }}>
-                                      <div className="col-12 col-md-6">
-                                        <strong>Cab Number:</strong> {booking.cabNumber} <br />
-                                        <strong>Model:</strong> {booking.cabModel} <br />
-                                        <strong>Color:</strong> {booking.cabColor} <br />
-                                        <strong>Pickup:</strong> {booking.pickupLocation} <br />
-                                        <strong>Drop:</strong> {booking.dropLocation} <br />
-                                        <strong>Date & Time:</strong>{" "}
-                                        {new Date(booking.pickupDateTime).toLocaleString()} <br />
-                                        <strong>Driver:</strong> {booking.driverName} ({booking.driverContact})
-                                      </div>
-                                      <div className="col-12 col-md-6">
-                                        <div
-                                          style={{
-                                            background: "#fff",
-                                            borderRadius: 10,
-                                            border: "1px solid #e3e6ed",
-                                            padding: "16px 18px",
-                                            marginTop: 4,
-                                            boxShadow: "0 2px 8px #ffd60011",
-                                            minWidth: 220,
-                                            maxWidth: 340,
-                                          }}
-                                        >
-                                          <div style={{ fontWeight: 700, color: "#23272f", marginBottom: 8, fontSize: 15 }}>
-                                            Fare Summary
-                                          </div>
-                                          <div className="d-flex justify-content-between mb-1">
-                                            <span>Base Fare</span>
-                                            <span>
-                                              ₹{Number(booking.baseFare || booking.fare || 0).toFixed(2)}
-                                            </span>
-                                          </div>
-                                          <div className="d-flex justify-content-between mb-1">
-                                            <span>Promo Discount</span>
-                                            <span>
-                                              -₹{Number(booking.promoDiscount || 0).toFixed(2)}
-                                            </span>
-                                          </div>
-                                          <div className="d-flex justify-content-between mb-2" style={{ fontWeight: 700 }}>
-                                            <span>Final Fare</span>
-                                            <span>
-                                              ₹{Number((booking.fare || 0) - (booking.promoDiscount || 0)).toFixed(2)}
-                                            </span>
-                                          </div>
-                                          <div className="d-flex justify-content-between mb-1">
-                                            <span>Token Paid</span>
-                                            <span>
-                                              ₹{Number(booking.tokenAmount || 0).toFixed(2)}
-                                            </span>
-                                          </div>
-                                          <div className="d-flex justify-content-between" style={{ fontWeight: 500 }}>
-                                            <span>Balance to Pay</span>
-                                            <span>
-                                              ₹{Number((booking.balanceAmount || 0)).toFixed(2)}
-                                            </span>
-                                          </div>
+                                    {booking.cabName} <span style={{ fontWeight: 400, color: "#1976d2" }}>({booking.cabType})</span>
+                                  </div>
+                                  <div className="small text-muted" style={{ fontSize: 14 }}>
+                                    {new Date(booking.pickupDateTime).toLocaleDateString()} &nbsp;|&nbsp; 
+                                    <span style={{
+                                      color:
+                                        booking.bookingStatus === "Pending"
+                                          ? "#e57368"
+                                          : booking.bookingStatus === "Confirmed"
+                                          ? "#1976d2"
+                                          : booking.bookingStatus === "Completed"
+                                          ? "#388e3c"
+                                          : "#888",
+                                      fontWeight: 600,
+                                      letterSpacing: 0.1,
+                                    }}>
+                                      {booking.bookingStatus}
+                                    </span>
+                                  </div>
+                                </div>
+                                <span style={{ color: "#e57368", fontSize: 22, marginLeft: 8 }}>
+                                  {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
+                                </span>
+                              </div>
+                              {/* Expanded Details */}
+                              {isExpanded && (
+                                <div
+                                  className="px-3 pb-3 pt-2"
+                                  style={{
+                                    background: "#f9fafb",
+                                    borderTop: "1px solid #eee",
+                                    animation: "fadeIn 0.3s",
+                                  }}
+                                >
+                                  <div className="row g-2 mb-2" style={{ fontSize: 14 }}>
+                                    <div className="col-12 col-md-6">
+                                      <strong>Cab Number:</strong> {booking.cabNumber} <br />
+                                      <strong>Model:</strong> {booking.cabModel} <br />
+                                      <strong>Color:</strong> {booking.cabColor} <br />
+                                      <strong>Pickup:</strong> {booking.pickupLocation} <br />
+                                      <strong>Drop:</strong> {booking.dropLocation} <br />
+                                      <strong>Date & Time:</strong>{" "}
+                                      {new Date(booking.pickupDateTime).toLocaleString()} <br />
+                                      <strong>Driver:</strong> {booking.driverName} ({booking.driverContact})
+                                    </div>
+                                    <div className="col-12 col-md-6">
+                                      <div
+                                        style={{
+                                          background: "#fff",
+                                          borderRadius: 10,
+                                          border: "1px solid #e3e6ed",
+                                          padding: "16px 18px",
+                                          marginTop: 4,
+                                          boxShadow: "0 2px 8px #ffd60011",
+                                          minWidth: 220,
+                                          maxWidth: 340,
+                                        }}
+                                      >
+                                        <div style={{ fontWeight: 700, color: "#23272f", marginBottom: 8, fontSize: 15 }}>
+                                          Fare Summary
+                                        </div>
+                                        <div className="d-flex justify-content-between mb-1">
+                                          <span>Base Fare</span>
+                                          <span>
+                                            ₹{Number(booking.baseFare || booking.fare || 0).toFixed(2)}
+                                          </span>
+                                        </div>
+                                        <div className="d-flex justify-content-between mb-1">
+                                          <span>Promo Discount</span>
+                                          <span>
+                                            -₹{Number(booking.promoDiscount || 0).toFixed(2)}
+                                          </span>
+                                        </div>
+                                        <div className="d-flex justify-content-between mb-2" style={{ fontWeight: 700 }}>
+                                          <span>Final Fare</span>
+                                          <span>
+                                            ₹{Number((booking.fare || 0) - (booking.promoDiscount || 0)).toFixed(2)}
+                                          </span>
+                                        </div>
+                                        <div className="d-flex justify-content-between mb-1">
+                                          <span>Token Paid</span>
+                                          <span>
+                                            ₹{Number(booking.tokenAmount || 0).toFixed(2)}
+                                          </span>
+                                        </div>
+                                        <div className="d-flex justify-content-between" style={{ fontWeight: 500 }}>
+                                          <span>Balance to Pay</span>
+                                          <span>
+                                            ₹{Number((booking.balanceAmount || 0)).toFixed(2)}
+                                          </span>
                                         </div>
                                       </div>
                                     </div>
-                                    <div className="d-flex flex-column flex-md-row gap-2 mt-3">
-                                      {bookingsTab !== "cancelled" && !isCancelled && (
-                                        <>
-                                          <button
-                                            className="btn btn-outline-danger btn-sm flex-fill"
-                                            title="Cancel Booking"
-                                            onClick={() => handleCancelBooking(booking)}
-                                            style={{
-                                              borderRadius: 8,
-                                              fontWeight: 600,
-                                              minWidth: 110,
-                                              display: "flex",
-                                              alignItems: "center",
-                                              justifyContent: "center",
-                                              gap: 6,
-                                            }}
-                                          >
-                                            <FaTrash /> Cancel
-                                          </button>
-                                        </>
-                                      )}
-                                      <button
-                                        className="btn btn-outline-secondary btn-sm flex-fill"
-                                        title="Download Receipt"
-                                        onClick={() => handleDownloadReceipt(booking)}
-                                        style={{
-                                          borderRadius: 8,
-                                          fontWeight: 600,
-                                          minWidth: 140,
-                                          display: "flex",
-                                          alignItems: "center",
-                                          justifyContent: "center",
-                                          gap: 6,
-                                        }}
-                                      >
-                                        <FaPrint /> Download Receipt
-                                      </button>
-                                    </div>
                                   </div>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  </>
-                )}
-                {activeTab === "deactivate" && (
-                  <>
-                    <h4 className="fw-bold mb-4 text-danger">
-                      Deactivate Account
-                    </h4>
-                    <div className="alert alert-warning">
-                      <strong>Warning:</strong> This action will permanently
-                      remove your account and all your bookings. This cannot be
-                      undone.
-                    </div>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => setShowDeactivate(true)}
+                                  <div className="d-flex flex-column flex-md-row gap-2 mt-3">
+                                    {bookingsTab !== "cancelled" && !isCancelled && (
+                                      <>
+                                        <button
+                                          className="btn btn-outline-danger btn-sm flex-fill"
+                                          title="Cancel Booking"
+                                          onClick={() => handleCancelBooking(booking)}
+                                          style={{
+                                            borderRadius: 8,
+                                            fontWeight: 600,
+                                            minWidth: 110,
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            gap: 6,
+                                          }}
+                                        >
+                                          <FaTrash /> Cancel
+                                        </button>
+                                      </>
+                                    )}
+                                    <button
+                                      className="btn btn-outline-secondary btn-sm flex-fill"
+                                      title="Download Receipt"
+                                      onClick={() => handleDownloadReceipt(booking)}
+                                      style={{
+                                        borderRadius: 8,
+                                        fontWeight: 600,
+                                        minWidth: 140,
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        gap: 6,
+                                      }}
+                                    >
+                                      <FaPrint /> Download Receipt
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+              {activeTab === "deactivate" && (
+                <>
+                  <h4 className="fw-bold mb-4 text-danger">
+                    Deactivate Account
+                  </h4>
+                  <div className="alert alert-warning">
+                    <strong>Warning:</strong> This action will permanently
+                    remove your account and all your bookings. This cannot be
+                    undone.
+                  </div>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => setShowDeactivate(true)}
+                  >
+                    Deactivate My Account
+                  </button>
+                  {showDeactivate && (
+                    <div
+                      className="modal fade show"
+                      style={{ display: "block" }}
+                      tabIndex={-1}
                     >
-                      Deactivate My Account
-                    </button>
-                    {showDeactivate && (
-                      <div
-                        className="modal fade show"
-                        style={{ display: "block" }}
-                        tabIndex={-1}
-                      >
-                        <div className="modal-dialog">
-                          <div className="modal-content">
-                            <div className="modal-header">
-                              <h5 className="modal-title text-danger">
-                                Confirm Deactivation
-                              </h5>
-                              <button
-                                type="button"
-                                className="btn-close"
-                                onClick={() => setShowDeactivate(false)}
-                              ></button>
-                            </div>
-                            <div className="modal-body">
-                              Are you sure you want to deactivate your account?
-                              This action cannot be undone.
-                            </div>
-                            <div className="modal-footer">
-                              <button
-                                className="btn btn-secondary"
-                                onClick={() => setShowDeactivate(false)}
-                              >
-                                Cancel
-                              </button>
-                              <button
-                                className="btn btn-danger"
-                                onClick={handleDeactivate}
-                              >
-                                Yes, Deactivate
-                              </button>
-                            </div>
+                      <div className="modal-dialog">
+                        <div className="modal-content">
+                          <div className="modal-header">
+                            <h5 className="modal-title text-danger">
+                              Confirm Deactivation
+                            </h5>
+                            <button
+                              type="button"
+                              className="btn-close"
+                              onClick={() => setShowDeactivate(false)}
+                            ></button>
+                          </div>
+                          <div className="modal-body">
+                            Are you sure you want to deactivate your account?
+                            This action cannot be undone.
+                          </div>
+                          <div className="modal-footer">
+                            <button
+                              className="btn btn-secondary"
+                              onClick={() => setShowDeactivate(false)}
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              className="btn btn-danger"
+                              onClick={handleDeactivate}
+                            >
+                              Yes, Deactivate
+                            </button>
                           </div>
                         </div>
                       </div>
-                    )}
-                  </>
-                )}
-                {/* Placeholder for other tabs */}
-                {activeTab !== "profile" &&
-                  activeTab !== "ratings" &&
-                  activeTab !== "deactivate" &&
-                  activeTab !== "bookings" && (
-                    <div
-                      className="text-center py-5 text-muted"
-                      style={{ fontSize: 22 }}
-                    >
-                      {
-                        sidebarItems.find((i) => i.key === activeTab)?.label
-                      }{" "}
-                      section coming soon!
                     </div>
                   )}
-              </div>
-            </>
-          )}
-        </div>
+                </>
+              )}
+              {/* Placeholder for other tabs */}
+              {activeTab !== "profile" &&
+                activeTab !== "ratings" &&
+                activeTab !== "deactivate" &&
+                activeTab !== "bookings" && (
+                  <div
+                    className="text-center py-5 text-muted"
+                    style={{ fontSize: 22 }}
+                  >
+                    {
+                      sidebarItems.find((i) => i.key === activeTab)?.label
+                    }{" "}
+                    section coming soon!
+                  </div>
+                )}
+            </div>
+          </>
+        )}
       </div>
       {/* Print Receipt Modal (hidden, just for printing) */}
       {printBooking && (

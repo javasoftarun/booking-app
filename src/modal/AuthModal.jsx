@@ -16,7 +16,6 @@ const AuthModal = ({ show, onClose }) => {
     const [showPrivacy, setShowPrivacy] = useState(false);
     const [showTerms, setShowTerms] = useState(false);
 
-    // Reset Terms/Privacy modal state when AuthModal is closed
     useEffect(() => {
         if (!show) {
             setShowPrivacy(false);
@@ -162,76 +161,56 @@ const AuthModal = ({ show, onClose }) => {
             <div
                 style={{
                     background: "#fff",
-                    borderRadius: 16,
-                    boxShadow: "0 8px 32px rgba(30,40,60,0.10)",
-                    width: "95vw",
-                    maxWidth: 370,
+                    borderRadius: 18,
+                    boxShadow: "0 8px 40px #e5736822, 0 2px 8px #FFD60033",
+                    width: "99vw",
+                    maxWidth: 400,
                     minHeight: 420,
                     display: "flex",
                     flexDirection: "column",
                     position: "relative",
                     overflow: "hidden",
-                    border: "1px solid #e3e6ed",
+                    border: "1.5px solid #e57368",
                     padding: 0,
                     animation: "fadeInUp .4s cubic-bezier(.4,2,.6,1)",
                 }}
                 onMouseDown={e => e.stopPropagation()}
             >
-                {/* Subtle Top Bar */}
+                {/* Header */}
                 <div
                     style={{
-                        height: 6,
-                        width: "100%",
-                        background: "linear-gradient(90deg, #f5f6fa 0%, #e3e6ed 100%)",
-                        borderRadius: "0 0 12px 12px",
+                        background: "linear-gradient(90deg, #fff 60%, #e3f6ff 100%)",
+                        padding: "22px 0 12px 0",
+                        textAlign: "center",
+                        borderBottom: "1px solid #f3e9e7",
+                        position: "relative",
                     }}
-                />
-                {/* Close Button */}
-                <button
-                    onClick={onClose}
-                    style={{
-                        position: "absolute",
-                        top: 14,
-                        right: 14,
-                        background: "#f5f6fa",
-                        border: "none",
-                        borderRadius: "50%",
-                        width: 32,
-                        height: 32,
-                        fontSize: 20,
-                        color: "#888",
-                        boxShadow: "0 1px 4px #e3e6ed",
-                        cursor: "pointer",
-                        zIndex: 1,
-                        transition: "background 0.2s",
-                    }}
-                    aria-label="Close"
                 >
-                    <i className="bi bi-x-lg" />
-                </button>
-                {/* Brand & Welcome */}
-                <div style={{ textAlign: "center", marginTop: 28, marginBottom: 8 }}>
-                    <div
+                    <button
+                        onClick={onClose}
                         style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            gap: 10,
-                            marginBottom: 8,
-                        }}
-                    >
-                        <span style={{
-                            fontWeight: 800,
-                            fontSize: 28,
-                            letterSpacing: 0.5,
-                            fontFamily: "inherit",
+                            position: "absolute",
+                            top: 16,
+                            right: 18,
+                            background: "#fff",
+                            border: "none",
+                            borderRadius: "50%",
+                            width: 32,
+                            height: 32,
+                            fontSize: 18,
                             color: "#e57368",
-                        }}>
-                            Yatra
-                            <span style={{ color: "#FFD600" }}>Now</span>
-                        </span>
+                            boxShadow: "0 1px 4px #FFD60033",
+                            cursor: "pointer",
+                            zIndex: 1,
+                        }}
+                        aria-label="Close"
+                    >
+                        <i className="bi bi-x-lg" />
+                    </button>
+                    <div style={{ fontWeight: 900, fontSize: 26, color: "#e57368", letterSpacing: 0.5 }}>
+                        Yatra<span style={{ color: "#FFD600" }}>N</span><span style={{ color: "#23272f" }}>ow</span>
                     </div>
-                    <div style={{ color: "#888", fontSize: 14, marginTop: 2 }}>
+                    <div style={{ color: "#23272f", fontWeight: 600, fontSize: 16, marginTop: 2 }}>
                         Sign in to continue
                     </div>
                 </div>
@@ -239,7 +218,7 @@ const AuthModal = ({ show, onClose }) => {
                 <div
                     style={{
                         flex: 1,
-                        padding: "0 24px 20px 24px",
+                        padding: "0 28px 24px 28px",
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",
@@ -247,7 +226,7 @@ const AuthModal = ({ show, onClose }) => {
                 >
                     <div id="recaptcha-container"></div>
                     {step === "mobile" ? (
-                        <form onSubmit={handleSendOtp} style={{ marginTop: 16 }}>
+                        <form onSubmit={handleSendOtp} style={{ marginTop: 22 }}>
                             <label
                                 style={{
                                     fontWeight: 600,
@@ -269,7 +248,7 @@ const AuthModal = ({ show, onClose }) => {
                                         borderRadius: "8px 0 0 8px",
                                         border: "1px solid #e3e6ed",
                                         borderRight: "none",
-                                        color: "#1976d2",
+                                        color: "#e57368",
                                     }}
                                 >
                                     +91
@@ -292,44 +271,19 @@ const AuthModal = ({ show, onClose }) => {
                                     maxLength={10}
                                 />
                             </div>
-                            <label
-                                style={{
-                                    fontWeight: 500,
-                                    fontSize: 13,
-                                    marginBottom: 6,
-                                    display: "block",
-                                    color: "#23272f",
-                                }}
-                            >
-                                Referral Code <span style={{ color: "#bbb" }}>(optional)</span>
-                            </label>
-                            <input
-                                type="text"
-                                className="form-control mb-3"
-                                placeholder="Referral Code"
-                                value={referral}
-                                onChange={(e) => setReferral(e.target.value)}
-                                style={{
-                                    fontSize: 14,
-                                    borderRadius: 8,
-                                    border: "1px solid #e3e6ed",
-                                    padding: "8px 14px",
-                                    background: "#fafbfc",
-                                }}
-                            />
                             <button
                                 type="submit"
                                 className="btn w-100 fw-bold"
                                 style={{
-                                    background: "#FFD600",
+                                    background: "#e57368",
                                     border: "none",
                                     borderRadius: 8,
                                     fontSize: 16,
-                                    padding: "9px 0",
+                                    padding: "10px 0",
                                     marginTop: 8,
                                     marginBottom: 10,
-                                    color: "#23272f",
-                                    boxShadow: "0 1px 4px #e3e6ed",
+                                    color: "#fff",
+                                    boxShadow: "0 1px 4px #FFD60044",
                                     opacity: mobile.length === 10 ? 1 : 0.6,
                                     pointerEvents: mobile.length === 10 ? "auto" : "none",
                                     letterSpacing: 0.5,
@@ -337,12 +291,12 @@ const AuthModal = ({ show, onClose }) => {
                                 }}
                                 disabled={mobile.length !== 10}
                             >
-                                <i className="bi bi-shield-lock-fill me-2" style={{ color: "#e57368" }} />
+                                <i className="bi bi-shield-lock-fill me-2" style={{ color: "#FFD600" }} />
                                 Send OTP
                             </button>
                         </form>
                     ) : (
-                        <form onSubmit={handleVerifyOtp} style={{ marginTop: 16 }}>
+                        <form onSubmit={handleVerifyOtp} style={{ marginTop: 22 }}>
                             <label
                                 style={{
                                     fontWeight: 600,
@@ -376,20 +330,20 @@ const AuthModal = ({ show, onClose }) => {
                                 type="submit"
                                 className="btn w-100 fw-bold"
                                 style={{
-                                    background: "#FFD600", // Yellow button
+                                    background: "#e57368",
                                     border: "none",
                                     borderRadius: 8,
                                     fontSize: 16,
-                                    padding: "9px 0",
+                                    padding: "10px 0",
                                     marginTop: 8,
                                     marginBottom: 10,
-                                    color: "#23272f",
-                                    boxShadow: "0 1px 4px #e3e6ed",
+                                    color: "#fff",
+                                    boxShadow: "0 1px 4px #FFD60044",
                                     letterSpacing: 0.5,
                                     transition: "background 0.2s",
                                 }}
                             >
-                                <i className="bi bi-unlock-fill me-2" style={{ color: "#e57368" }} />
+                                <i className="bi bi-unlock-fill me-2" style={{ color: "#FFD600" }} />
                                 Verify OTP
                             </button>
                         </form>
@@ -399,7 +353,7 @@ const AuthModal = ({ show, onClose }) => {
                         <span
                             style={{
                                 margin: "0 12px",
-                                color: "#bbb",
+                                color: "#888",
                                 fontWeight: 500,
                                 fontSize: 14,
                                 letterSpacing: 0.5,
@@ -418,8 +372,8 @@ const AuthModal = ({ show, onClose }) => {
                             color: "#23272f",
                             border: "1px solid #e3e6ed",
                             marginBottom: 10,
-                            background: "#f5f6fa",
-                            boxShadow: "0 1px 4px #e3e6ed",
+                            background: "#f8fafc",
+                            boxShadow: "0 1px 4px #e3f6ff44",
                             letterSpacing: 0.5,
                             display: "flex",
                             alignItems: "center",
@@ -440,7 +394,7 @@ const AuthModal = ({ show, onClose }) => {
                     </button>
                     <div
                         style={{
-                            fontSize: 11,
+                            fontSize: 12,
                             color: "#888",
                             marginTop: 10,
                             textAlign: "center",
@@ -449,14 +403,14 @@ const AuthModal = ({ show, onClose }) => {
                     >
                         By logging in, you agree to{" "}
                         <span
-                            style={{ color: "#1976d2", textDecoration: "underline", cursor: "pointer" }}
+                            style={{ color: "#e57368", textDecoration: "underline", cursor: "pointer" }}
                             onClick={() => setShowTerms(true)}
                         >
                             Terms of Use
                         </span>{" "}
                         &amp;{" "}
                         <span
-                            style={{ color: "#1976d2", textDecoration: "underline", cursor: "pointer" }}
+                            style={{ color: "#e57368", textDecoration: "underline", cursor: "pointer" }}
                             onClick={() => setShowPrivacy(true)}
                         >
                             Privacy Policy
@@ -464,10 +418,8 @@ const AuthModal = ({ show, onClose }) => {
                     </div>
                 </div>
             </div>
-            {/* Modals for Terms and Privacy */}
             <TermsAndConditionsModal show={showTerms} onClose={() => setShowTerms(false)} />
             <PrivacyPolicyModal show={showPrivacy} onClose={() => setShowPrivacy(false)} />
-            {/* Animation keyframes */}
             <style>
                 {`
         @keyframes fadeInUp {
