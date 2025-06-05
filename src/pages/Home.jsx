@@ -3,6 +3,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import PlacesAutocomplete from 'react-places-autocomplete';
 import API_ENDPOINTS from '../config/apiConfig';
 import FaqSection from '../components/FaqSection';
+import weddingImg from '../assets/images/wedding.avif';
+import djImg from '../assets/images/dj.webp';
+import transportImg from '../assets/images/transporter.avif';
+import lightingImg from '../assets/images/rath.avif';
+import decoratedWeddingCarImg from '../assets/images/decorated-wedding-car.jpg';
 
 // Dummy data for offers, why choose, and FAQs
 const offers = [
@@ -15,11 +20,6 @@ const whyChoose = [
   { icon: "bi-currency-rupee", title: "Best Prices", desc: "Transparent fares, no hidden charges." },
   { icon: "bi-clock-history", title: "24x7 Support", desc: "We are here for you anytime." }
 ];
-
-const weddingImg = "https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?auto=format&fit=crop&w=600&q=80";
-const djImg = "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80";
-const transportImg = "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=400&q=80";
-const lightingImg = "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=400&q=80";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -337,12 +337,12 @@ const Home = () => {
           <div className="col-md-3 col-6">
             <div className="card-grid-item text-center p-3 h-100">
               <img
-                src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80"
-                alt="Cabs & Taxis"
+                src={decoratedWeddingCarImg}
+                alt="Cabs"
                 className="img-fluid rounded-3 mb-3"
                 style={{ height: 160, width: "100%", objectFit: "cover", maxWidth: 240 }}
               />
-              <div className="fw-bold mt-2">Cabs & Taxis</div>
+              <div className="fw-bold mt-2">Cabs</div>
               <div className="text-secondary">Book safe, reliable cabs for local, outstation, and event travel.</div>
             </div>
           </div>

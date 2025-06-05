@@ -97,6 +97,27 @@ const CabBookingDetails = () => {
       .catch(() => { });
   }, []);
 
+  // Prevent back navigation after successful payment
+  useEffect(() => {
+    if (showRedirecting) {
+      navigate("/confirmation", {
+        state: {
+          ...location.state,
+          cab,
+          tokenAmount: payFull ? finalFare : finalToken,
+          payFull,
+          coupon: selectedCoupon,
+          couponDiscount,
+          finalFare,
+          user: userDetails,
+          razorpay_payment_id: "success",
+        },
+        replace: true,
+      });
+    }
+    // eslint-disable-next-line
+  }, [showRedirecting]);
+
   if (!cab) {
     return (
       <div className="container py-5 text-center">
@@ -108,11 +129,13 @@ const CabBookingDetails = () => {
     );
   }
 
-  // Calculate dropDateTime by adding travelTime (in minutes) to pickup datetime
-  // Make sure cab.travelTime is available and is a number (in minutes)
-  const dropDateTime = cab.travelTime
-    ? addMinutesToDatetime(datetime, Number(cab.travelTime))
+  // Calculate dropDateTime by adding travel time (in hours) to pickup datetime
+  const dropDateTime = hours
+    ? addMinutesToDatetime(datetime, Number(hours) * 60)
     : datetime;
+
+  const formattedPickupDateTime = formatLocalDateTime(datetime);
+  const formattedDropDateTime = formatLocalDateTime(dropDateTime);
 
   // Coupon logic
   const eligibleCoupons = coupons.filter(coupon => cab.fare >= (coupon.minFare || 0));
@@ -166,6 +189,7 @@ const CabBookingDetails = () => {
       name: "YatraNow Cab Booking",
       description: "Cab Booking Payment",
       handler: async function (response) {
+        setShowRedirecting(true); 
         // Get userId from localStorage if available, else from registration response
         let userId = localStorage.getItem("userId");
         if (!userId) {
@@ -217,7 +241,7 @@ const CabBookingDetails = () => {
               pickupLocation: pickup,
               dropLocation: drop,
               pickupDateTime: formattedPickupDateTime,
-              dropDateTime: formattedDropDateTime,
+              dropDateTime: formattedDropDateTime, // <-- Ensure this line is present
               fare: finalFare + couponDiscount,
               promoDiscount: selectedCoupon ? couponDiscount : 0,
               tokenAmount: payFull ? finalFare : finalToken,
@@ -236,7 +260,6 @@ const CabBookingDetails = () => {
           });
           const bookingData = await bookingRes.json();
           if (bookingData && bookingData.responseMessage === "success") {
-            setShowRedirecting(true);
             setTimeout(() => {
               navigate("/confirmation", {
                 state: {
@@ -251,13 +274,14 @@ const CabBookingDetails = () => {
                   razorpay_payment_id: response.razorpay_payment_id,
                 },
               });
-            }, 1200); // Show loading for at least 1.2 seconds
+            }, 1200);
           } else {
             setShowBookingError(true);
+            setShowRedirecting(false); // Remove blur if booking fails
           }
         } catch (err) {
-          console.error("Booking insertion failed", err);
-          setShowBookingError(true); // Show popup on error
+          setShowBookingError(true);
+          setShowRedirecting(false); // Remove blur if booking fails
         }
       },
       prefill: {
@@ -274,11 +298,23 @@ const CabBookingDetails = () => {
     rzp.open();
   };
 
-  const formattedPickupDateTime = formatLocalDateTime(datetime);
-  const formattedDropDateTime = formatLocalDateTime(dropDateTime);
-
   return (
-    <div className="cablist-bg" style={{ minHeight: "100vh", background: "#fff" }}>
+    <div className="cablist-bg" style={{ minHeight: "100vh", background: "#fff", position: "relative" }}>
+      {/* Blur overlay when redirecting */}
+      {showRedirecting && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            zIndex: 2000,
+            backdropFilter: "blur(6px)",
+            background: "rgba(255,255,255,0.5)",
+          }}
+        />
+      )}
       <div
         className="cablist-main-container"
         style={{
@@ -287,7 +323,10 @@ const CabBookingDetails = () => {
           borderRadius: 28,
           boxShadow: "0 8px 40px #e5736822, 0 2px 8px #FFD60033",
           padding: "40px 28px",
-          background: "#fff"
+          background: "#fff",
+          filter: showRedirecting ? "blur(6px)" : "none",
+          pointerEvents: showRedirecting ? "none" : "auto",
+          transition: "filter 0.3s",
         }}
       >
         {/* Header */}
@@ -744,7 +783,7 @@ const CabBookingDetails = () => {
             left: 0,
             width: "100vw",
             height: "100vh",
-            zIndex: 2000,
+            zIndex: 3000,
           }}
           tabIndex={-1}
           role="dialog"
