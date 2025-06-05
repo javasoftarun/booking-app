@@ -253,8 +253,8 @@ const Home = () => {
         <h3 className="fw-bold mb-4 text-center" style={{ color: "#d32f2f" }}>Why Choose YatraNow?</h3>
         <div className="row g-4 justify-content-center">
           {whyChoose.map((item, idx) => (
-            <div key={idx} className="col-md-4">
-              <div className="card-grid-item text-center p-4 h-100 shadow-sm rounded-4">
+            <div key={idx} className="col-12 col-md-4 d-flex justify-content-center">
+              <div className="card-grid-item text-center p-4 h-100 shadow-sm rounded-4" style={{ width: "100%", maxWidth: 340 }}>
                 <i className={`bi ${item.icon} text-warning mb-2`} style={{ fontSize: 40 }}></i>
                 <div className="fw-bold mt-2" style={{ fontSize: 20 }}>{item.title}</div>
                 <div className="text-secondary">{item.desc}</div>
