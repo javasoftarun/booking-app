@@ -298,49 +298,49 @@ const Home = () => {
       <section className="container my-5">
         <h3 className="fw-bold mb-4 text-center" style={{ color: "#d32f2f" }}>Our Popular Services</h3>
         <div className="row g-4">
-          <div className="col-md-3 col-6">
-            <div className="card-grid-item text-center p-3 h-100">
+          <div className="col-12 col-sm-6 col-md-3">
+            <div className="card-grid-item text-center p-3 h-100 mx-auto" style={{ width: "100%" }}>
               <img
                 src={transportImg}
                 alt="Transporters"
                 className="img-fluid rounded-3 mb-3"
-                style={{ height: 160, width: "100%", objectFit: "cover", maxWidth: 240 }}
+                style={{ height: 160, width: "100%", objectFit: "cover" }}
               />
               <div className="fw-bold mt-2">Transporters</div>
               <div className="text-secondary">Book trucks, mini-trucks, and more for your goods and wedding logistics.</div>
             </div>
           </div>
-          <div className="col-md-3 col-6">
-            <div className="card-grid-item text-center p-3 h-100">
+          <div className="col-12 col-sm-6 col-md-3">
+            <div className="card-grid-item text-center p-3 h-100 mx-auto" style={{ width: "100%" }}>
               <img
                 src={djImg}
                 alt="DJ & Sound"
                 className="img-fluid rounded-3 mb-3"
-                style={{ height: 160, width: "100%", objectFit: "cover", maxWidth: 240 }}
+                style={{ height: 160, width: "100%", objectFit: "cover" }}
               />
               <div className="fw-bold mt-2">DJ & Sound</div>
               <div className="text-secondary">Hire professional DJs and sound systems for your events and parties.</div>
             </div>
           </div>
-          <div className="col-md-3 col-6">
-            <div className="card-grid-item text-center p-3 h-100">
+          <div className="col-12 col-sm-6 col-md-3">
+            <div className="card-grid-item text-center p-3 h-100 mx-auto" style={{ width: "100%" }}>
               <img
                 src={lightingImg}
                 alt="Roadlights"
                 className="img-fluid rounded-3 mb-3"
-                style={{ height: 160, width: "100%", objectFit: "cover", maxWidth: 240 }}
+                style={{ height: 160, width: "100%", objectFit: "cover" }}
               />
               <div className="fw-bold mt-2">Roadlights</div>
               <div className="text-secondary">Decorative roadlights and lighting solutions for weddings and functions.</div>
             </div>
           </div>
-          <div className="col-md-3 col-6">
-            <div className="card-grid-item text-center p-3 h-100">
+          <div className="col-12 col-sm-6 col-md-3">
+            <div className="card-grid-item text-center p-3 h-100 mx-auto" style={{ width: "100%" }}>
               <img
                 src={decoratedWeddingCarImg}
                 alt="Cabs"
                 className="img-fluid rounded-3 mb-3"
-                style={{ height: 160, width: "100%", objectFit: "cover", maxWidth: 240 }}
+                style={{ height: 160, width: "100%", objectFit: "cover" }}
               />
               <div className="fw-bold mt-2">Cabs</div>
               <div className="text-secondary">Book safe, reliable cabs for local, outstation, and event travel.</div>
@@ -422,7 +422,7 @@ const Home = () => {
               <div className="text-secondary mb-2">
                 "YatraNow made our wedding transport so easy! The cabs were on time and the drivers were very professional."
               </div>
-              <div className="fw-bold">- Priya S., Lucknow</div>
+              <div className="fw-bold">- Anil Kumar, Varanasi</div>
             </div>
           </div>
           <div className="col-md-4">
@@ -437,7 +437,7 @@ const Home = () => {
               <div className="text-secondary mb-2">
                 "Booked DJ and lighting for my brother's wedding. Great service and best rates in town!"
               </div>
-              <div className="fw-bold">- Aman K., Kanpur</div>
+              <div className="fw-bold">- Anand, Gorakhpur</div>
             </div>
           </div>
         </div>

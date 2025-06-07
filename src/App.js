@@ -10,6 +10,7 @@ import BookingConfirmation from './pages/BookingConfirmation';
 import UserProfile from './pages/UserProfile';
 import Footer from './components/Footer';
 import AboutUs from './pages/AboutUs';
+import Contact from './pages/Contact';
 
 const App = () => (
   <BrowserRouter>
@@ -21,6 +22,7 @@ const App = () => (
             <Route path="/" element={<Home />} />
             <Route path="/search-cab" element={<Home />} />
             <Route path="/about" element={<AboutUs />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/cabs" element={<CabsList />} />
             <Route path="/profile" element={<UserProfile />} />
             <Route path="/cab-booking-details" element={<CabBookingDetails />} />

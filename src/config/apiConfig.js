@@ -1,4 +1,4 @@
-const API_USER_BASE_URL = "https://userservice-f6nd.onrender.com/api";
+const API_USER_BASE_URL = "http://localhost:8083/api";
 const API_CABANDBOOKING_BASE_URL = "https://carbookingservice-0mby.onrender.com/api";
 const API_COMMONSERVICE_BASE_URL = "https://commonservice-31h4.onrender.com/api";
 
@@ -14,6 +14,7 @@ const API_ENDPOINTS = {
   UPDATE_PASSWORD: `${API_USER_BASE_URL}/users/update/password`,
   UPDATE_USER: `${API_USER_BASE_URL}/users/update`,
   GET_USER_BY_EMAIL: (email) => `${API_USER_BASE_URL}/users/find/email/${email}`,
+  INSER_USER_QUERY: `${API_USER_BASE_URL}/users/userquery`,
 
   // cab and booking api endpoints
   GET_ALL_CABS: `${API_CABANDBOOKING_BASE_URL}/cab/registration/get/all`,

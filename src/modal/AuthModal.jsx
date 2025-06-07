@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { auth, provider, messaging } from "../config/firebase";
+import { auth, provider, messaging, onMessage } from "../config/firebase";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { signInWithPopup } from "firebase/auth";
 import { USER_DEFAULT_ROLE } from "../constants/appConstants";
@@ -13,7 +13,6 @@ const AuthModal = ({ show, onClose }) => {
     const [mobile, setMobile] = useState("");
     const [otp, setOtp] = useState("");
     const [confirmationResult, setConfirmationResult] = useState(null);
-    const [referral, setReferral] = useState("");
     const [showPrivacy, setShowPrivacy] = useState(false);
     const [showTerms, setShowTerms] = useState(false);
 
@@ -25,9 +24,17 @@ const AuthModal = ({ show, onClose }) => {
             setMobile("");
             setOtp("");
             setConfirmationResult(null);
-            setReferral("");
         }
     }, [show]);
+
+    useEffect(() => {
+        onMessage(messaging, (payload) => {
+            new window.Notification(payload.notification.title, {
+                body: payload.notification.body,
+                icon: "/logo192.png",
+            });
+        });
+    }, []);
 
     if (!show) return null;
 
@@ -37,7 +44,8 @@ const AuthModal = ({ show, onClose }) => {
             let fcmToken = "";
             try {
                 fcmToken = await getToken(messaging, {
-                    vapidKey: "BMjoI0vuxY7XF6EkpbfeJP4GMmwyCRkK_9ptzad5gX36ckb502s_1odyiWf0Hjz7xafGz_Xt7QdTPvmK53lGRlc"
+                    vapidKey:
+                        "BMjoI0vuxY7XF6EkpbfeJP4GMmwyCRkK_9ptzad5gX36ckb502s_1odyiWf0Hjz7xafGz_Xt7QdTPvmK53lGRlc",
                 });
                 console.log("FCM Token:", fcmToken);
             } catch (err) {
@@ -187,7 +195,7 @@ const AuthModal = ({ show, onClose }) => {
                     padding: 0,
                     animation: "fadeInUp .4s cubic-bezier(.4,2,.6,1)",
                 }}
-                onMouseDown={e => e.stopPropagation()}
+                onMouseDown={(e) => e.stopPropagation()}
             >
                 {/* Header */}
                 <div
@@ -220,10 +228,26 @@ const AuthModal = ({ show, onClose }) => {
                     >
                         <i className="bi bi-x-lg" />
                     </button>
-                    <div style={{ fontWeight: 900, fontSize: 26, color: "#e57368", letterSpacing: 0.5 }}>
-                        Yatra<span style={{ color: "#FFD600" }}>N</span><span style={{ color: "#23272f" }}>ow</span>
+                    <div
+                        style={{
+                            fontWeight: 900,
+                            fontSize: 26,
+                            color: "#e57368",
+                            letterSpacing: 0.5,
+                        }}
+                    >
+                        Yatra
+                        <span style={{ color: "#FFD600" }}>N</span>
+                        <span style={{ color: "#23272f" }}>ow</span>
                     </div>
-                    <div style={{ color: "#23272f", fontWeight: 600, fontSize: 16, marginTop: 2 }}>
+                    <div
+                        style={{
+                            color: "#23272f",
+                            fontWeight: 600,
+                            fontSize: 16,
+                            marginTop: 2,
+                        }}
+                    >
                         Sign in to continue
                     </div>
                 </div>
@@ -416,14 +440,22 @@ const AuthModal = ({ show, onClose }) => {
                     >
                         By logging in, you agree to{" "}
                         <span
-                            style={{ color: "#e57368", textDecoration: "underline", cursor: "pointer" }}
+                            style={{
+                                color: "#e57368",
+                                textDecoration: "underline",
+                                cursor: "pointer",
+                            }}
                             onClick={() => setShowTerms(true)}
                         >
                             Terms of Use
                         </span>{" "}
                         &amp;{" "}
                         <span
-                            style={{ color: "#e57368", textDecoration: "underline", cursor: "pointer" }}
+                            style={{
+                                color: "#e57368",
+                                textDecoration: "underline",
+                                cursor: "pointer",
+                            }}
                             onClick={() => setShowPrivacy(true)}
                         >
                             Privacy Policy
