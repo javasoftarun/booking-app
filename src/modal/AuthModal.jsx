@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { auth, provider } from "../config/firebase";
+import { auth, provider, messaging } from "../config/firebase";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { signInWithPopup } from "firebase/auth";
 import { USER_DEFAULT_ROLE } from "../constants/appConstants";
 import API_ENDPOINTS from "../config/apiConfig";
 import TermsAndConditionsModal from "../modal/TermsAndConditionsModal";
 import PrivacyPolicyModal from "../modal/PrivacyPolicyModal";
+import { getToken } from "firebase/messaging";
 
 const AuthModal = ({ show, onClose }) => {
     const [step, setStep] = useState("mobile");
@@ -32,6 +33,17 @@ const AuthModal = ({ show, onClose }) => {
 
     const handleGoogleSignIn = async () => {
         try {
+            // Get FCM token before user API call
+            let fcmToken = "";
+            try {
+                fcmToken = await getToken(messaging, {
+                    vapidKey: "BMjoI0vuxY7XF6EkpbfeJP4GMmwyCRkK_9ptzad5gX36ckb502s_1odyiWf0Hjz7xafGz_Xt7QdTPvmK53lGRlc"
+                });
+                console.log("FCM Token:", fcmToken);
+            } catch (err) {
+                console.warn("Unable to get FCM token", err);
+            }
+
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
             const payload = {
@@ -45,6 +57,7 @@ const AuthModal = ({ show, onClose }) => {
                 imageUrl: user.photoURL || "",
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
+                fcmToken: fcmToken || "",
             };
             // Call Add User API
             const res = await fetch(API_ENDPOINTS.ADD_USER, {
