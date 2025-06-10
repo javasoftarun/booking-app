@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import PlacesAutocomplete from 'react-places-autocomplete';
 import API_ENDPOINTS from '../config/apiConfig';
 import FaqSection from '../components/FaqSection';
@@ -98,10 +98,10 @@ const Home = () => {
         <div className="container hero-form-content">
           <div className="text-center mb-4">
             <h1 className="hero-title-main">
-              Book Your Cab <span className="red">Anywhere</span> <span className="yellow">Anytime</span>
+              Pre Book Cab <span className="red">Anywhere</span> <span className="yellow">Anytime</span>
             </h1>
             <div className="hero-desc">
-              Fast, <span className="yellow">safe</span>, and <span className="red">affordable</span> rides at your fingertips.
+              Book Early. <span className="yellow">Travel Easy.</span><span className="red"> Reliable Cabs at Your Fingertips.</span>
             </div>
           </div>
           <div className="hero-form-card">
@@ -112,19 +112,49 @@ const Home = () => {
             <form onSubmit={handleSubmit} className="mt-4">
               <div className="row g-3 align-items-end">
                 <div className="col-12 col-md-3">
-                  <label className="form-label fw-semibold text-secondary">From</label>
+                  <label className="form-label fw-semibold text-secondary" htmlFor="pickup">
+                    From
+                  </label>
                   <PlacesAutocomplete value={pickup} onChange={setPickup} onSelect={setPickup}>
                     {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
                       <div style={{ position: 'relative', width: '100%' }}>
                         <input
                           {...getInputProps({
                             placeholder: 'Pickup Location',
-                            className: 'form-control fw-bold',
+                            className: 'form-control',
+                            id: 'pickup',
+                            name: 'pickup',
                             required: true,
+                            style: { fontWeight: 400 }
                           })}
                         />
                         {suggestions.length > 0 && (
-                          <div className="position-absolute w-100 bg-white rounded shadow" style={{ zIndex: 1000, top: '100%' }}>
+                          <div
+                            className="position-absolute bg-white rounded shadow autocomplete-dropdown-container"
+                            style={{
+                              zIndex: 9999,
+                              top: 'calc(100% + 4px)',
+                              left: 0,
+                              right: 0,
+                              width: '380px',
+                              minWidth: '320px',
+                              maxWidth: '95vw',
+                              boxShadow: '0 6px 24px rgba(0,0,0,0.12)',
+                              border: '1px solid #e0e0e0',
+                              position: 'absolute',
+                              background: '#fff',
+                              // Responsive: full width on small screens
+                              ...(window.innerWidth <= 600
+                                ? {
+                                    width: '100%',
+                                    minWidth: 0,
+                                    maxWidth: '100%',
+                                    left: 0,
+                                    right: 0,
+                                  }
+                                : {})
+                            }}
+                          >
                             {loading && <div className="p-2 text-muted">Loading...</div>}
                             {suggestions.map((suggestion, idx) => (
                               <div
@@ -149,19 +179,39 @@ const Home = () => {
                   </PlacesAutocomplete>
                 </div>
                 <div className="col-12 col-md-3">
-                  <label className="form-label fw-semibold text-secondary">To</label>
+                  <label className="form-label fw-semibold text-secondary" htmlFor="drop">
+                    To
+                  </label>
                   <PlacesAutocomplete value={drop} onChange={setDrop} onSelect={setDrop}>
                     {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
                       <div style={{ position: 'relative', width: '100%' }}>
                         <input
                           {...getInputProps({
                             placeholder: 'Drop Location',
-                            className: 'form-control fw-bold',
+                            className: 'form-control',
+                            id: 'drop',
+                            name: 'drop',
                             required: true,
+                            style: { fontWeight: 400 }
                           })}
                         />
                         {suggestions.length > 0 && (
-                          <div className="position-absolute w-100 bg-white rounded shadow" style={{ zIndex: 1000, top: '100%' }}>
+                          <div
+                            className="position-absolute bg-white rounded shadow autocomplete-dropdown-container"
+                            style={{
+                              zIndex: 9999,
+                              top: 'calc(100% + 4px)',
+                              left: 0,
+                              right: 0,
+                              width: '380px',
+                              minWidth: '320px',
+                              maxWidth: '95vw',
+                              boxShadow: '0 6px 24px rgba(0,0,0,0.12)',
+                              border: '1px solid #e0e0e0',
+                              position: 'absolute',
+                              background: '#fff'
+                            }}
+                          >
                             {loading && <div className="p-2 text-muted">Loading...</div>}
                             {suggestions.map((suggestion, idx) => (
                               <div
@@ -186,39 +236,54 @@ const Home = () => {
                   </PlacesAutocomplete>
                 </div>
                 <div className="col-6 col-md-2">
-                  <label className="form-label fw-semibold text-secondary">Pickup Date</label>
+                  <label className="form-label fw-semibold text-secondary" htmlFor="pickupDate">
+                    Pickup Date
+                  </label>
                   <input
                     type="date"
-                    className="form-control fw-bold"
+                    className="form-control"
+                    id="pickupDate"
+                    name="pickupDate"
+                    style={{ fontWeight: 400 }}
                     value={datetime ? datetime.split('T')[0] : ''}
                     onChange={e => {
                       const date = e.target.value;
-                      let time = "09:00";
-                      if (datetime && datetime.includes("T") && datetime.split("T")[1]) {
-                        time = datetime.split("T")[1].slice(0, 5);
-                      }
-                      setDatetime(date ? `${date}T${time}` : "");
+                      setDatetime(date + (datetime && datetime.includes('T') ? datetime.slice(datetime.indexOf('T')) : 'T00:00'));
                     }}
                     required
                   />
                 </div>
                 <div className="col-6 col-md-2">
-                  <label className="form-label fw-semibold text-secondary">Pickup Time</label>
+                  <label className="form-label fw-semibold text-secondary" htmlFor="pickupTime">
+                    Pickup Time
+                  </label>
                   <input
                     type="time"
-                    className="form-control fw-bold"
-                    value={datetime && datetime.includes('T') ? datetime.split('T')[1]?.slice(0, 5) || '' : ''}
+                    className="form-control"
+                    id="pickupTime"
+                    name="pickupTime"
+                    style={{ fontWeight: 400 }}
+                    value={
+                      datetime && datetime.includes('T')
+                        ? datetime.split('T')[1].slice(0, 5)
+                        : '09:00'
+                    }
                     onChange={e => {
-                      let date = datetime ? datetime.split('T')[0] : '';
-                      setDatetime(date && e.target.value ? `${date}T${e.target.value}` : '');
+                      const time = e.target.value;
+                      setDatetime((datetime ? datetime.split('T')[0] : '') + 'T' + time);
                     }}
                     required
                   />
                 </div>
                 <div className="col-6 col-md-1">
-                  <label className="form-label fw-semibold text-secondary">Travel Time</label>
+                  <label className="form-label fw-semibold text-secondary" htmlFor="travelTime">
+                    Travel Time
+                  </label>
                   <select
-                    className="form-select fw-bold"
+                    className="form-select"
+                    id="travelTime"
+                    name="travelTime"
+                    style={{ fontWeight: 400 }}
                     value={hours}
                     onChange={e => setHours(e.target.value)}
                     required
@@ -452,9 +517,9 @@ const Home = () => {
           <div style={{ fontSize: 18 }}>
             <span>Contact our team for a free consultation and best offers!</span>
           </div>
-          <a href="/contact" className="btn btn-danger fw-bold mt-3 px-4 py-2">
+          <Link to="/contact" className="btn btn-danger fw-bold mt-3 px-4 py-2">
             Get in Touch
-          </a>
+          </Link>
         </div>
       </section>
 

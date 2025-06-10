@@ -17,7 +17,7 @@ const BookingConfirmation = () => {
     finalFare,
     user,
     razorpay_payment_id,
-    bookingId, 
+    bookingId,
   } = location.state || {};
 
   if (!cab || !user) {
@@ -83,10 +83,10 @@ const BookingConfirmation = () => {
               >
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="#FFD600">
                   <circle cx="12" cy="12" r="12" fill="#FFD600" opacity="0.12" />
-                  <path d="M12 7v5l3 3" stroke="#FFD600" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                  <path d="M12 7v5l3 3" stroke="#FFD600" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                 </svg>
               </span>
-              
+
               <div>
                 <h3 className="fw-bold mb-1" style={{ color: "#e57368", fontSize: 22 }}>
                   Booking Request Received
@@ -104,175 +104,189 @@ const BookingConfirmation = () => {
                 </div>
               </div>
             </div>
-            
+
           </div>
-          {/* Trip Summary Tags */}
-          <div className="d-flex flex-wrap align-items-center gap-2 mb-4 justify-content-center">
-            <span
-              className="badge rounded-pill bg-primary-subtle text-primary px-3 py-2"
-              style={{ fontSize: 15, minWidth: 90, textAlign: "center" }}
-            >
-              <i className="bi bi-geo-alt-fill me-1"></i> {pickup}
-            </span>
-            <i className="bi bi-arrow-right mx-2" />
-            <span
-              className="badge rounded-pill bg-danger-subtle text-danger px-3 py-2"
-              style={{ fontSize: 15, minWidth: 90, textAlign: "center" }}
-            >
-              <i className="bi bi-geo-alt-fill me-1"></i> {drop}
-            </span>
-            <span
-              className="badge rounded-pill bg-info-subtle text-info px-3 py-2 ms-2"
-              style={{ fontSize: 15, minWidth: 120, textAlign: "center" }}
-            >
-              <i className="bi bi-calendar-event me-1"></i> {datetime}
-            </span>
-          </div>
+
           <hr />
-          <div className="row mb-4 gy-3">
-            {/* Passenger Details */}
-            <div className="col-md-6 mb-2 mb-md-0">
-              <h5 className="fw-semibold mb-2" style={{ color: "#23272f" }}>
-                Passenger Details
-              </h5>
-              <div style={{ fontSize: 15 }}>
-                <div>
-                  <b>Name:</b> {user.name}
-                </div>
-                <div>
-                  <b>Contact:</b> +91 {user.contact || user.phone}
-                </div>
-                <div>
-                  <b>Email:</b> {user.email || "N/A"}
-                </div>
-              </div>
-            </div>
-            {/* Payment Details */}
-            <div className="col-md-6">
-              <h5 className="fw-semibold mb-2" style={{ color: "#23272f" }}>
-                Payment Details
-              </h5>
-              <div style={{ fontSize: 15 }}>
-                <div>
-                  <b>Payment ID:</b>{" "}
-                  <span className="text-break">{razorpay_payment_id}</span>
-                </div>
-                <div>
-                  <b>Token Status:</b> <span className="text-success">Paid</span>
-                </div>
-                <div>
-                  <b>Amount Paid:</b> ₹{tokenAmount}
-                  {!payFull && (
-                    <span className="text-secondary ms-2">
-                      (Balance: ₹{finalFare - tokenAmount})
-                    </span>
-                  )}
+          <div className="row mb-4 g-3">
+            {/* Passenger Details Card/Table */}
+            <div className="col-12">
+              <div className="card shadow-sm border-0 rounded-4 h-100">
+                <div className="card-body p-3">
+                  <h5 className="fw-semibold mb-3" style={{ color: "#23272f" }}>
+                    Passenger Details
+                  </h5>
+                  <div className="table-responsive">
+                    <table className="table table-borderless mb-0" style={{ fontSize: 15 }}>
+                      <tbody>
+                        <tr>
+                          <th style={{ width: 120, color: "#888" }}>Name</th>
+                          <td>{user.name}</td>
+                          <th style={{ width: 120, color: "#888" }}>Contact</th>
+                          <td>+91 {user.contact || user.phone}</td>
+                        </tr>
+                        <tr>
+                          <th style={{ width: 120, color: "#888" }}>Email</th>
+                          <td colSpan={3}>{user.email || "N/A"}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div className="row mb-4 gy-3">
-            {/* Trip Details */}
-            <div className="col-md-6 mb-2 mb-md-0">
-              <h5 className="fw-semibold mb-2" style={{ color: "#23272f" }}>
-                Trip Details
-              </h5>
-              <div style={{ fontSize: 15 }}>
-                <div>
-                  <i
-                    className="bi bi-geo-alt-fill me-1"
-                    style={{ color: "#e57368" }}
-                  />
-                  <b>From:</b> {pickup}
+          {/* Trip & Cab Details Card/Table */}
+          <div className="mb-4">
+            <div className="card shadow-sm border-0 rounded-4">
+              <div className="card-body p-3">
+                <h5 className="fw-semibold mb-3" style={{ color: "#23272f" }}>
+                  Trip & Cab Details
+                </h5>
+                <div className="table-responsive">
+                  <table className="table table-borderless mb-0" style={{ fontSize: 15 }}>
+                    <tbody>
+                      <tr>
+                        <th style={{ width: 120, color: "#888" }}>From</th>
+                        <td>
+                          <i className="bi bi-geo-alt-fill me-1" style={{ color: "#e57368" }} />
+                          {pickup}
+                        </td>
+                        <th style={{ width: 120, color: "#888" }}>To</th>
+                        <td>
+                          <i className="bi bi-geo-alt me-1" style={{ color: "#1976d2" }} />
+                          {drop}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th style={{ color: "#888" }}>Pickup</th>
+                        <td colSpan={3}>
+                          <i className="bi bi-calendar-event me-1" style={{ color: "#e57368" }} />
+                          {datetime}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th style={{ color: "#888" }}>Cab</th>
+                        <td colSpan={3}>
+                          <img
+                            src={cab.cabImageUrl}
+                            alt={cab.cabName}
+                            style={{
+                              width: 40,
+                              height: 28,
+                              objectFit: "contain",
+                              borderRadius: 6,
+                              background: "#f8fafc",
+                              border: "1px solid #eee",
+                              marginRight: 8,
+                            }}
+                          />
+                          <span className="fw-semibold">{cab.cabName}</span>
+                          <span className="text-secondary ms-2">
+                            {cab.cabType} • {cab.cabCapacity} Seats • Fuel: {cab.cabFuelType || "N/A"}
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
-                <div>
-                  <i className="bi bi-geo-alt me-1" style={{ color: "#1976d2" }} />
-                  <b>To:</b> {drop}
-                </div>
-                <div>
-                  <i
-                    className="bi bi-calendar-event me-1"
-                    style={{ color: "#e57368" }}
-                  />
-                  <b>Pickup:</b> {datetime}
-                </div>
-              </div>
-            </div>
-            {/* Cab Details */}
-            <div className="col-md-6">
-              <h5 className="fw-semibold mb-2" style={{ color: "#23272f" }}>
-                Cab Details
-              </h5>
-              <div className="d-flex align-items-center gap-3 mb-2">
-                <img
-                  src={cab.cabImageUrl}
-                  alt={cab.cabName}
-                  style={{
-                    width: 54,
-                    height: 38,
-                    objectFit: "contain",
-                    borderRadius: 8,
-                    background: "#f8fafc",
-                    border: "1px solid #eee",
-                  }}
-                />
-                <div>
-                  <div className="fw-semibold" style={{ fontSize: 16 }}>
-                    {cab.cabName}
-                  </div>
-                  <div className="text-secondary" style={{ fontSize: 14 }}>
-                    {cab.cabType} • {cab.cabCapacity} Seats
-                  </div>
-                </div>
-              </div>
-              <div style={{ fontSize: 14 }}>
-                <b>Fuel:</b> {cab.cabFuelType || "N/A"}
               </div>
             </div>
           </div>
           <hr />
-          {/* Fare Summary */}
-          <div className="mb-3">
-            <h5 className="fw-semibold mb-2" style={{ color: "#23272f" }}>
-              Fare Summary
-            </h5>
-            <div className="d-flex justify-content-between" style={{ fontSize: 15 }}>
-              <span>Base Fare</span>
-              <span>₹{cab.fare}</span>
-            </div>
-            <div className="d-flex justify-content-between" style={{ fontSize: 15 }}>
-              <span>Promo Discount</span>
-              <span className={couponDiscount ? "text-success" : "text-secondary"}>
-                -₹{couponDiscount || 0}
-              </span>
-            </div>
-            <div className="d-flex justify-content-between fw-bold" style={{ fontSize: 16 }}>
-              <span>Final Fare</span>
-              <span>₹{finalFare}</span>
-            </div>
-            {!payFull && (
-              <>
-                <div className="d-flex justify-content-between" style={{ fontSize: 15 }}>
-                  <span>Token Paid (10%)</span>
-                  <span>₹{tokenAmount}</span>
+          {/* Payment Details Card/Table */}
+          <div className="mb-4">
+            <div className="card shadow-sm border-0 rounded-4">
+              <div className="card-body p-3">
+                <h5 className="fw-semibold mb-3" style={{ color: "#23272f" }}>
+                  Payment Details
+                </h5>
+                <div className="table-responsive">
+                  <table className="table table-borderless mb-0" style={{ fontSize: 14 }}>
+                    <tbody>
+                      <tr>
+                        <th style={{ width: 140, color: "#888" }}>Payment ID</th>
+                        <td className="text-end text-break" style={{ fontWeight: 500 }}>{razorpay_payment_id || "N/A"}</td>
+                      </tr>
+                      <tr>
+                        <th style={{ width: 140, color: "#888" }}>Status</th>
+                        <td className="text-end">
+                          {razorpay_payment_id ? (
+                            <span className="text-success fw-semibold">Paid</span>
+                          ) : (
+                            <span className="text-danger fw-semibold">Pending</span>
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th style={{ width: 140, color: "#888" }}>Amount Paid</th>
+                        <td className="text-end" style={{ fontWeight: 500 }}>
+                          ₹{payFull ? finalFare : tokenAmount}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
-                <div className="d-flex justify-content-between" style={{ fontSize: 15, color: "#1976d2" }}>
-                  <span>To Pay Driver During Trip</span>
-                  <span>₹{finalFare - tokenAmount}</span>
-                </div>
-                <div className="alert alert-info py-2 px-3 mt-2" style={{ fontSize: 13, background: "#e3f6ff", color: "#1976d2", border: "1px solid #b6e3fa" }}>
-                  <i className="bi bi-info-circle me-1"></i>
-                  <b>Note:</b> Token amount is just 10% of the total fare. The remaining amount (shown above) is payable directly to the driver at the time of pickup or drop.
-                </div>
-              </>
-            )}
-            {payFull && (
-              <div className="d-flex justify-content-between" style={{ fontSize: 15 }}>
-                <span>Paid Amount</span>
-                <span>₹{finalFare}</span>
               </div>
-            )}
+            </div>
           </div>
+          {/* Fare Summary Card/Table */}
+          <div className="mb-4">
+            <div className="card shadow-sm border-0 rounded-4">
+              <div className="card-body p-3">
+                <h5 className="fw-semibold mb-3" style={{ color: "#23272f" }}>
+                  Fare Summary
+                </h5>
+                <div className="table-responsive">
+                  <table className="table table-borderless mb-0" style={{ fontSize: 15 }}>
+                    <tbody>
+                      <tr>
+                        <th style={{ width: 180, color: "#888" }}>Base Fare</th>
+                        <td className="text-end">₹{cab.fare}</td>
+                      </tr>
+                      <tr>
+                        <th style={{ width: 180, color: "#888" }}>Promo Discount</th>
+                        <td className={`text-end ${couponDiscount ? "text-success" : "text-secondary"}`}>
+                          -₹{couponDiscount || 0}
+                        </td>
+                      </tr>
+                      <tr className="fw-bold">
+                        <th style={{ width: 180, color: "#23272f" }}>Final Fare</th>
+                        <td className="text-end" style={{ color: "#23272f" }}>₹{finalFare}</td>
+                      </tr>
+                      {!payFull && (
+                        <>
+                          <tr>
+                            <th style={{ width: 180, color: "#888" }}>Token Paid (10%)</th>
+                            <td className="text-end">₹{tokenAmount}</td>
+                          </tr>
+                          <tr>
+                            <th style={{ width: 180, color: "#1976d2" }}>To Pay Driver During Trip</th>
+                            <td className="text-end" style={{ color: "#1976d2" }}>₹{finalFare - tokenAmount}</td>
+                          </tr>
+                          <tr>
+                            <td colSpan={2}>
+                              <div className="alert alert-info py-2 px-3 mt-2 mb-0" style={{ fontSize: 13, background: "#e3f6ff", color: "#1976d2", border: "1px solid #b6e3fa" }}>
+                                <i className="bi bi-info-circle me-1"></i>
+                                <b>Note:</b> Token amount is just 10% of the total fare. The remaining amount (shown above) is payable directly to the driver at the time of pickup or drop.
+                              </div>
+                            </td>
+                          </tr>
+                        </>
+                      )}
+                      {payFull && (
+                        <tr>
+                          <th style={{ width: 180, color: "#888" }}>Paid Amount</th>
+                          <td className="text-end">₹{finalFare}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="alert alert-info mt-4 mb-0" style={{ fontSize: 14 }}>
             <i className="bi bi-info-circle me-1" />
             Cab and driver details will be shared up to 1 day before your pickup time.<br />

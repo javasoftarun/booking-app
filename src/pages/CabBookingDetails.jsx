@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import API_ENDPOINTS from "../config/apiConfig";
 import { USER_DEFAULT_IMAGE, USER_DEFAULT_ROLE, DEFAULT_BOOKING_STATUS } from "../constants/appConstants";
@@ -7,6 +7,7 @@ import axios from "axios";
 import CouponListModal from "./CouponListModal";
 import TermsAndConditionsModal from "../modal/TermsAndConditionsModal";
 import PrivacyPolicyModal from "../modal/PrivacyPolicyModal";
+import AuthModal from "../modal/AuthModal";
 
 // Helper to add minutes to a datetime string
 function addMinutesToDatetime(datetimeStr, minutes) {
@@ -35,34 +36,25 @@ function formatLocalDateTime(dt) {
 const CabBookingDetails = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  // Get cabRating and roundTrip from navigation state
   const { cab, pickup, drop, datetime, hours, cabRating, roundTrip } = location.state || {};
 
+  // All hooks here!
   const [payFull, setPayFull] = useState(false);
   const [selectedCoupon, setSelectedCoupon] = useState(null);
   const [couponError, setCouponError] = useState("");
   const [showBookingError, setShowBookingError] = useState(false);
-
-  // New: State for user details
-  const [userDetails, setUserDetails] = useState({
-    name: "",
-    gender: "",
-    email: "",
-    contact: ""
-  });
-
-  // State for coupons
+  const [fieldErrors, setFieldErrors] = useState({ name: "", contact: "" });
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [userDetails, setUserDetails] = useState({ name: "", email: "", contact: "" });
   const [coupons, setCoupons] = useState([]);
-
-  // 1. Add state for coupon modal at the top (after other useState hooks)
   const [showCouponModal, setShowCouponModal] = useState(false);
-
-  // Add this state at the top with other useState hooks:
   const [showRedirecting, setShowRedirecting] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
+  const nameRef = useRef(null);
+  const contactRef = useRef(null);
 
-  // On mount, if userId in localStorage, fetch user details and prefill form
+  // All useEffect hooks here!
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (userId) {
@@ -78,7 +70,6 @@ const CabBookingDetails = () => {
             const user = data.responseData[0];
             setUserDetails({
               name: user.name || "",
-              gender: user.gender || "",
               email: user.email || "",
               contact: user.phone || ""
             });
@@ -87,7 +78,6 @@ const CabBookingDetails = () => {
     }
   }, []);
 
-  // Fetch coupons
   useEffect(() => {
     axios
       .get(API_ENDPOINTS.GET_ALL_COUPONS)
@@ -97,7 +87,6 @@ const CabBookingDetails = () => {
       .catch(() => { });
   }, []);
 
-  // Prevent back navigation after successful payment
   useEffect(() => {
     if (showRedirecting) {
       navigate("/confirmation", {
@@ -118,6 +107,15 @@ const CabBookingDetails = () => {
     // eslint-disable-next-line
   }, [showRedirecting]);
 
+  useEffect(() => {
+    const handleUserLogin = () => {
+      setShowAuthModal(false);
+    };
+    window.addEventListener("userLogin", handleUserLogin);
+    return () => window.removeEventListener("userLogin", handleUserLogin);
+  }, []);
+
+  // Now you can safely do:
   if (!cab) {
     return (
       <div className="container py-5 text-center">
@@ -158,28 +156,49 @@ const CabBookingDetails = () => {
     setCouponError("");
   };
 
-  // Replace handlePay with Razorpay integration
+  // Replace handlePay with userId check before payment
   const handlePay = () => {
-    // Use state if available, else fallback to form values
+    // Check userId before proceeding
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      setShowAuthModal(true);
+      return;
+    }
+
+    let errors = { name: "", contact: "" };
+    let focusField = null;
+
+    // Validate name
+    if (!userDetails.name.trim()) {
+      errors.name = "Please enter your name.";
+      focusField = "name";
+    }
+
+    // Validate contact
+    if (!userDetails.contact.trim()) {
+      errors.contact = "Please enter your contact number.";
+      if (!focusField) focusField = "contact";
+    } else if (!/^\d{10}$/.test(userDetails.contact.trim())) {
+      errors.contact = "Please enter a valid 10-digit contact number.";
+      if (!focusField) focusField = "contact";
+    }
+
+    setFieldErrors(errors);
+
+    // Auto-focus the first invalid field
+    if (focusField === "name" && nameRef.current) {
+      nameRef.current.focus();
+      return;
+    }
+    if (focusField === "contact" && contactRef.current) {
+      contactRef.current.focus();
+      return;
+    }
+
     const name = userDetails.name || document.getElementById("name")?.value.trim();
-    const gender = userDetails.gender || document.querySelector('input[name="gender"]:checked')?.value;
     const email = userDetails.email || document.getElementById("email")?.value.trim();
     const contact = userDetails.contact || document.getElementById("contact")?.value.trim();
 
-    if (!name) {
-      alert("Please enter your name.");
-      return;
-    }
-    if (!gender) {
-      alert("Please select your gender.");
-      return;
-    }
-    if (!contact || !/^\d{10}$/.test(contact)) {
-      alert("Please enter a valid 10-digit contact number.");
-      return;
-    }
-
-    // Amount in paise
     const amount = (payFull ? finalFare : finalToken) * 100;
 
     const options = {
@@ -190,7 +209,6 @@ const CabBookingDetails = () => {
       description: "Cab Booking Payment",
       handler: async function (response) {
         setShowRedirecting(true); 
-        // Get userId from localStorage if available, else from registration response
         let userId = localStorage.getItem("userId");
         if (!userId) {
           try {
@@ -270,7 +288,7 @@ const CabBookingDetails = () => {
                   coupon: selectedCoupon,
                   couponDiscount,
                   finalFare,
-                  user: { name, gender, email, contact },
+                  user: { name, email, contact },
                   razorpay_payment_id: response.razorpay_payment_id,
                 },
               });
@@ -474,34 +492,18 @@ const CabBookingDetails = () => {
                     <label className="form-label" htmlFor="name">Name <span className="text-danger">*</span></label>
                     <input
                       type="text"
-                      className="form-control"
+                      className={`form-control${fieldErrors.name ? " is-invalid" : ""}`}
                       id="name"
                       required
                       value={userDetails.name}
                       onChange={e => setUserDetails(prev => ({ ...prev, name: e.target.value }))}
-                      disabled={!!userDetails.name}
+                      ref={nameRef}
                     />
-                  </div>
-                  <div className="col-md-6">
-                    <label className="form-label d-block">Gender <span className="text-danger">*</span></label>
-                    <div>
-                      {["Male", "Female", "Other"].map(option => (
-                        <div className="form-check form-check-inline" key={option}>
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            name="gender"
-                            id={option.toLowerCase()}
-                            value={option}
-                            checked={userDetails.gender === option}
-                            onChange={e => setUserDetails(prev => ({ ...prev, gender: e.target.value }))}
-                            disabled={!!userDetails.gender}
-                            required
-                          />
-                          <label className="form-check-label" htmlFor={option.toLowerCase()}>{option}</label>
-                        </div>
-                      ))}
-                    </div>
+                    {fieldErrors.name && (
+                      <div className="invalid-feedback" style={{ display: "block" }}>
+                        {fieldErrors.name}
+                      </div>
+                    )}
                   </div>
                   <div className="col-md-6">
                     <label className="form-label" htmlFor="email">Email Id</label>
@@ -511,7 +513,7 @@ const CabBookingDetails = () => {
                       id="email"
                       value={userDetails.email}
                       onChange={e => setUserDetails(prev => ({ ...prev, email: e.target.value }))}
-                      disabled={!!userDetails.email}
+                      disabled
                     />
                   </div>
                   <div className="col-md-6">
@@ -520,16 +522,21 @@ const CabBookingDetails = () => {
                       <span className="input-group-text" style={{ background: "#fffbe7" }}>+91</span>
                       <input
                         type="tel"
-                        className="form-control"
+                        className={`form-control${fieldErrors.contact ? " is-invalid" : ""}`}
                         id="contact"
                         required
                         maxLength={10}
                         pattern="[0-9]{10}"
                         value={userDetails.contact}
                         onChange={e => setUserDetails(prev => ({ ...prev, contact: e.target.value }))}
-                        disabled={!!userDetails.contact}
+                        ref={contactRef}
                       />
                     </div>
+                    {fieldErrors.contact && (
+                      <div className="invalid-feedback" style={{ display: "block" }}>
+                        {fieldErrors.contact}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="form-text mt-3">
@@ -817,6 +824,7 @@ const CabBookingDetails = () => {
       />
       <TermsAndConditionsModal show={showTerms} onClose={() => setShowTerms(false)} />
       <PrivacyPolicyModal show={showPrivacy} onClose={() => setShowPrivacy(false)} />
+      <AuthModal show={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </div>
   );
 };

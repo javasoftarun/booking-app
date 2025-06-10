@@ -38,6 +38,7 @@ const CabsList = () => {
 
   // Auth modal state
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [pendingCab, setPendingCab] = useState(null); // To store cab info for post-login redirect
 
   // Optional: handle window resize to auto-toggle filter on resize
   React.useEffect(() => {
@@ -159,6 +160,22 @@ const CabsList = () => {
     fetchRatings();
     return () => { isMounted = false; };
   }, [pagedCabs, fetchCabRating]);
+
+  // Listen for login event to proceed after successful login
+  useEffect(() => {
+    const handleUserLogin = () => {
+      if (pendingCab) {
+        // After login, redirect to cab booking details
+        navigate('/cab-booking-details', {
+          state: pendingCab
+        });
+        setPendingCab(null);
+      }
+      setShowAuthModal(false);
+    };
+    window.addEventListener("userLogin", handleUserLogin);
+    return () => window.removeEventListener("userLogin", handleUserLogin);
+  }, [pendingCab, navigate]);
 
   if (!cabs.length) {
     return (
@@ -544,19 +561,24 @@ const CabsList = () => {
                       </div>
                       <button
                         className="btn btn-book fw-bold ms-2 ms-md-0 mt-0 mt-md-2"
-                        onClick={() =>
-                          navigate('/cab-booking-details', {
-                            state: {
-                              cab,
-                              pickup,
-                              drop,
-                              datetime,
-                              hours,
-                              roundTrip: true,
-                              cabRating: cabRatings[cab.cabRegistrationId]
-                            }
-                          })
-                        }
+                        onClick={() => {
+                          const userId = localStorage.getItem("userId");
+                          const cabState = {
+                            cab,
+                            pickup,
+                            drop,
+                            datetime,
+                            hours,
+                            roundTrip: true,
+                            cabRating: cabRatings[cab.cabRegistrationId]
+                          };
+                          if (!userId) {
+                            setPendingCab(cabState);
+                            setShowAuthModal(true);
+                          } else {
+                            navigate('/cab-booking-details', { state: cabState });
+                          }
+                        }}
                       >
                         BOOK
                       </button>

@@ -665,3 +665,24 @@ body {
     border-radius: 16px !important;
   }
 }
+
+.hero-form-section {
+  overflow: visible !important;
+}
+.hero-form-card {
+  overflow: visible !important;
+}
+
+/* Make the address suggestion box wider than the input/search box */
+.pac-container,
+.autocomplete-dropdown-container,
+.address-suggestion-box {
+  min-width: 340px !important;
+  width: 100% !important;
+  left: 0px !important;
+  max-width: 95vw;
+  z-index: 9999 !important;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.12) !important;
+}
+
+/* Optional: If you use a custom class for your suggestion box, add it to the selector above */
