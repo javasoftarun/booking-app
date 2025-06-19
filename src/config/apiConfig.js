@@ -1,6 +1,6 @@
-const API_USER_BASE_URL = "https://userservice-f6nd.onrender.com/api";
-const API_CABANDBOOKING_BASE_URL = "https://carbookingservice-0mby.onrender.com/api";
-const API_COMMONSERVICE_BASE_URL = "https://commonservice-31h4.onrender.com/api";
+const API_USER_BASE_URL = "https://userservice-c3lx.onrender.com/api";
+const API_CABANDBOOKING_BASE_URL = "https://carbookingservice.onrender.com/api";
+const API_COMMONSERVICE_BASE_URL = "https://commonservice.onrender.com/api";
 
 const API_ENDPOINTS = {
   // users api endpoints
