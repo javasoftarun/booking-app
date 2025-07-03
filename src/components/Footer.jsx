@@ -19,23 +19,21 @@ const Footer = () => {
   return (
     <>
       {/* Desktop Footer */}
-      <footer
-        className="bg-white border-top"
-      >
+      <footer className="bg-white border-top">
         <div className="container py-5">
-          <div className="row gy-4 gx-5">
+          <div className="row gy-4 gx-5 flex-column flex-md-row">
             {/* Brand and tagline */}
-            <div className="col-12 col-md-4">
-              <div className="d-flex align-items-center gap-2 mb-3">
+            <div className="col-12 col-md-4 mb-4 mb-md-0 text-center text-md-start">
+              <div className="d-flex align-items-center gap-2 mb-3 justify-content-center justify-content-md-start">
                 <span style={{ color: "#FFD600", fontSize: 34 }}>🚕</span>
                 <span className="fw-bold" style={{ color: "#e57368", fontSize: 26, letterSpacing: 1 }}>
                   Yatra<span style={{ color: "#FFD600" }}>Now</span>
                 </span>
               </div>
-              <div className="text-muted mb-3" style={{ fontSize: 15, maxWidth: 320 }}>
+              <div className="text-muted mb-3 mx-auto mx-md-0" style={{ fontSize: 15, maxWidth: 320 }}>
                 Your trusted partner for safe, fast, and affordable travel bookings across India.
               </div>
-              <div className="d-flex align-items-center gap-3 mt-3">
+              <div className="d-flex align-items-center gap-3 mt-3 justify-content-center justify-content-md-start">
                 <a href="https://facebook.com/yatranow" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
                   <i className="bi bi-facebook" style={{ fontSize: 22, color: "#4267B2" }} />
                 </a>
@@ -51,7 +49,7 @@ const Footer = () => {
               </div>
             </div>
             {/* Useful Links */}
-            <div className="col-6 col-md-2">
+            <div className="col-12 col-md-2 mb-4 mb-md-0 text-center text-md-start">
               <div className="fw-semibold mb-3" style={{ color: "#e57368", fontSize: 17 }}>Useful Links</div>
               <ul className="list-unstyled mb-2" style={{ fontSize: 15, lineHeight: 2 }}>
                 <li>
@@ -74,7 +72,7 @@ const Footer = () => {
               </ul>
             </div>
             {/* Quick Help */}
-            <div className="col-6 col-md-3">
+            <div className="col-12 col-md-3 mb-4 mb-md-0 text-center text-md-start">
               <div className="fw-semibold mb-3" style={{ color: "#e57368", fontSize: 17 }}>Quick Help</div>
               <ul className="list-unstyled mb-2" style={{ fontSize: 15, lineHeight: 2 }}>
                 <li>
@@ -116,29 +114,29 @@ const Footer = () => {
               </ul>
             </div>
             {/* Contact Info */}
-            <div className="col-12 col-md-3">
+            <div className="col-12 col-md-3 text-center text-md-start">
               <div className="fw-semibold mb-3" style={{ color: "#e57368", fontSize: 17 }}>Contact Us</div>
               <div style={{ fontSize: 15 }}>
-                <div className="mb-2 d-flex align-items-center">
+                <div className="mb-2 d-flex align-items-center justify-content-center justify-content-md-start">
                   <i className="bi bi-envelope-fill me-2" style={{ color: "#FFD600" }} />
                   <a href="mailto:support@yatranow.com" className="text-decoration-none text-muted">
                     support@yatranow.com
                   </a>
                 </div>
-                <div className="mb-2 d-flex align-items-center">
+                <div className="mb-2 d-flex align-items-center justify-content-center justify-content-md-start">
                   <i className="bi bi-telephone-fill me-2" style={{ color: "#FFD600" }} />
                   <a href="tel:+919140251119" className="text-decoration-none text-muted">
                     +91-9140251119
                   </a>
                 </div>
-                <div className="mb-2 d-flex align-items-center">
+                <div className="mb-2 d-flex align-items-center justify-content-center justify-content-md-start">
                   <i className="bi bi-geo-alt-fill me-2" style={{ color: "#FFD600" }} />
                   <span>Varanasi, Uttar Pradesh, India</span>
                 </div>
                 <div className="mt-3">
                   <span className="fw-semibold" style={{ color: "#e57368", fontSize: 15 }}>Business Hours:</span>
-                  <div style={{ fontSize: 14, color: "#888" }}>Mon - Sat: 8:00am - 10:00pm</div>
-                  <div style={{ fontSize: 14, color: "#888" }}>Sunday: 9:00am - 6:00pm</div>
+                  <div style={{ fontSize: 14, color: "#888" }}>Mon - Sat: 9:00am - 06:00pm</div>
+                  <div style={{ fontSize: 14, color: "#888" }}>Sunday: 9:00am - 2:00pm</div>
                 </div>
               </div>
             </div>
@@ -168,7 +166,44 @@ const Footer = () => {
       <CancellationPolicyModal show={showCancelPolicy} onClose={() => setShowCancelPolicy(false)} />
       <RefundPolicyModal show={showRefundPolicy} onClose={() => setShowRefundPolicy(false)} />
       <TermsAndConditionsModal show={showTerms} onClose={() => setShowTerms(false)} />
-      <PrivacyPolicyModal show={showPrivacy} onClose={() => setShowPrivacy(false)} /> 
+      <PrivacyPolicyModal show={showPrivacy} onClose={() => setShowPrivacy(false)} />
+
+      <style>
+        {`
+          @media (max-width: 991px) {
+            .row.flex-column {
+              flex-direction: column !important;
+            }
+            .row.flex-column > [class^="col-"] {
+              max-width: 100% !important;
+              flex: 0 0 100% !important;
+            }
+            footer .mb-4 {
+              margin-bottom: 2rem !important;
+            }
+          }
+          @media (max-width: 575px) {
+            footer .container {
+              padding-left: 8px !important;
+              padding-right: 8px !important;
+              width: 100vw !important;
+              max-width: 100vw !important;
+              overflow-x: hidden !important;
+            }
+            footer .row {
+              margin-left: 0 !important;
+              margin-right: 0 !important;
+            }
+            footer [class^="col-"] {
+              padding-left: 0 !important;
+              padding-right: 0 !important;
+            }
+            body, html {
+              overflow-x: hidden !important;
+            }
+          }
+        `}
+      </style>
     </>
   );
 };

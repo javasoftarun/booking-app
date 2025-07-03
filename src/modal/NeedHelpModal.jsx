@@ -167,7 +167,7 @@ const NeedHelpModal = ({ show, onClose, style = {} }) => {
                   className="alert alert-info py-2 px-3 mb-3"
                   style={{
                     background: "#e3f6ff",
-                    color: "#e57368", // red text
+                    color: "#e57368",
                     border: "none",
                     borderRadius: 10,
                     fontSize: 16,
@@ -180,7 +180,7 @@ const NeedHelpModal = ({ show, onClose, style = {} }) => {
                   className="mb-3"
                   style={{
                     background: "#fff",
-                    border: "1.5px solid #e57368", // red border
+                    border: "1.5px solid #e57368",
                     borderRadius: 10,
                     padding: "1rem 1.2rem",
                     color: "#e57368",
@@ -200,7 +200,7 @@ const NeedHelpModal = ({ show, onClose, style = {} }) => {
                 >
                   <b>Office Hours:</b> 9:00 AM – 8:00 PM (Mon-Sat)
                   <br />
-                  <b>Address:</b> 2nd Floor, YatraNow HQ, Hyderabad, India
+                  <b>Address:</b> Varanasi, Uttar Pradesh, India
                 </div>
                 <div
                   className="mb-0"

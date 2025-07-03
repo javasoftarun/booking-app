@@ -28,6 +28,7 @@ const Home = () => {
   const recognitionRef = useRef(null);
   const pickupInputRef = useRef(null);
   const dropInputRef = useRef(null);
+  const [recognizing, setRecognizing] = useState(false);
 
   const {
     pickup: initialPickup = '',
@@ -57,6 +58,7 @@ const Home = () => {
 
   // Voice search handler
   const startListening = (field) => {
+    if (recognizing) return; // Prevent double start
     setListeningField(field);
     if (recognitionRef.current) {
       recognitionRef.current.onresult = (event) => {
@@ -84,9 +86,17 @@ const Home = () => {
           }, 100);
         }
         setListeningField(null);
+        setRecognizing(false);
       };
-      recognitionRef.current.onerror = () => setListeningField(null);
-      recognitionRef.current.onend = () => setListeningField(null);
+      recognitionRef.current.onerror = () => {
+        setListeningField(null);
+        setRecognizing(false);
+      };
+      recognitionRef.current.onend = () => {
+        setListeningField(null);
+        setRecognizing(false);
+      };
+      setRecognizing(true);
       recognitionRef.current.start();
     }
   };
@@ -153,6 +163,63 @@ const Home = () => {
 
   return (
     <>
+      {/* Listening Indicator */}
+      {recognizing && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(30,32,38,0.15)",
+            zIndex: 2000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            style={{
+              background: "#fff",
+              padding: "32px 48px",
+              borderRadius: 18,
+              boxShadow: "0 8px 32px #0002",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 16,
+            }}
+          >
+            <div className="mb-2">
+              <i
+                className="bi bi-mic-fill"
+                style={{
+                  fontSize: 48,
+                  color: "#e57368",
+                  animation: "pulse 1s infinite",
+                }}
+              />
+            </div>
+            <div style={{ fontWeight: 700, fontSize: 22, color: "#e57368" }}>
+              Listening...
+            </div>
+            <div style={{ color: "#23272f", fontSize: 16 }}>
+              Please speak your location
+            </div>
+          </div>
+          <style>
+            {`
+              @keyframes pulse {
+                0% { box-shadow: 0 0 0 0 #e5736840; }
+                70% { box-shadow: 0 0 0 16px #e5736800; }
+                100% { box-shadow: 0 0 0 0 #e5736840; }
+              }
+            `}
+          </style>
+        </div>
+      )}
+
       {/* HERO SECTION */}
       <section className="hero-form-section">
         <img

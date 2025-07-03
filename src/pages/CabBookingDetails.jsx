@@ -444,10 +444,6 @@ const CabBookingDetails = () => {
                     ({cabRating?.totalRatings ?? 0} reviews)
                   </span>
                 </span>
-                <span className="ms-3 text-success" style={{ fontSize: 14 }}>
-                  <i className="bi bi-check-circle-fill me-1" />
-                  Free Cancellation until pickup time
-                </span>
               </div>
               <div className="mb-2" style={{ color: "#FFD600", fontWeight: 600, fontSize: 16 }}>
                 Value + Fare
@@ -480,7 +476,7 @@ const CabBookingDetails = () => {
             <div className="bg-white rounded-4 shadow-sm p-4 mb-4" style={{ boxShadow: "0 2px 12px #e5736820", border: "none" }}>
               <div className="fw-bold mb-2" style={{ color: "#1976d2", fontSize: 18 }}>Driver & Cab details</div>
               <div style={{ color: "#23272f", fontSize: 15 }}>
-                Cab operator will be assigned on booking completion. Cab and driver details will be shared up to 30 mins prior to departure.
+                Cab operator will be assigned on booking completion. Cab and driver details will be shared up to few hours prior to departure.
               </div>
             </div>
             {/* Confirm Booking Form */}
