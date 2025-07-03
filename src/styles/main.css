@@ -239,12 +239,10 @@ body {
 .card-grid-item {
   background: #fff;
   border-radius: 18px;
-  box-shadow: 0 4px 16px #ffd60040;
   padding: 2rem 1.5rem 1.5rem 1.5rem;
   position: relative;
   transition: box-shadow 0.2s, transform 0.2s;
   min-height: 140px;
-  border: 2px solid #FFD600;
 }
 .card-grid-item:hover {
   box-shadow: 0 8px 32px #e57368a0;
@@ -453,7 +451,6 @@ body {
   min-width: 220px;
   max-width: 320px;
   position: relative;
-  border-left: 5px solid #d32f2f;
 }
 .card-badge {
   position: absolute;
@@ -685,4 +682,38 @@ body {
   box-shadow: 0 6px 24px rgba(0,0,0,0.12) !important;
 }
 
-/* Optional: If you use a custom class for your suggestion box, add it to the selector above */
+/* --- DESKTOP: Keep fields in a row --- */
+.hero-form-card .row.g-3,
+.hero-form-card .row.gy-3 {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 18px;
+  align-items: end;
+}
+.hero-form-card .row.g-3 > div,
+.hero-form-card .row.gy-3 > div {
+  flex: 1 1 0;
+  min-width: 120px;
+  max-width: 100%;
+}
+
+@media (max-width: 767.98px) {
+  .hero-form-card .row.g-3,
+  .hero-form-card .row.gy-3,
+  .hero-form-card .row {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+  .hero-form-card .row.g-3 > div,
+  .hero-form-card .row.gy-3 > div,
+  .hero-form-card .row > div {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin-bottom: 0.15rem !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+} 

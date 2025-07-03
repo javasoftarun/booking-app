@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FaUser,
   FaBook,
@@ -92,13 +93,13 @@ const UserProfile = () => {
   const [givenRatingsLoading, setGivenRatingsLoading] = useState(false);
   const [expandedBooking, setExpandedBooking] = useState(null);
   const printRef = useRef();
-
+  const navigate = useNavigate();
   // Load user from localStorage on mount
   useEffect(() => {
     const userStr = localStorage.getItem("user");
     if (!userStr) {
       setProfileLoading(false);
-      return;
+      navigate("/", { replace: true });
     }
     try {
       const user = JSON.parse(userStr);
@@ -122,7 +123,7 @@ const UserProfile = () => {
       setProfile(initialProfile);
     }
     setProfileLoading(false);
-  }, []);
+  }, [navigate]);
 
   // Fetch bookings after user is loaded
   useEffect(() => {

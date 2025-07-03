@@ -213,7 +213,7 @@ const Navbar = () => {
                       onClick={() => {
                         localStorage.clear();
                         setDropdownOpen(false);
-                        setUser(null); 
+                        setUser(null);
                       }}
                     >
                       Logout
@@ -230,8 +230,10 @@ const Navbar = () => {
           <div
             className="position-fixed top-0 start-0 w-100 h-100"
             style={{
-              background: "#0005",
+              background: "rgba(30,32,38,0.25)",
+              backdropFilter: "blur(2px)",
               zIndex: 1050,
+              transition: "background 0.3s",
             }}
             onClick={() => {
               setMobileMenuOpen(false);
@@ -242,43 +244,56 @@ const Navbar = () => {
 
         {/* Mobile Menu Drawer */}
         <div
-          className={`d-lg-none position-fixed top-0 end-0 bg-white shadow`}
+          className={`d-lg-none position-fixed top-0 end-0 bg-white shadow mobile-drawer`}
           style={{
-            width: 270,
+            width: 240,
+            maxWidth: "90vw",
             height: "100vh",
             zIndex: 1100,
             transform: mobileMenuOpen ? "translateX(0)" : "translateX(110%)",
-            transition: "transform 0.3s cubic-bezier(.4,2,.6,1)",
-            boxShadow: "0 0 24px #e5736822",
+            boxShadow: "0 8px 32px #0002",
             borderTopLeftRadius: 18,
             borderBottomLeftRadius: 18,
+            padding: 0,
+            overflowY: "auto",
+            background: "rgba(255,255,255,0.96)",
+            backdropFilter: "blur(8px)",
           }}
         >
-          <div className="d-flex align-items-center justify-content-between px-3 py-3 border-bottom" style={{background:"#f8fafc"}}>
+          <div className="d-flex align-items-center justify-content-between px-3 py-3 border-bottom" style={{ background: "#f8fafc", borderTopLeftRadius: 18 }}>
             <span style={{
               color: "#e57368",
               fontWeight: 900,
-              fontSize: 26,
+              fontSize: 22,
               letterSpacing: 1,
               display: "flex",
               alignItems: "center"
             }}>
-              <span style={{ color: "#FFD600", fontSize: 28, marginRight: 6 }}>🚕</span> Yatra
+              <span style={{ color: "#FFD600", fontSize: 24, marginRight: 6 }}>🚕</span> Yatra
               <span style={{ color: "#FFD600" }}>Now</span>
             </span>
             <button
               className="btn"
-              style={{ fontSize: 26, color: "#e57368", background: "none", border: "none" }}
+              style={{
+                fontSize: 28,
+                color: "#e57368",
+                background: "none",
+                border: "none",
+                marginRight: -8,
+                marginTop: -8,
+                padding: 0,
+                lineHeight: 1,
+              }}
               onClick={() => {
                 setMobileMenuOpen(false);
                 setShowMobileProfile(false);
               }}
               aria-label="Close menu"
             >
-              &times;
+              <i className="bi bi-x-lg"></i>
             </button>
           </div>
-          <ul className="navbar-nav flex-column gap-2 px-3 pt-3">
+          <ul className="navbar-nav flex-column gap-2 px-3 pt-3 pb-4">
             <li className="nav-item">
               <Link
                 className="nav-link d-flex align-items-center fw-semibold px-2"
@@ -436,14 +451,21 @@ const Navbar = () => {
       {/* Responsive styles */}
       <style>
         {`
-          @media (max-width: 991px) {
-            .navbar-nav.d-none.d-lg-flex { display: none !important; }
-            .d-lg-none { display: block !important; }
-          }
-          @media (min-width: 992px) {
-            .d-lg-none { display: none !important; }
-          }
-        `}
+        .mobile-drawer {
+          box-shadow: 0 8px 32px #0002 !important;
+          border-top-left-radius: 18px !important;
+          border-bottom-left-radius: 18px !important;
+          background: rgba(255,255,255,0.96) !important;
+          backdrop-filter: blur(8px) !important;
+        }
+        @media (max-width: 991px) {
+          .navbar-nav.d-none.d-lg-flex { display: none !important; }
+          .d-lg-none { display: block !important; }
+        }
+        @media (min-width: 992px) {
+          .d-lg-none { display: none !important; }
+        }
+      `}
       </style>
     </nav>
   );

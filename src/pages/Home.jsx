@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import PlacesAutocomplete from 'react-places-autocomplete';
 import API_ENDPOINTS from '../config/apiConfig';
@@ -24,6 +24,10 @@ const whyChoose = [
 const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [listeningField, setListeningField] = useState(null);
+  const recognitionRef = useRef(null);
+  const pickupInputRef = useRef(null);
+  const dropInputRef = useRef(null);
 
   const {
     pickup: initialPickup = '',
@@ -37,6 +41,65 @@ const Home = () => {
   const [datetime, setDatetime] = useState(initialDatetime);
   const [hours, setHours] = useState(initialHours);
   const [loading, setLoading] = useState(false);
+  // Helper messages for user after voice input
+  const [showPickupHelper, setShowPickupHelper] = useState(false);
+  const [showDropHelper, setShowDropHelper] = useState(false);
+
+  // Voice recognition setup (only create instance ONCE)
+  useEffect(() => {
+    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) return;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognitionRef.current = new SpeechRecognition();
+    recognitionRef.current.lang = 'en-IN';
+    recognitionRef.current.interimResults = false;
+    recognitionRef.current.maxAlternatives = 1;
+  }, []);
+
+  // Voice search handler
+  const startListening = (field) => {
+    setListeningField(field);
+    if (recognitionRef.current) {
+      recognitionRef.current.onresult = (event) => {
+        let transcript = event.results[0][0].transcript;
+        // Remove trailing punctuation and add a space
+        transcript = transcript.replace(/[.,!?;:]+$/, '') + ' ';
+        if (field === 'pickup') {
+          setPickup(transcript);
+          setShowPickupHelper(true);
+          setTimeout(() => {
+            if (pickupInputRef.current) {
+              pickupInputRef.current.focus();
+              pickupInputRef.current.setSelectionRange(transcript.length, transcript.length);
+            }
+          }, 100);
+        }
+        if (field === 'drop') {
+          setDrop(transcript);
+          setShowDropHelper(true);
+          setTimeout(() => {
+            if (dropInputRef.current) {
+              dropInputRef.current.focus();
+              dropInputRef.current.setSelectionRange(transcript.length, transcript.length);
+            }
+          }, 100);
+        }
+        setListeningField(null);
+      };
+      recognitionRef.current.onerror = () => setListeningField(null);
+      recognitionRef.current.onend = () => setListeningField(null);
+      recognitionRef.current.start();
+    }
+  };
+
+  // Hide helper when user types
+  const handlePickupChange = (val) => {
+    setPickup(val);
+    setShowPickupHelper(false);
+  };
+  const handleDropChange = (val) => {
+    setDrop(val);
+    setShowDropHelper(false);
+  };
 
   useEffect(() => {
     if (location.state && location.state.editData) {
@@ -85,6 +148,9 @@ const Home = () => {
     }
   };
 
+  // Responsive: detect mobile
+  const isMobile = typeof window !== "undefined" && window.innerWidth <= 767;
+
   return (
     <>
       {/* HERO SECTION */}
@@ -96,9 +162,9 @@ const Home = () => {
         />
         <div className="hero-banner-overlay"></div>
         <div className="container hero-form-content">
-          <div className="text-center mb-4">
+          <div className="text-center mb-4 d-none d-md-block">
             <h1 className="hero-title-main">
-              Pre Book Cab <span className="red">Anywhere</span> <span className="yellow">Anytime</span>
+              Book Your Cab <span className="red">Anywhere</span> <span className="yellow">Anytime</span>
             </h1>
             <div className="hero-desc">
               Book Early. <span className="yellow">Travel Easy.</span><span className="red"> Reliable Cabs at Your Fingertips.</span>
@@ -110,204 +176,451 @@ const Home = () => {
               Cabs Booking
             </div>
             <form onSubmit={handleSubmit} className="mt-4">
-              <div className="row g-3 align-items-end">
-                <div className="col-12 col-md-3">
-                  <label className="form-label fw-semibold text-secondary" htmlFor="pickup">
-                    From
-                  </label>
-                  <PlacesAutocomplete value={pickup} onChange={setPickup} onSelect={setPickup}>
-                    {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-                      <div style={{ position: 'relative', width: '100%' }}>
-                        <input
-                          {...getInputProps({
-                            placeholder: 'Pickup Location',
-                            className: 'form-control',
-                            id: 'pickup',
-                            name: 'pickup',
-                            required: true,
-                            style: { fontWeight: 400 }
-                          })}
-                        />
-                        {suggestions.length > 0 && (
-                          <div
-                            className="position-absolute bg-white rounded shadow autocomplete-dropdown-container"
-                            style={{
-                              zIndex: 9999,
-                              top: 'calc(100% + 4px)',
-                              left: 0,
-                              right: 0,
-                              width: '380px',
-                              minWidth: '320px',
-                              maxWidth: '95vw',
-                              boxShadow: '0 6px 24px rgba(0,0,0,0.12)',
-                              border: '1px solid #e0e0e0',
-                              position: 'absolute',
-                              background: '#fff',
-                              // Responsive: full width on small screens
-                              ...(window.innerWidth <= 600
-                                ? {
-                                    width: '100%',
-                                    minWidth: 0,
-                                    maxWidth: '100%',
-                                    left: 0,
-                                    right: 0,
-                                  }
-                                : {})
-                            }}
-                          >
-                            {loading && <div className="p-2 text-muted">Loading...</div>}
-                            {suggestions.map((suggestion, idx) => (
-                              <div
-                                {...getSuggestionItemProps(suggestion, {
-                                  className: "p-2",
-                                  style: {
-                                    cursor: "pointer",
-                                    background: suggestion.active ? "#fffbe7" : "#fff",
-                                    fontWeight: suggestion.active ? 600 : 400,
-                                  }
-                                })}
-                                key={suggestion.placeId}
-                              >
-                                <i className="bi bi-geo-alt-fill text-warning me-2" />
-                                {suggestion.description}
+              {/* MOBILE: Separate sections for Pickup/Drop and Pickup Date/Time */}
+              {isMobile ? (
+                <>
+                  {/* Section: Pickup & Drop */}
+                  <div className="mb-3">
+                    <div className="mb-2">
+                      <label className="form-label fw-semibold text-secondary" htmlFor="pickup" style={{ fontSize: 15 }}>
+                        Pickup Location
+                      </label>
+                      <PlacesAutocomplete
+                        value={pickup}
+                        onChange={handlePickupChange}
+                        onSelect={address => {
+                          setPickup(address);
+                          setShowPickupHelper(false);
+                        }}
+                      >
+                        {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                          <div style={{ position: 'relative', width: '100%' }}>
+                            <input
+                              {...getInputProps({
+                                ref: pickupInputRef,
+                                placeholder: 'From',
+                                className: 'form-control',
+                                id: 'pickup',
+                                name: 'pickup',
+                                required: true,
+                                style: { fontWeight: 400 }
+                              })}
+                            />
+                            {/* Voice button */}
+                            <button
+                              type="button"
+                              className="btn btn-link p-0 position-absolute"
+                              style={{ right: 8, top: 8 }}
+                              aria-label="Voice input for pickup"
+                              onClick={() => startListening('pickup')}
+                              tabIndex={-1}
+                            >
+                              <i className={`bi ${listeningField === 'pickup' ? 'bi-mic-fill text-danger' : 'bi-mic'} fs-5`} />
+                            </button>
+                            {showPickupHelper && (
+                              <div className="text-muted small mt-1">
+                                Tap space or type to see suggestions.
                               </div>
-                            ))}
+                            )}
+
+                            {suggestions.length > 0 && (
+                              <div
+                                className="position-absolute bg-white rounded shadow autocomplete-dropdown-container"
+                                style={{
+                                  zIndex: 9999,
+                                  top: 'calc(100% + 4px)',
+                                  left: 0,
+                                  right: 0,
+                                  width: '100%',
+                                  boxShadow: '0 6px 24px rgba(0,0,0,0.12)',
+                                  border: '1px solid #e0e0e0',
+                                  background: '#fff'
+                                }}
+                              >
+                                {loading && <div className="p-2 text-muted">Loading...</div>}
+                                {suggestions.map((suggestion, idx) => (
+                                  <div
+                                    {...getSuggestionItemProps(suggestion, {
+                                      className: "p-2",
+                                      style: {
+                                        cursor: "pointer",
+                                        background: suggestion.active ? "#fffbe7" : "#fff",
+                                        fontWeight: suggestion.active ? 600 : 400,
+                                      }
+                                    })}
+                                    key={suggestion.placeId}
+                                  >
+                                    <i className="bi bi-geo-alt-fill text-warning me-2" />
+                                    {suggestion.description}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         )}
-                      </div>
-                    )}
-                  </PlacesAutocomplete>
-                </div>
-                <div className="col-12 col-md-3">
-                  <label className="form-label fw-semibold text-secondary" htmlFor="drop">
-                    To
-                  </label>
-                  <PlacesAutocomplete value={drop} onChange={setDrop} onSelect={setDrop}>
-                    {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-                      <div style={{ position: 'relative', width: '100%' }}>
-                        <input
-                          {...getInputProps({
-                            placeholder: 'Drop Location',
-                            className: 'form-control',
-                            id: 'drop',
-                            name: 'drop',
-                            required: true,
-                            style: { fontWeight: 400 }
-                          })}
-                        />
-                        {suggestions.length > 0 && (
-                          <div
-                            className="position-absolute bg-white rounded shadow autocomplete-dropdown-container"
-                            style={{
-                              zIndex: 9999,
-                              top: 'calc(100% + 4px)',
-                              left: 0,
-                              right: 0,
-                              width: '380px',
-                              minWidth: '320px',
-                              maxWidth: '95vw',
-                              boxShadow: '0 6px 24px rgba(0,0,0,0.12)',
-                              border: '1px solid #e0e0e0',
-                              position: 'absolute',
-                              background: '#fff'
-                            }}
-                          >
-                            {loading && <div className="p-2 text-muted">Loading...</div>}
-                            {suggestions.map((suggestion, idx) => (
-                              <div
-                                {...getSuggestionItemProps(suggestion, {
-                                  className: "p-2",
-                                  style: {
-                                    cursor: "pointer",
-                                    background: suggestion.active ? "#fffbe7" : "#fff",
-                                    fontWeight: suggestion.active ? 600 : 400,
-                                  }
-                                })}
-                                key={suggestion.placeId}
-                              >
-                                <i className="bi bi-geo-alt-fill text-warning me-2" />
-                                {suggestion.description}
+                      </PlacesAutocomplete>
+                    </div>
+                    <div>
+                      <label className="form-label fw-semibold text-secondary" htmlFor="drop" style={{ fontSize: 15 }}>
+                        Drop Location
+                      </label>
+                      <PlacesAutocomplete
+                        value={drop}
+                        onChange={handleDropChange}
+                        onSelect={address => {
+                          setDrop(address);
+                          setShowDropHelper(false);
+                        }}
+                      >
+                        {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                          <div style={{ position: 'relative', width: '100%' }}>
+                            <input
+                              {...getInputProps({
+                                ref: dropInputRef,
+                                placeholder: 'To',
+                                className: 'form-control',
+                                id: 'drop',
+                                name: 'drop',
+                                required: true,
+                                style: { fontWeight: 400 }
+                              })}
+                            />
+                            {/* Voice button */}
+                            <button
+                              type="button"
+                              className="btn btn-link p-0 position-absolute"
+                              style={{ right: 8, top: 8 }}
+                              aria-label="Voice input for drop"
+                              onClick={() => startListening('drop')}
+                              tabIndex={-1}
+                            >
+                              <i className={`bi ${listeningField === 'drop' ? 'bi-mic-fill text-danger' : 'bi-mic'} fs-5`} />
+                            </button>
+                            {showDropHelper && (
+                              <div className="text-muted small mt-1">
+                                Tap space or type to see suggestions.
                               </div>
-                            ))}
+                            )}
+                            {suggestions.length > 0 && (
+                              <div
+                                className="position-absolute bg-white rounded shadow autocomplete-dropdown-container"
+                                style={{
+                                  zIndex: 9999,
+                                  top: 'calc(100% + 4px)',
+                                  left: 0,
+                                  right: 0,
+                                  width: '100%',
+                                  boxShadow: '0 6px 24px rgba(0,0,0,0.12)',
+                                  border: '1px solid #e0e0e0',
+                                  background: '#fff'
+                                }}
+                              >
+                                {loading && <div className="p-2 text-muted">Loading...</div>}
+                                {suggestions.map((suggestion, idx) => (
+                                  <div
+                                    {...getSuggestionItemProps(suggestion, {
+                                      className: "p-2",
+                                      style: {
+                                        cursor: "pointer",
+                                        background: suggestion.active ? "#fffbe7" : "#fff",
+                                        fontWeight: suggestion.active ? 600 : 400,
+                                      }
+                                    })}
+                                    key={suggestion.placeId}
+                                  >
+                                    <i className="bi bi-geo-alt-fill text-warning me-2" />
+                                    {suggestion.description}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         )}
-                      </div>
+                      </PlacesAutocomplete>
+                    </div>
+                  </div>
+                  {/* Section: Pickup Date & Time */}
+                  <div className="mb-3">
+                    <div className="mb-2">
+                      <label className="form-label fw-semibold text-secondary" htmlFor="pickupDate" style={{ fontSize: 15 }}>
+                        Pickup Date
+                      </label>
+                      <input
+                        type="date"
+                        className="form-control"
+                        id="pickupDate"
+                        name="pickupDate"
+                        style={{ fontWeight: 400 }}
+                        value={datetime ? datetime.split('T')[0] : ''}
+                        onChange={e => {
+                          const date = e.target.value;
+                          setDatetime(date + (datetime && datetime.includes('T') ? datetime.slice(datetime.indexOf('T')) : 'T09:00'));
+                        }}
+                        required
+                        placeholder="Pickup Date"
+                      />
+                    </div>
+                    <div>
+                      <label className="form-label fw-semibold text-secondary" htmlFor="pickupTime" style={{ fontSize: 15 }}>
+                        Pickup Time
+                      </label>
+                      <input
+                        type="time"
+                        className="form-control"
+                        id="pickupTime"
+                        name="pickupTime"
+                        style={{ fontWeight: 400 }}
+                        value={
+                          datetime && datetime.includes('T')
+                            ? datetime.split('T')[1].slice(0, 5)
+                            : '09:00'
+                        }
+                        onChange={e => {
+                          const time = e.target.value;
+                          setDatetime((datetime ? datetime.split('T')[0] : '') + 'T' + time);
+                        }}
+                        required
+                        placeholder="Pickup Time"
+                      />
+                    </div>
+                  </div>
+                  {/* Section: Travel Time & Search */}
+                  <div className="mb-3">
+                    <div className="fw-semibold text-secondary mb-2" style={{ fontSize: 16 }}>
+                      Travel Time
+                    </div>
+                    <div className="mb-2">
+                      <select
+                        className="form-select"
+                        id="travelTime"
+                        name="travelTime"
+                        style={{ fontWeight: 400 }}
+                        value={hours}
+                        onChange={e => setHours(e.target.value)}
+                        required
+                      >
+                        <option value="">Select</option>
+                        <option value="3">3 Hours</option>
+                        <option value="6">6 Hours</option>
+                        <option value="9">9 Hours</option>
+                        <option value="12">12 Hours</option>
+                        <option value="24">1 Day</option>
+                        <option value="48">2 Days</option>
+                      </select>
+                    </div>
+                    <div>
+                      <button
+                        type="submit"
+                        className="btn btn-yellow fw-bold w-100"
+                        disabled={loading}
+                        style={{ minHeight: 40 }}
+                      >
+                        {loading ? 'Searching...' : <>Search <i className="bi bi-arrow-right ms-2"></i></>}
+                      </button>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                // DESKTOP: Original layout (keep as is)
+                <div className="row gy-3">
+                  {/* From */}
+                  <div className="col-12 col-md-3">
+                    {isMobile ? null : (
+                      <label className="form-label fw-semibold text-secondary" htmlFor="pickup">
+                        From
+                      </label>
                     )}
-                  </PlacesAutocomplete>
+                    <PlacesAutocomplete value={pickup} onChange={setPickup} onSelect={setPickup}>
+                      {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                        <div style={{ position: 'relative', width: '100%' }}>
+                          <input
+                            {...getInputProps({
+                              placeholder: isMobile ? 'From (Pickup Location)' : 'Pickup Location',
+                              className: 'form-control',
+                              id: 'pickup',
+                              name: 'pickup',
+                              required: true,
+                              style: { fontWeight: 400 }
+                            })}
+                          />
+                          {suggestions.length > 0 && (
+                            <div
+                              className="position-absolute bg-white rounded shadow autocomplete-dropdown-container"
+                              style={{
+                                zIndex: 9999,
+                                top: 'calc(100% + 4px)',
+                                left: 0,
+                                right: 0,
+                                width: window.innerWidth <= 600 ? '100%' : '380px',
+                                minWidth: window.innerWidth <= 600 ? 0 : '320px',
+                                maxWidth: window.innerWidth <= 600 ? '100%' : '95vw',
+                                boxShadow: '0 6px 24px rgba(0,0,0,0.12)',
+                                border: '1px solid #e0e0e0',
+                                background: '#fff'
+                              }}
+                            >
+                              {loading && <div className="p-2 text-muted">Loading...</div>}
+                              {suggestions.map((suggestion, idx) => (
+                                <div
+                                  {...getSuggestionItemProps(suggestion, {
+                                    className: "p-2",
+                                    style: {
+                                      cursor: "pointer",
+                                      background: suggestion.active ? "#fffbe7" : "#fff",
+                                      fontWeight: suggestion.active ? 600 : 400,
+                                    }
+                                  })}
+                                  key={suggestion.placeId}
+                                >
+                                  <i className="bi bi-geo-alt-fill text-warning me-2" />
+                                  {suggestion.description}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </PlacesAutocomplete>
+                  </div>
+                  {/* To */}
+                  <div className="col-12 col-md-3">
+                    {isMobile ? null : (
+                      <label className="form-label fw-semibold text-secondary" htmlFor="drop">
+                        To
+                      </label>
+                    )}
+                    <PlacesAutocomplete value={drop} onChange={setDrop} onSelect={setDrop}>
+                      {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                        <div style={{ position: 'relative', width: '100%' }}>
+                          <input
+                            {...getInputProps({
+                              placeholder: isMobile ? 'To (Drop Location)' : 'Drop Location',
+                              className: 'form-control',
+                              id: 'drop',
+                              name: 'drop',
+                              required: true,
+                              style: { fontWeight: 400 }
+                            })}
+                          />
+                          {suggestions.length > 0 && (
+                            <div
+                              className="position-absolute bg-white rounded shadow autocomplete-dropdown-container"
+                              style={{
+                                zIndex: 9999,
+                                top: 'calc(100% + 4px)',
+                                left: 0,
+                                right: 0,
+                                width: window.innerWidth <= 600 ? '100%' : '380px',
+                                minWidth: window.innerWidth <= 600 ? 0 : '320px',
+                                maxWidth: window.innerWidth <= 600 ? '100%' : '95vw',
+                                boxShadow: '0 6px 24px rgba(0,0,0,0.12)',
+                                border: '1px solid #e0e0e0',
+                                background: '#fff'
+                              }}
+                            >
+                              {loading && <div className="p-2 text-muted">Loading...</div>}
+                              {suggestions.map((suggestion, idx) => (
+                                <div
+                                  {...getSuggestionItemProps(suggestion, {
+                                    className: "p-2",
+                                    style: {
+                                      cursor: "pointer",
+                                      background: suggestion.active ? "#fffbe7" : "#fff",
+                                      fontWeight: suggestion.active ? 600 : 400,
+                                    }
+                                  })}
+                                  key={suggestion.placeId}
+                                >
+                                  <i className="bi bi-geo-alt-fill text-warning me-2" />
+                                  {suggestion.description}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </PlacesAutocomplete>
+                  </div>
+                  {/* Pickup Date */}
+                  <div className="col-12 col-md-2">
+                    <label className="form-label fw-semibold text-secondary" htmlFor="pickupDate">
+                      Pickup Date
+                    </label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="pickupDate"
+                      name="pickupDate"
+                      style={{ fontWeight: 400 }}
+                      value={datetime ? datetime.split('T')[0] : ''}
+                      onChange={e => {
+                        const date = e.target.value;
+                        setDatetime(date + (datetime && datetime.includes('T') ? datetime.slice(datetime.indexOf('T')) : 'T00:00'));
+                      }}
+                      required
+                    />
+                  </div>
+                  {/* Pickup Time */}
+                  <div className="col-12 col-md-2">
+                    <label className="form-label fw-semibold text-secondary" htmlFor="pickupTime">
+                      Pickup Time
+                    </label>
+                    <input
+                      type="time"
+                      className="form-control"
+                      id="pickupTime"
+                      name="pickupTime"
+                      style={{ fontWeight: 400 }}
+                      value={
+                        datetime && datetime.includes('T')
+                          ? datetime.split('T')[1].slice(0, 5)
+                          : '09:00'
+                      }
+                      onChange={e => {
+                        const time = e.target.value;
+                        setDatetime((datetime ? datetime.split('T')[0] : '') + 'T' + time);
+                      }}
+                      required
+                    />
+                  </div>
+                  {/* Travel Time */}
+                  <div className="col-12 col-md-1">
+                    {isMobile ? null : (
+                      <label className="form-label fw-semibold text-secondary" htmlFor="travelTime">
+                        Travel Time
+                      </label>
+                    )}
+                    <select
+                      className="form-select"
+                      id="travelTime"
+                      name="travelTime"
+                      style={{ fontWeight: 400 }}
+                      value={hours}
+                      onChange={e => setHours(e.target.value)}
+                      required
+                    >
+                      <option value="">{isMobile ? "Travel Time" : "Select"}</option>
+                      <option value="3">3 Hours</option>
+                      <option value="6">6 Hours</option>
+                      <option value="9">9 Hours</option>
+                      <option value="12">12 Hours</option>
+                      <option value="24">1 Day</option>
+                      <option value="48">2 Days</option>
+                    </select>
+                  </div>
+                  {/* Search Button */}
+                  <div className="col-12 col-md-1 d-grid">
+                    <button
+                      type="submit"
+                      className="btn btn-yellow fw-bold w-100"
+                      disabled={loading}
+                      style={{ minHeight: 40 }}
+                    >
+                      {loading ? 'Searching...' : <>Search <i className="bi bi-arrow-right ms-2"></i></>}
+                    </button>
+                  </div>
                 </div>
-                <div className="col-6 col-md-2">
-                  <label className="form-label fw-semibold text-secondary" htmlFor="pickupDate">
-                    Pickup Date
-                  </label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    id="pickupDate"
-                    name="pickupDate"
-                    style={{ fontWeight: 400 }}
-                    value={datetime ? datetime.split('T')[0] : ''}
-                    onChange={e => {
-                      const date = e.target.value;
-                      setDatetime(date + (datetime && datetime.includes('T') ? datetime.slice(datetime.indexOf('T')) : 'T00:00'));
-                    }}
-                    required
-                  />
-                </div>
-                <div className="col-6 col-md-2">
-                  <label className="form-label fw-semibold text-secondary" htmlFor="pickupTime">
-                    Pickup Time
-                  </label>
-                  <input
-                    type="time"
-                    className="form-control"
-                    id="pickupTime"
-                    name="pickupTime"
-                    style={{ fontWeight: 400 }}
-                    value={
-                      datetime && datetime.includes('T')
-                        ? datetime.split('T')[1].slice(0, 5)
-                        : '09:00'
-                    }
-                    onChange={e => {
-                      const time = e.target.value;
-                      setDatetime((datetime ? datetime.split('T')[0] : '') + 'T' + time);
-                    }}
-                    required
-                  />
-                </div>
-                <div className="col-6 col-md-1">
-                  <label className="form-label fw-semibold text-secondary" htmlFor="travelTime">
-                    Travel Time
-                  </label>
-                  <select
-                    className="form-select"
-                    id="travelTime"
-                    name="travelTime"
-                    style={{ fontWeight: 400 }}
-                    value={hours}
-                    onChange={e => setHours(e.target.value)}
-                    required
-                  >
-                    <option value="">Select</option>
-                    <option value="3">3 Hours</option>
-                    <option value="6">6 Hours</option>
-                    <option value="9">9 Hours</option>
-                    <option value="12">12 Hours</option>
-                    <option value="24">1 Day</option>
-                    <option value="48">2 Days</option>
-                  </select>
-                </div>
-                <div className="col-6 col-md-1 d-grid">
-                  <button
-                    type="submit"
-                    className="btn btn-yellow fw-bold"
-                    disabled={loading}
-                    style={{ minHeight: 40 }}
-                  >
-                    {loading ? 'Searching...' : <>Search <i className="bi bi-arrow-right ms-2"></i></>}
-                  </button>
-                </div>
-              </div>
+              )}
             </form>
           </div>
         </div>
@@ -544,31 +857,7 @@ const Home = () => {
           </div>
         </div>
       </section>
-
-      {/* FAQ SECTION */}
       <FaqSection />
-
-      {/* WEDDINGS & EVENTS PROMO SECTION */}
-      <section className="container my-5">
-        <div className="row align-items-center">
-          <div className="col-md-6">
-            <img src={weddingImg} alt="Weddings" className="img-fluid rounded-4 shadow-sm" />
-          </div>
-          <div className="col-md-6">
-            <h3 className="fw-bold mb-3" style={{ color: "#d32f2f" }}>Make Every Event Memorable</h3>
-            <p style={{ fontSize: 17 }}>
-              From cabs for guests to DJs and decorative lighting, YatraNow is your event partner.
-              <br /><br />
-              <span style={{ color: "#FFD600" }}>Book everything in one place and focus on your celebration!</span>
-            </p>
-            <ul style={{ fontSize: 16, color: "#1976d2" }}>
-              <li>Easy event logistics</li>
-              <li>Exclusive wedding deals</li>
-              <li>Trusted local partners</li>
-            </ul>
-          </div>
-        </div>
-      </section>
     </>
   );
 };
