@@ -87,7 +87,7 @@ const Navbar = () => {
             onClick={() => setMobileMenuOpen(false)}
           >
             <span>
-              <span style={{ color: "#FFD600" }}>🚕</span> Yatra
+              Yatra
               <span style={{ color: '#FFD600' }}>Now</span>
             </span>
           </Link>
@@ -269,7 +269,7 @@ const Navbar = () => {
               display: "flex",
               alignItems: "center"
             }}>
-              <span style={{ color: "#FFD600", fontSize: 24, marginRight: 6 }}>🚕</span> Yatra
+              Yatra
               <span style={{ color: "#FFD600" }}>Now</span>
             </span>
             <button

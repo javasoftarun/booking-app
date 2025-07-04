@@ -25,7 +25,6 @@ const Footer = () => {
             {/* Brand and tagline */}
             <div className="col-12 col-md-4 mb-4 mb-md-0 text-center text-md-start">
               <div className="d-flex align-items-center gap-2 mb-3 justify-content-center justify-content-md-start">
-                <span style={{ color: "#FFD600", fontSize: 34 }}>🚕</span>
                 <span className="fw-bold" style={{ color: "#e57368", fontSize: 26, letterSpacing: 1 }}>
                   Yatra<span style={{ color: "#FFD600" }}>Now</span>
                 </span>
@@ -53,19 +52,31 @@ const Footer = () => {
               <div className="fw-semibold mb-3" style={{ color: "#e57368", fontSize: 17 }}>Useful Links</div>
               <ul className="list-unstyled mb-2" style={{ fontSize: 15, lineHeight: 2 }}>
                 <li>
-                  <Link to="/" className="text-decoration-none text-muted">Home</Link>
+                  <Link
+                    to="/"
+                    className="text-decoration-none text-muted"
+                    onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                  >
+                    Home
+                  </Link>
                 </li>
                 <li>
                   <button
                     className="btn btn-link text-decoration-none text-muted p-0"
                     style={{ color: "#888" }}
-                    onClick={() => setShowHelp(true)}
+                    onClick={() => {
+                      setShowHelp(true);
+                    }}
                   >
                     Contact
                   </button>
                 </li>
                 <li>
-                  <Link to="/about" className="text-decoration-none text-muted">
+                  <Link
+                    to="/about"
+                    className="text-decoration-none text-muted"
+                    onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                  >
                     About Us
                   </Link>
                 </li>
@@ -79,7 +90,9 @@ const Footer = () => {
                   <button
                     className="btn btn-link text-decoration-none text-muted p-0"
                     style={{ color: "#888" }}
-                    onClick={() => setShowCancelPolicy(true)}
+                    onClick={() => {
+                      setShowCancelPolicy(true);
+                    }}
                   >
                     Cancellation Policy
                   </button>
@@ -88,7 +101,9 @@ const Footer = () => {
                   <button
                     className="btn btn-link text-decoration-none text-muted p-0"
                     style={{ color: "#888" }}
-                    onClick={() => setShowRefundPolicy(true)}
+                    onClick={() => {
+                      setShowRefundPolicy(true);
+                    }}
                   >
                     Refund Policy
                   </button>
@@ -97,7 +112,9 @@ const Footer = () => {
                   <button
                     className="btn btn-link text-decoration-none text-muted p-0"
                     style={{ color: "#888" }}
-                    onClick={() => setShowTerms(true)}
+                    onClick={() => {
+                      setShowTerms(true);
+                    }}
                   >
                     Terms & Conditions
                   </button>
@@ -106,7 +123,9 @@ const Footer = () => {
                   <button
                     className="btn btn-link text-decoration-none text-muted p-0"
                     style={{ color: "#888" }}
-                    onClick={() => setShowPrivacy(true)}
+                    onClick={() => {
+                      setShowPrivacy(true);
+                    }}
                   >
                     Privacy Policy
                   </button>
