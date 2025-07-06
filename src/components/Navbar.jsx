@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import AuthModal from '../modal/AuthModal';
 import NeedHelpModal from '../modal/NeedHelpModal';
+import logo from '../assets/images/logo.png';
 
 const Navbar = () => {
   const [showAuth, setShowAuth] = useState(false);
@@ -86,10 +87,11 @@ const Navbar = () => {
             }}
             onClick={() => setMobileMenuOpen(false)}
           >
-            <span>
-              Yatra
-              <span style={{ color: '#FFD600' }}>Now</span>
-            </span>
+            <img
+              src={logo}
+              alt="Bhada24 Logo"
+              style={{ height: 66, width: "auto", marginRight: 8 }}
+            />
           </Link>
         </div>
 
@@ -269,8 +271,11 @@ const Navbar = () => {
               display: "flex",
               alignItems: "center"
             }}>
-              Yatra
-              <span style={{ color: "#FFD600" }}>Now</span>
+              <img
+                src={logo}
+                alt="Bhada24 Logo"
+                style={{ height: 45, width: "auto", marginRight: 8 }}
+              />
             </span>
             <button
               className="btn"

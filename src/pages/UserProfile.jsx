@@ -405,7 +405,7 @@ const UserProfile = () => {
 
   const handlePrint = useReactToPrint({
     contentRef: printRef,
-    documentTitle: "YatraNow Booking Receipt",
+    documentTitle: "Bhada24 Booking Receipt",
     removeAfterPrint: true,
     onAfterPrint: () => setPrintBooking(null),
   });
@@ -444,7 +444,7 @@ const UserProfile = () => {
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
     pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`YatraNow-Booking-${booking.bookingId}.pdf`);
+    pdf.save(`Bhada24-Booking-${booking.bookingId}.pdf`);
     setDownloadBooking(null);
   };
 

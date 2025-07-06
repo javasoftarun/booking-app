@@ -22,11 +22,11 @@ const PrivacyPolicyContent = ({ small }) => (
         <strong>Third-Party Links:</strong> We are not responsible for the privacy practices of external sites linked from our platform.
       </li>
       <li>
-        <strong>Contact:</strong> For privacy questions, email <a href="mailto:support@yatranow.com">support@yatranow.com</a> or call <a href="tel:+919140251119">+91-9140251119</a>.
+        <strong>Contact:</strong> For privacy questions, email <a href="mailto:support@bhada24.com">support@bhada24.com</a> or call <a href="tel:+919140251119">+91-9140251119</a>.
       </li>
     </ul>
     <div className="alert alert-info mt-4" style={{ fontSize: small ? 12 : 14 }}>
-      By using YatraNow, you agree to this privacy policy. We may update this policy; please review it regularly.
+      By using Bhada24, you agree to this privacy policy. We may update this policy; please review it regularly.
     </div>
   </section>
 );

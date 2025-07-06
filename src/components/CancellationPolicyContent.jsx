@@ -13,7 +13,7 @@ const CancellationPolicyContent = ({ small }) => (
         <strong>Refunds:</strong> Any eligible refunds will be processed to your original payment method within 5-7 business days.
       </li>
       <li>
-        <strong>How to Cancel:</strong> You can cancel your booking from your profile page or by contacting our support team at <a href="mailto:support@yatranow.com">support@yatranow.com</a> or <a href="tel:+919140251119">+91-9140251119</a>.
+        <strong>How to Cancel:</strong> You can cancel your booking from your profile page or by contacting our support team at <a href="mailto:support@bhada24.com">support@bhada24.com</a> or <a href="tel:+919140251119">+91-9140251119</a>.
       </li>
       <li>
         <strong>Special Cases:</strong> In case of unavoidable circumstances (like natural calamities), cancellation charges may be waived at the company’s discretion.

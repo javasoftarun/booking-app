@@ -42,7 +42,7 @@ const Contact = () => {
         <div className="col-lg-7">
           <h2 className="fw-bold mb-3" style={{ color: "#d32f2f" }}>Contact Us</h2>
           <p>
-            Have questions, need a custom quote, or want to partner with YatraNow? Fill out the form below and our team will get back to you within 24 hours.
+            Have questions, need a custom quote, or want to partner with Bhada24? Fill out the form below and our team will get back to you within 24 hours.
           </p>
           {submitted ? (
             <div className="alert alert-success mt-4">
@@ -125,7 +125,7 @@ const Contact = () => {
             </p>
             <p className="mb-2">
               <i className="bi bi-envelope-fill me-2 text-warning"></i>
-              <b>Email:</b> <a href="mailto:support@yatranow.com">support@yatranow.com</a>
+              <b>Email:</b> <a href="mailto:support@bhada24.com">support@bhada24.com</a>
             </p>
             <p className="mb-2">
               <i className="bi bi-geo-alt-fill me-2 text-warning"></i>
@@ -156,7 +156,7 @@ const Contact = () => {
             <div>
               <b>Looking for a partnership or bulk booking?</b>
               <br />
-              <span>Write to us at <a href="mailto:partners@yatranow.com">partners@yatranow.com</a></span>
+              <span>Write to us at <a href="mailto:partners@bhada24.com">partners@bhada24.com</a></span>
             </div>
           </div>
         </div>

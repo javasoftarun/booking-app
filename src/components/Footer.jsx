@@ -5,6 +5,7 @@ import CancellationPolicyModal from "../modal/CancellationPolicyModal";
 import RefundPolicyModal from "../modal/RefundPolicyModal";
 import TermsAndConditionsModal from "../modal/TermsAndConditionsModal";
 import PrivacyPolicyModal from "../modal/PrivacyPolicyModal";
+import logo from "../assets/images/logo.png"; // Add this import
 
 const Footer = () => {
   const [showHelp, setShowHelp] = useState(false);
@@ -25,24 +26,26 @@ const Footer = () => {
             {/* Brand and tagline */}
             <div className="col-12 col-md-4 mb-4 mb-md-0 text-center text-md-start">
               <div className="d-flex align-items-center gap-2 mb-3 justify-content-center justify-content-md-start">
-                <span className="fw-bold" style={{ color: "#e57368", fontSize: 26, letterSpacing: 1 }}>
-                  Yatra<span style={{ color: "#FFD600" }}>Now</span>
-                </span>
+                <img
+                  src={logo}
+                  alt="Bhada24 Logo"
+                  style={{ height: 56, width: "auto", marginRight: 8 }}
+                />
               </div>
               <div className="text-muted mb-3 mx-auto mx-md-0" style={{ fontSize: 15, maxWidth: 320 }}>
                 Your trusted partner for safe, fast, and affordable travel bookings across India.
               </div>
               <div className="d-flex align-items-center gap-3 mt-3 justify-content-center justify-content-md-start">
-                <a href="https://facebook.com/yatranow" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                <a href="https://facebook.com/bhada24" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
                   <i className="bi bi-facebook" style={{ fontSize: 22, color: "#4267B2" }} />
                 </a>
-                <a href="https://twitter.com/yatranow" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+                <a href="https://twitter.com/bhada24" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
                   <i className="bi bi-twitter" style={{ fontSize: 22, color: "#1DA1F2" }} />
                 </a>
-                <a href="https://instagram.com/yatranow" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                <a href="https://instagram.com/bhada24" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                   <i className="bi bi-instagram" style={{ fontSize: 22, color: "#C13584" }} />
                 </a>
-                <a href="https://linkedin.com/company/yatranow" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                <a href="https://linkedin.com/company/bhada24" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
                   <i className="bi bi-linkedin" style={{ fontSize: 22, color: "#0077B5" }} />
                 </a>
               </div>
@@ -138,8 +141,8 @@ const Footer = () => {
               <div style={{ fontSize: 15 }}>
                 <div className="mb-2 d-flex align-items-center justify-content-center justify-content-md-start">
                   <i className="bi bi-envelope-fill me-2" style={{ color: "#FFD600" }} />
-                  <a href="mailto:support@yatranow.com" className="text-decoration-none text-muted">
-                    support@yatranow.com
+                  <a href="mailto:support@bhada24.com" className="text-decoration-none text-muted">
+                    support@bhada24.com
                   </a>
                 </div>
                 <div className="mb-2 d-flex align-items-center justify-content-center justify-content-md-start">
@@ -162,7 +165,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="container text-center text-muted small py-3 border-top" style={{ fontSize: 13 }}>
-          &copy; {new Date().getFullYear()} YatraNow. All rights reserved. | Designed with <span style={{ color: "#e57368" }}>♥</span> in India
+          &copy; {new Date().getFullYear()} Bhada24. All rights reserved. | Designed with <span style={{ color: "#e57368" }}>♥</span> in India
         </div>
       </footer>
 

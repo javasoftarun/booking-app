@@ -131,10 +131,10 @@ const NeedHelpModal = ({ show, onClose, style = {} }) => {
                 <div className="mb-2">
                   <span style={{ fontWeight: 600 }}>Email:</span>{" "}
                   <a
-                    href="mailto:support@yatranow.com"
+                    href="mailto:support@bhada24.com"
                     style={{ color: "#1976d2", textDecoration: "underline" }}
                   >
-                    support@yatranow.com
+                    support@bhada24.com
                   </a>
                 </div>
                 <div className="mb-2">
@@ -211,10 +211,10 @@ const NeedHelpModal = ({ show, onClose, style = {} }) => {
                 >
                   For feedback or suggestions, write to us at{" "}
                   <a
-                    href="mailto:feedback@yatranow.com"
+                    href="mailto:feedback@bhada24.com"
                     style={{ color: "#1976d2", textDecoration: "underline" }}
                   >
-                    feedback@yatranow.com
+                    feedback@bhada24.com
                   </a>
                 </div>
               </div>

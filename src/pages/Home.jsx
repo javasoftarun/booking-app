@@ -11,7 +11,7 @@ import decoratedWeddingCarImg from '../assets/images/decorated-wedding-car.jpg';
 
 // Dummy data for offers, why choose, and FAQs
 const offers = [
-  { title: "Flat 10% Off", desc: "On your first ride with YatraNow. Use code: FIRST10" },
+  { title: "Flat 10% Off", desc: "On your first ride with Bhada24. Use code: FIRST10" },
   { title: "Refer & Earn", desc: "Invite friends and earn ride credits." }
 ];
 
@@ -695,7 +695,7 @@ const Home = () => {
 
       {/* WHY CHOOSE SECTION */}
       <section className="container my-5">
-        <h3 className="fw-bold mb-4 text-center" style={{ color: "#d32f2f" }}>Why Choose YatraNow?</h3>
+        <h3 className="fw-bold mb-4 text-center" style={{ color: "#d32f2f" }}>Why Choose Bhada24?</h3>
         <div className="row g-4 justify-content-center">
           {whyChoose.map((item, idx) => (
             <div key={idx} className="col-12 col-md-4 d-flex justify-content-center">
@@ -810,7 +810,7 @@ const Home = () => {
               Your One-Stop Solution for Weddings & Events
             </h3>
             <p style={{ fontSize: 17, color: "#23272f" }}>
-              YatraNow is not just for cabs! We help you book <b>transporters</b> for goods, <b>DJs</b> for parties, <b>roadlights</b> for weddings, and much more.
+              Bhada24 is not just for cabs! We help you book <b>transporters</b> for goods, <b>DJs</b> for parties, <b>roadlights</b> for weddings, and much more.
               <br /><br />
               <span style={{ color: "#FFD600" }}>This Saadi (wedding) season</span>, get exclusive offers on all event essentials. Make your celebrations grand and hassle-free with our trusted partners.
             </p>
@@ -865,7 +865,7 @@ const Home = () => {
                 <i className="bi bi-star-fill text-warning"></i>
               </div>
               <div className="text-secondary mb-2">
-                "YatraNow made our wedding transport so easy! The cabs were on time and the drivers were very professional."
+                "Bhada24 made our wedding transport so easy! The cabs were on time and the drivers were very professional."
               </div>
               <div className="fw-bold">- Anil Kumar, Varanasi</div>
             </div>
@@ -905,7 +905,7 @@ const Home = () => {
 
       {/* HOW IT WORKS SECTION */}
       <section className="container my-5">
-        <h3 className="fw-bold mb-4 text-center" style={{ color: "#1976d2" }}>How YatraNow Works</h3>
+        <h3 className="fw-bold mb-4 text-center" style={{ color: "#1976d2" }}>How Bhada24 Works</h3>
         <div className="row text-center">
           <div className="col-md-4">
             <i className="bi bi-search" style={{ fontSize: 40, color: "#FFD600" }}></i>

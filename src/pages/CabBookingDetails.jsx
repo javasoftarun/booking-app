@@ -205,7 +205,7 @@ const CabBookingDetails = () => {
       key: "rzp_test_ZXILcDrwDtBqkg",
       amount: amount,
       currency: "INR",
-      name: "YatraNow Cab Booking",
+      name: "Bhada24 Cab Booking",
       description: "Cab Booking Payment",
       handler: async function (response) {
         setShowRedirecting(true); 
@@ -536,7 +536,7 @@ const CabBookingDetails = () => {
                   </div>
                 </div>
                 <div className="form-text mt-3">
-                  By proceeding to book, I agree to YatraNow's{" "}
+                  By proceeding to book, I agree to Bhada24's{" "}
                   <span
                     style={{ color: "#1976d2", textDecoration: "underline", cursor: "pointer" }}
                     onClick={() => setShowPrivacy(true)}

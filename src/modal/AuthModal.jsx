@@ -7,6 +7,7 @@ import API_ENDPOINTS from "../config/apiConfig";
 import TermsAndConditionsModal from "../modal/TermsAndConditionsModal";
 import PrivacyPolicyModal from "../modal/PrivacyPolicyModal";
 import { getToken } from "firebase/messaging";
+import logo from "../assets/images/logo.png"; // Add this import
 
 const AuthModal = ({ show, onClose }) => {
     const [step, setStep] = useState("mobile");
@@ -234,11 +235,18 @@ const AuthModal = ({ show, onClose }) => {
                             fontSize: 26,
                             color: "#e57368",
                             letterSpacing: 0.5,
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: 4,
                         }}
                     >
-                        Yatra
-                        <span style={{ color: "#FFD600" }}>N</span>
-                        <span style={{ color: "#23272f" }}>ow</span>
+                        <img
+                            src={logo}
+                            alt="Bhada24 Logo"
+                            style={{ height: 45, width: "auto", marginBottom: 4 }}
+                        />
                     </div>
                     <div
                         style={{

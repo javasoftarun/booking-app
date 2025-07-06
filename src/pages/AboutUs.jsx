@@ -53,7 +53,7 @@ const AboutUs = () => (
               <div style={{ display: "inline-block", maxWidth: 420 }}>
                 <h4 className="fw-semibold mb-2" style={{ color: "#e57368" }}>Who We Are</h4>
                 <p style={{ fontSize: 16, color: "#23272f" }}>
-                  <strong>YatraNow</strong> is dedicated to making your travel experience smooth, safe, and affordable. We focus on <b>pre-cab booking</b> so you can plan your journey in advance and avoid last-minute hassles. Our platform is simple, transparent, and designed for everyone.
+                  <strong>Bhada24</strong> is dedicated to making your travel experience smooth, safe, and affordable. We focus on <b>pre-cab booking</b> so you can plan your journey in advance and avoid last-minute hassles. Our platform is simple, transparent, and designed for everyone.
                 </p>
               </div>
             </div>
@@ -144,7 +144,7 @@ const AboutUs = () => (
               <div style={{ display: "inline-block", maxWidth: 420 }}>
                 <h4 className="fw-semibold mb-2" style={{ color: "#e57368" }}>Our Promise</h4>
                 <p style={{ fontSize: 15, color: "#23272f" }}>
-                  We are committed to providing a seamless booking experience, professional drivers, and customer support that cares. Whether it’s an airport transfer, business trip, or family outing, YatraNow is your reliable travel partner.
+                  We are committed to providing a seamless booking experience, professional drivers, and customer support that cares. Whether it’s an airport transfer, business trip, or family outing, Bhada24 is your reliable travel partner.
                 </p>
               </div>
             </div>
@@ -174,8 +174,8 @@ const AboutUs = () => (
                 <div style={{ fontSize: 15, color: "#23272f" }}>
                   <div>
                     <i className="bi bi-envelope-fill me-2" style={{ color: "#FFD600" }} />
-                    <a href="mailto:support@yatranow.com" className="text-decoration-none text-muted">
-                      support@yatranow.com
+                    <a href="mailto:support@bhada24.com" className="text-decoration-none text-muted">
+                      support@bhada24.com
                     </a>
                   </div>
                   <div>

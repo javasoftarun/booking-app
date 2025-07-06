@@ -1,8 +1,12 @@
 import React, { forwardRef } from "react";
+import logo from "../assets/images/logo.png"; // Add this line
 
 const BookingReceipt = forwardRef(({ booking }, ref) => (
   <div ref={ref} style={{ maxWidth: 600, margin: "0 auto", padding: 32, fontFamily: "inherit", background: "#fff" }}>
-    <h2 style={{ color: "#8d3c1e", fontWeight: 700, marginBottom: 0 }}>YatraNow Booking Receipt</h2>
+    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+      <img src={logo} alt="Bhada24 Logo" style={{ height: 38, width: "auto" }} />
+      <h2 style={{ color: "#8d3c1e", fontWeight: 700, margin: 0, fontSize: 28 }}>Bhada24 Booking Receipt</h2>
+    </div>
     <div style={{ color: "#666", fontSize: 14, marginBottom: 16 }}>
       Booking Date: {new Date().toLocaleString()}
     </div>
@@ -49,8 +53,15 @@ const BookingReceipt = forwardRef(({ booking }, ref) => (
       For help, contact our support.
     </div>
     <div style={{ textAlign: "center", color: "#8d3c1e", marginTop: 32 }}>
-      <div style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}><span role="img" aria-label="car">🚗</span> YatraNow</div>
-      <div style={{ fontSize: 13 }}>All rights reserved © {new Date().getFullYear()}<br />Designed with ♥ for your travel needs.<br />Need help? <a href="mailto:support@yatranow.com" style={{ color: "#e57368" }}>support@yatranow.com</a></div>
+      <div style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>
+        <img src={logo} alt="Bhada24 Logo" style={{ height: 45, width: "auto", verticalAlign: "middle", marginRight: 6 }} />
+        Bhada24
+      </div>
+      <div style={{ fontSize: 13 }}>
+        All rights reserved © {new Date().getFullYear()}<br />
+        Designed with ♥ for your travel needs.<br />
+        Need help? <a href="mailto:support@bhada24.com" style={{ color: "#e57368" }}>support@bhada24.com</a>
+      </div>
     </div>
   </div>
 ));

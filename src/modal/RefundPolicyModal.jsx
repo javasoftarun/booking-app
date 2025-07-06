@@ -19,7 +19,7 @@ const RefundPolicyContent = ({ small }) => (
         <strong>Partial Refunds:</strong> If only a part of your booking is eligible for refund, the amount will be calculated accordingly.
       </li>
       <li>
-        <strong>Contact Support:</strong> For any refund-related queries, email <a href="mailto:support@yatranow.com">support@yatranow.com</a> or call <a href="tel:+919140251119">+91-9140251119</a>.
+        <strong>Contact Support:</strong> For any refund-related queries, email <a href="mailto:support@bhada24.com">support@bhada24.com</a> or call <a href="tel:+919140251119">+91-9140251119</a>.
       </li>
     </ul>
     <div className="alert alert-info mt-4" style={{ fontSize: small ? 12 : 14 }}>

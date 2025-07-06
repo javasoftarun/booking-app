@@ -7,7 +7,7 @@ const faqs = [
   },
   {
     q: "Can I book for outstation?",
-    a: "Yes, you can book both local and outstation cabs with YatraNow."
+    a: "Yes, you can book both local and outstation cabs with Bhada24."
   },
   {
     q: "How do I pay?",
@@ -27,7 +27,7 @@ const faqs = [
   },
   {
     q: "How do I contact customer support?",
-    a: "You can reach us 24/7 via the Contact option in the footer, email at support@yatranow.com, or call +91-9140251119."
+    a: "You can reach us 24/7 via the Contact option in the footer, email at support@bhada24.com, or call +91-9140251119."
   },
   {
     q: "Is there a refund policy?",
