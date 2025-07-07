@@ -16,6 +16,7 @@ const AuthModal = ({ show, onClose }) => {
     const [confirmationResult, setConfirmationResult] = useState(null);
     const [showPrivacy, setShowPrivacy] = useState(false);
     const [showTerms, setShowTerms] = useState(false);
+    const [authLoading, setAuthLoading] = useState(false);
 
     useEffect(() => {
         if (!show) {
@@ -32,7 +33,7 @@ const AuthModal = ({ show, onClose }) => {
         onMessage(messaging, (payload) => {
             new window.Notification(payload.notification.title, {
                 body: payload.notification.body,
-                icon: "/logo192.png",
+                icon: "/fevicon.png",
             });
         });
     }, []);
@@ -40,6 +41,7 @@ const AuthModal = ({ show, onClose }) => {
     if (!show) return null;
 
     const handleGoogleSignIn = async () => {
+        setAuthLoading(true); // Start loading
         try {
             // Get FCM token before user API call
             let fcmToken = "";
@@ -126,6 +128,8 @@ const AuthModal = ({ show, onClose }) => {
             }
         } catch (error) {
             alert("Google sign-in failed.");
+        } finally {
+            setAuthLoading(false); // Stop loading (even on error)
         }
     };
 
@@ -177,6 +181,9 @@ const AuthModal = ({ show, onClose }) => {
                 alignItems: "center",
                 justifyContent: "center",
                 backdropFilter: "blur(3px)",
+                pointerEvents: authLoading ? "none" : "auto",
+                filter: authLoading ? "blur(2px)" : "none",
+                transition: "filter 0.2s",
             }}
             tabIndex={-1}
         >
@@ -195,6 +202,7 @@ const AuthModal = ({ show, onClose }) => {
                     border: "1.5px solid #e57368",
                     padding: 0,
                     animation: "fadeInUp .4s cubic-bezier(.4,2,.6,1)",
+                    pointerEvents: authLoading ? "none" : "auto",
                 }}
                 onMouseDown={(e) => e.stopPropagation()}
             >
@@ -471,6 +479,44 @@ const AuthModal = ({ show, onClose }) => {
                     </div>
                 </div>
             </div>
+            {authLoading && (
+                <div
+                    style={{
+                        position: "fixed",
+                        zIndex: 2100,
+                        left: 0,
+                        top: 0,
+                        width: "100vw",
+                        height: "100vh",
+                        background: "rgba(255,255,255,0.65)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        pointerEvents: "auto",
+                    }}
+                >
+                    <div style={{
+                        background: "#fff",
+                        padding: "32px 48px",
+                        borderRadius: 18,
+                        boxShadow: "0 8px 32px #0002",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: 16,
+                    }}>
+                        <div className="mb-2">
+                          <i className="bi bi-google" style={{ fontSize: 48, color: "#e57368", animation: "pulse 1s infinite" }} />
+                        </div>
+                        <div style={{ fontWeight: 700, fontSize: 22, color: "#e57368" }}>
+                          Signing you in...
+                        </div>
+                        <div style={{ color: "#23272f", fontSize: 16 }}>
+                          Please wait while we log you in with Google.
+                        </div>
+                    </div>
+                </div>
+            )}
             <TermsAndConditionsModal show={showTerms} onClose={() => setShowTerms(false)} />
             <PrivacyPolicyModal show={showPrivacy} onClose={() => setShowPrivacy(false)} />
             <style>

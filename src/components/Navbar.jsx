@@ -7,7 +7,11 @@ import logo from '../assets/images/logo.png';
 const Navbar = () => {
   const [showAuth, setShowAuth] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    // Get user from localStorage on mount
+    const stored = localStorage.getItem("user");
+    return stored ? JSON.parse(stored) : null;
+  });
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showMobileProfile, setShowMobileProfile] = useState(false);
@@ -15,11 +19,15 @@ const Navbar = () => {
   const location = useLocation();
 
   const loadUserInfo = useCallback(() => {
-    const userId = localStorage.getItem("userId");
-    const userName = localStorage.getItem("userName");
-    const userImage = localStorage.getItem("userImage");
-    if (userId && userName && userImage) {
-      setUser({ name: userName, image: userImage });
+    const stored = localStorage.getItem("user");
+    if (stored) {
+      const userObj = JSON.parse(stored);
+      setUser({
+        name: userObj.name,
+        imageUrl: userObj.imageUrl || "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+        email: userObj.email,
+        phone: userObj.phone,
+      });
     } else {
       setUser(null);
     }
@@ -31,6 +39,18 @@ const Navbar = () => {
     window.addEventListener("userLogin", handleUserLogin);
     return () => window.removeEventListener("userLogin", handleUserLogin);
   }, [loadUserInfo]);
+
+  useEffect(() => {
+    const handleUserChange = () => {
+      window.location.reload();
+    };
+    window.addEventListener("userLogin", handleUserChange);
+    window.addEventListener("userLogout", handleUserChange);
+    return () => {
+      window.removeEventListener("userLogin", handleUserChange);
+      window.removeEventListener("userLogout", handleUserChange);
+    };
+  }, []);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -58,7 +78,23 @@ const Navbar = () => {
   }, [mobileMenuOpen]);
 
   // Helper to check if on profile page
-  const isProfilePage = location.pathname === "/profile";
+  const isProfilePage = location.pathname.startsWith("/profile/");
+
+  // Logout handler
+  const handleLogout = () => {
+    localStorage.clear();
+    setUser(null);
+    setDropdownOpen(false);
+    setMobileMenuOpen(false);
+    setShowMobileProfile(false);
+    window.dispatchEvent(new Event("userLogout"));
+    // If on profile page, redirect to home. Otherwise, refresh the page.
+    if (location.pathname.startsWith("/profile/*")) {
+      window.location.href = "/";
+    } else {
+      window.location.reload();
+    }
+  };
 
   return (
     <nav
@@ -90,7 +126,7 @@ const Navbar = () => {
             <img
               src={logo}
               alt="Bhada24 Logo"
-              style={{ height: 66, width: "auto", marginRight: 8 }}
+              style={{ height: 60, width: "auto", marginRight: 8 }}
             />
           </Link>
         </div>
@@ -181,9 +217,9 @@ const Navbar = () => {
                 onClick={() => setDropdownOpen((open) => !open)}
               >
                 <img
-                  src={user.image}
+                  src={user.imageUrl}
                   alt={user.name}
-                  className="rounded-circle me-2"
+                  className="rounded-circle"
                   style={{ width: 36, height: 36, objectFit: "cover", background: "#eee" }}
                   onError={e => { e.target.onerror = null; e.target.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png"; }}
                 />
@@ -212,11 +248,7 @@ const Navbar = () => {
                   <li>
                     <button
                       className="dropdown-item"
-                      onClick={() => {
-                        localStorage.clear();
-                        setDropdownOpen(false);
-                        setUser(null);
-                      }}
+                      onClick={handleLogout}
                     >
                       Logout
                     </button>
@@ -380,7 +412,7 @@ const Navbar = () => {
                     onClick={() => setShowMobileProfile((v) => !v)}
                   >
                     <img
-                      src={user.image}
+                      src={user.imageUrl}
                       alt={user.name}
                       className="rounded-circle"
                       style={{ width: 36, height: 36, objectFit: "cover", background: "#eee" }}
@@ -399,11 +431,11 @@ const Navbar = () => {
                     </div>
                     <div className="mb-1" style={{ color: "#23272f", fontSize: 15 }}>
                       <i className="bi bi-envelope me-2" style={{ color: "#e57368" }} />
-                      {localStorage.getItem("userEmail") || "No email"}
+                      {user.email || "No email"}
                     </div>
                     <div className="mb-2" style={{ color: "#23272f", fontSize: 15 }}>
                       <i className="bi bi-telephone me-2" style={{ color: "#e57368" }} />
-                      {localStorage.getItem("userPhone") || "No phone"}
+                      {user.phone || "No phone"}
                     </div>
                     {!isProfilePage && (
                       <Link
@@ -435,12 +467,7 @@ const Navbar = () => {
                         fontWeight: 600,
                         fontSize: 15,
                       }}
-                      onClick={() => {
-                        localStorage.clear();
-                        setUser(null);
-                        setMobileMenuOpen(false);
-                        setShowMobileProfile(false);
-                      }}
+                      onClick={handleLogout}
                     >
                       Logout
                     </button>
