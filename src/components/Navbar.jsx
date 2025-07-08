@@ -96,7 +96,6 @@ const Navbar = () => {
     if (location.pathname.startsWith("/profile")) {
       window.location.href = "/";
     }
-    // Removed: else { window.location.reload(); }
   };
 
   return (
