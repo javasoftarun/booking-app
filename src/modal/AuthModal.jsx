@@ -182,7 +182,8 @@ const AuthModal = ({ show, onClose }) => {
                 justifyContent: "center",
                 backdropFilter: "blur(3px)",
                 pointerEvents: authLoading ? "none" : "auto",
-                filter: authLoading ? "blur(2px)" : "none",
+                // Remove blur effect while logging in
+                filter: "none",
                 transition: "filter 0.2s",
             }}
             tabIndex={-1}

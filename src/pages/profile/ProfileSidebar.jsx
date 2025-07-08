@@ -17,14 +17,15 @@ const ProfileSidebar = () => (
       className="profile-sidebar d-none d-md-flex"
       style={{
         minWidth: 220,
-        background: "#fffbe7",
+        background: "#fff", // White background
         borderRadius: 18,
-        boxShadow: "0 2px 12px #ffd60022",
+        boxShadow: "0 4px 24px 0 #e0e7ef1a, 0 1.5px 8px #15649122",
         padding: "32px 0",
         display: "flex",
         flexDirection: "column",
         gap: 8,
         height: "fit-content",
+        border: "1.5px solid #f3f6fa",
       }}
     >
       <nav>
@@ -33,20 +34,45 @@ const ProfileSidebar = () => (
             key={link.to}
             to={link.to}
             className={({ isActive }) =>
-              `d-flex align-items-center gap-3 px-4 py-3 fw-semibold ${isActive ? "bg-warning shadow-sm" : ""} ${link.danger ? "text-danger" : "text-dark"}`
+              `d-flex align-items-center gap-3 px-4 py-3 fw-semibold sidebar-link 
+              ${isActive ? "active" : ""} ${link.danger ? "text-danger" : "text-dark"}`
             }
             style={{
-              borderRadius: 12,
+              borderRadius: 14,
               fontSize: 17,
               textDecoration: "none",
-              transition: "background 0.2s"
+              transition: "background 0.2s, color 0.2s",
+              fontWeight: 600,
             }}
           >
-            <span style={{ fontSize: 20 }}>{link.icon}</span>
+            <span style={{ fontSize: 22 }}>{link.icon}</span>
             <span className="sidebar-label">{link.label}</span>
           </NavLink>
         ))}
       </nav>
+      <style>
+        {`
+          .profile-sidebar .sidebar-link {
+            color: #23272f;
+            background: none;
+            box-shadow: none;
+          }
+          .profile-sidebar .sidebar-link.active {
+            background: #f4f7fb;
+            color: #0d3559 !important;
+            box-shadow: 0 2px 12px #e0e7ef33;
+          }
+          .profile-sidebar .sidebar-link.text-danger.active {
+            background: #fff0f0;
+            color: #dc3545 !important;
+            box-shadow: 0 2px 12px #dc354522;
+          }
+          .profile-sidebar .sidebar-link:hover:not(.active) {
+            background: #f0f4f8;
+            color: #156491;
+          }
+        `}
+      </style>
     </aside>
 
     {/* Mobile: Bottom navigation bar */}

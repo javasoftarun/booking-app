@@ -36,8 +36,13 @@ const Navbar = () => {
   useEffect(() => {
     loadUserInfo();
     const handleUserLogin = () => loadUserInfo();
+    const handleUserProfileUpdated = () => loadUserInfo();
     window.addEventListener("userLogin", handleUserLogin);
-    return () => window.removeEventListener("userLogin", handleUserLogin);
+    window.addEventListener("userProfileUpdated", handleUserProfileUpdated);
+    return () => {
+      window.removeEventListener("userLogin", handleUserLogin);
+      window.removeEventListener("userProfileUpdated", handleUserProfileUpdated);
+    };
   }, [loadUserInfo]);
 
   useEffect(() => {
@@ -80,7 +85,6 @@ const Navbar = () => {
   // Helper to check if on profile page
   const isProfilePage = location.pathname.startsWith("/profile/");
 
-  // Logout handler
   const handleLogout = () => {
     localStorage.clear();
     setUser(null);
@@ -88,12 +92,11 @@ const Navbar = () => {
     setMobileMenuOpen(false);
     setShowMobileProfile(false);
     window.dispatchEvent(new Event("userLogout"));
-    // If on profile page, redirect to home. Otherwise, refresh the page.
-    if (location.pathname.startsWith("/profile/*")) {
+    // If on profile page, redirect to home. Otherwise, do NOT refresh the page.
+    if (location.pathname.startsWith("/profile")) {
       window.location.href = "/";
-    } else {
-      window.location.reload();
     }
+    // Removed: else { window.location.reload(); }
   };
 
   return (
@@ -240,7 +243,11 @@ const Navbar = () => {
                 >
                   {!isProfilePage && (
                     <li>
-                      <Link className="dropdown-item" to="/profile" onClick={() => setDropdownOpen(false)}>
+                      <Link
+                        className="dropdown-item"
+                        to="/profile/info"
+                        onClick={() => setDropdownOpen(false)}
+                      >
                         View Profile
                       </Link>
                     </li>
@@ -440,7 +447,7 @@ const Navbar = () => {
                     {!isProfilePage && (
                       <Link
                         className="btn btn-sm w-100 mb-2"
-                        to="/profile"
+                        to="/profile/info"
                         style={{
                           background: "#FFD600",
                           color: "#23272f",
