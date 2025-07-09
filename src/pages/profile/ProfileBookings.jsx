@@ -14,16 +14,19 @@ const STATUS_COLORS = {
 
 const UPCOMING_STATUSES = ["Pending", "Accepted", "Running"];
 const HISTORY_STATUSES = ["Cancelled", "Completed"];
+const USER_DEFAULT_ROLE = "user";
 
 const ProfileBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [actionLoading, setActionLoading] = useState({});
+  const [actionLoading] = useState({});
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [downloadBooking, setDownloadBooking] = useState(null);
   const [activeTab, setActiveTab] = useState("upcoming");
   const [setMessage] = useState("");
   const [setMessageType] = useState("");
+  const [cancelConfirm, setCancelConfirm] = useState({ show: false, booking: null });
+  const [cancelLoading, setCancelLoading] = useState(false);
 
   useEffect(() => {
     const userStr = localStorage.getItem("user");
@@ -46,28 +49,52 @@ const ProfileBookings = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleCancel = async (bookingId) => {
-    if (!window.confirm("Are you sure you want to cancel this booking?")) return;
-    setActionLoading((prev) => ({ ...prev, [bookingId]: true }));
+  // Ask for confirmation before cancelling
+  const handleCancelBooking = (booking) => {
+    setCancelConfirm({ show: true, booking });
+  };
+
+  // Confirm and perform cancellation
+  const confirmCancelBooking = async () => {
+    setMessage("");
+    setMessageType("");
+    setCancelLoading(true);
+    const booking = cancelConfirm.booking;
     try {
-      const res = await fetch(API_ENDPOINTS.CANCEL_BOOKING(bookingId), {
-        method: "PATCH",
+      const response = await fetch(API_ENDPOINTS.UPDATE_BOOKING_STATUS, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bookingId: booking.bookingId,
+          cabRegistrationId: booking.cabRegistrationId,
+          bookingStatus: "Cancelled",
+          paymentStatus: null,
+          role: USER_DEFAULT_ROLE
+        }),
       });
-      const data = await res.json();
-      if (data.responseMessage === "success") {
+      const data = await response.json();
+      if (data && data.responseMessage === "success") {
+        setMessage("Booking cancelled successfully!");
+        setMessageType("success");
         setBookings((prev) =>
           prev.map((b) =>
-            b.bookingId === bookingId ? { ...b, bookingStatus: "Cancelled" } : b
+            b.bookingId === booking.bookingId
+              ? { ...b, bookingStatus: "Cancelled" }
+              : b
           )
         );
+        setSelectedBooking(null);
       } else {
-        alert(data.responseMessage || "Failed to cancel booking.");
+        setMessage(data.responseMessage || "Failed to cancel booking.");
+        setMessageType("error");
       }
-    } catch {
-      alert("Failed to cancel booking.");
+    } catch (error) {
+      setMessage("Failed to cancel booking.");
+      setMessageType("error");
+    } finally {
+      setCancelLoading(false);
+      setCancelConfirm({ show: false, booking: null });
     }
-    setActionLoading((prev) => ({ ...prev, [bookingId]: false }));
   };
 
   const handleShareReceipt = (booking) => {
@@ -163,7 +190,9 @@ const ProfileBookings = () => {
         <div className="mb-5">
           <div className="row g-4">
             {upcomingBookings.length === 0 && (
-              <div className="text-muted px-3 pb-3">No upcoming bookings.</div>
+              <div className="text-muted px-3 pb-3 d-flex align-items-center justify-content-center" style={{ minHeight: 200 }}>
+                <div>No upcoming bookings.</div>
+              </div>
             )}
             {upcomingBookings.map((booking) => (
               <div key={booking.bookingId} className="col-12 col-md-6 col-lg-4">
@@ -255,7 +284,7 @@ const ProfileBookings = () => {
                         className="btn btn-outline-danger btn-sm"
                         style={{ minWidth: 80, fontWeight: 600 }}
                         disabled={actionLoading[booking.bookingId]}
-                        onClick={() => handleCancel(booking.bookingId)}
+                        onClick={() => handleCancelBooking(booking)}
                       >
                         {actionLoading[booking.bookingId] ? (
                           <span className="spinner-border spinner-border-sm" />
@@ -379,7 +408,7 @@ const ProfileBookings = () => {
                         className="btn btn-outline-danger btn-sm"
                         style={{ minWidth: 80, fontWeight: 600 }}
                         disabled={actionLoading[booking.bookingId]}
-                        onClick={() => handleCancel(booking.bookingId)}
+                        onClick={() => handleCancelBooking(booking)}
                       >
                         {actionLoading[booking.bookingId] ? (
                           <span className="spinner-border spinner-border-sm" />
@@ -581,7 +610,7 @@ const ProfileBookings = () => {
                   style={{ minWidth: 90, fontWeight: 600 }}
                   onClick={() => {
                     setSelectedBooking(null);
-                    handleCancel(selectedBooking.bookingId);
+                    handleCancelBooking(selectedBooking);
                   }}
                 >
                   <i className="bi bi-x-circle me-1" />
@@ -611,6 +640,61 @@ const ProfileBookings = () => {
               <i className="bi bi-info-circle me-2"></i>
               Cab and driver details will be shared up to few hours before your pickup time.<br />
               For help, contact our support.
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Confirmation Modal */}
+      {cancelConfirm.show && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(30,32,38,0.25)",
+            zIndex: 2000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+        >
+          <div
+            className="shadow bg-white p-4"
+            style={{
+              borderRadius: 12,
+              minWidth: 320,
+              maxWidth: "90vw",
+              textAlign: "center"
+            }}
+          >
+            <div className="mb-3 fw-bold" style={{ fontSize: 18 }}>
+              Cancel Booking?
+            </div>
+            <div className="mb-4 text-muted">
+              Are you sure you want to cancel this booking?
+            </div>
+            <div className="d-flex gap-2 justify-content-center">
+              <button
+                className="btn btn-danger"
+                disabled={cancelLoading}
+                onClick={confirmCancelBooking}
+              >
+                {cancelLoading ? (
+                  <span className="spinner-border spinner-border-sm" />
+                ) : (
+                  "Yes, Cancel"
+                )}
+              </button>
+              <button
+                className="btn btn-secondary"
+                disabled={cancelLoading}
+                onClick={() => setCancelConfirm({ show: false, booking: null })}
+              >
+                No, Go Back
+              </button>
             </div>
           </div>
         </div>
