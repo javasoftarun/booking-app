@@ -18,8 +18,8 @@ const ProfileSettings = () => {
           className="form-check-input"
           type="checkbox"
           id="emailNotification"
-          checked={profile.emailNotification || false}
-          onChange={e => setProfile({ ...profile, emailNotification: e.target.checked })}
+          checked={true}
+          disabled
         />
         <label className="form-check-label" htmlFor="emailNotification">
           Enable Email Notifications
@@ -30,8 +30,8 @@ const ProfileSettings = () => {
           className="form-check-input"
           type="checkbox"
           id="mobileNotification"
-          checked={profile.mobileNotification || false}
-          onChange={e => setProfile({ ...profile, mobileNotification: e.target.checked })}
+          checked={true}
+          disabled
         />
         <label className="form-check-label" htmlFor="mobileNotification">
           Enable Mobile Notifications

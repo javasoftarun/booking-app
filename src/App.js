@@ -21,7 +21,7 @@ const App = () => (
   <BrowserRouter>
     <div className="with-mobile-footer">
       <Navbar />
-      <div style={{ paddingBottom: '64px' }}>
+      <div style={{ paddingBottom: '0px' }}>
         <main style={{ minHeight: 'calc(100vh - 64px)' }}>
           <Routes>
             <Route path="/" element={<Home />} />

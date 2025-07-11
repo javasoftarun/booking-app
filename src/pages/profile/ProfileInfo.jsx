@@ -305,7 +305,7 @@ const ProfileInfo = () => {
               name="email"
               value={form.email}
               onChange={handleChange}
-              readOnly={!edit}
+              readOnly={!!form.email || !edit}
               required
             />
           </div>
@@ -317,7 +317,7 @@ const ProfileInfo = () => {
               name="phone"
               value={form.phone}
               onChange={handleChange}
-              readOnly={!edit}
+              readOnly={!!form.phone || !edit} // <-- disable if phone exists
             />
           </div>
           <div className="col-12 col-md-6">

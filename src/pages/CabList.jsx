@@ -179,8 +179,226 @@ const CabsList = () => {
 
   if (!cabs.length) {
     return (
-      <div className="container py-5">
-        <h3>No cabs found for your search.</h3>
+      <div className="cablist-bg" style={{ minHeight: '100vh' }}>
+        <div className="cablist-main-container">
+          {/* Mobile: Search Info as tags (on top) */}
+          <div className="d-flex flex-column flex-md-row gap-2 align-items-start align-items-md-center mb-3 d-md-none">
+            <div className="w-100 bg-white shadow-sm rounded-4 p-3 mb-2">
+              <div className="d-flex flex-wrap gap-2 align-items-center">
+                <div className="d-flex align-items-center mb-1" style={{ fontSize: 15 }}>
+                  <i className="bi bi-geo-alt-fill text-primary me-2"></i>
+                  <span className="fw-semibold text-dark">{pickup}</span>
+                </div>
+                <div className="d-flex align-items-center mb-1" style={{ fontSize: 15 }}>
+                  <i className="bi bi-geo-alt-fill text-danger me-2"></i>
+                  <span className="fw-semibold text-dark">{drop}</span>
+                </div>
+                <div className="d-flex align-items-center mb-1" style={{ fontSize: 15 }}>
+                  <i className="bi bi-calendar-event text-info me-2"></i>
+                  <span className="fw-semibold text-dark">{datetime}</span>
+                </div>
+                <div className="d-flex align-items-center mb-1" style={{ fontSize: 15 }}>
+                  <i className="bi bi-clock text-primary me-2"></i>
+                  <span className="fw-semibold text-dark">{hours}</span>
+                </div>
+                <div className="d-flex align-items-center mb-1" style={{ fontSize: 15 }}>
+                  <i className="bi bi-arrow-repeat text-success me-2"></i>
+                  <span className="fw-semibold text-success">Round Trip</span>
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-link p-0 ms-2"
+                  style={{ fontSize: 18 }}
+                  title="Edit Trip Info"
+                  onClick={() => navigate('/search-cab', { state: { pickup, drop, datetime, hours } })}
+                >
+                  <i className="bi bi-pencil-square text-primary"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          {/* Mobile: Cab Type Filter (after search) */}
+          <div className="cablist-sidebar d-md-none mb-3">
+            <div className="bg-white shadow rounded-4 p-2" style={{ border: '1px solid #e3e6ed' }}>
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <span className="fw-bold" style={{ color: '#333', fontSize: 15 }}>Select Cab Types</span>
+                <button
+                  type="button"
+                  className="btn btn-sm"
+                  style={{ background: '#FFD600', borderRadius: 8, fontWeight: 700, fontSize: 14, padding: '2px 8px' }}
+                  onClick={() => setFilterOpen(open => !open)}
+                  aria-label="Toggle Cab Type Filter"
+                >
+                  {filterOpen ? <i className="bi bi-chevron-up"></i> : <i className="bi bi-chevron-down"></i>}
+                </button>
+              </div>
+              <div className={`d-flex flex-wrap gap-2 ${filterOpen ? '' : 'd-none'}`}>
+                {['All', ...cabTypes].map(type => (
+                  <button
+                    key={type}
+                    className={`cab-type-btn d-flex align-items-center px-2 py-1 fw-semibold text-start shadow-sm ${selectedTypes.includes(type) ? 'bg-light border-primary' : 'bg-white border'
+                      }`}
+                    style={{
+                      borderRadius: 8,
+                      borderWidth: selectedTypes.includes(type) ? 2 : 1,
+                      borderColor: selectedTypes.includes(type) ? '#1976d2' : '#e3e6ed',
+                      color: selectedTypes.includes(type) ? '#1976d2' : '#444',
+                      fontSize: 13,
+                      outline: 'none',
+                      transition: 'all 0.15s',
+                      cursor: 'pointer',
+                      minHeight: 28,
+                      minWidth: 60,
+                    }}
+                    onClick={() => handleTypeClick(type)}
+                    type="button"
+                  >
+                    {cabTypeIcons[type]
+                      ? React.cloneElement(cabTypeIcons[type], { style: { fontSize: 16, marginRight: 6 } })
+                      : <i className="bi bi-car-front-fill me-2" style={{ fontSize: 16 }}></i>}
+                    {type.toUpperCase()}
+                    {selectedTypes.includes(type) && type !== 'All' && (
+                      <i className="bi bi-check-circle-fill ms-1 text-primary" style={{ fontSize: 14 }}></i>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+          {/* Main Content */}
+          <div className="row g-4">
+            {/* Sidebar: Only on desktop */}
+            <div className="col-12 col-md-4 col-lg-3 order-1 order-md-0">
+              {/* Desktop: Search Info Card */}
+              <div className="cablist-sidebar mb-3 mb-md-4 position-relative d-none d-md-block">
+                <button
+                  type="button"
+                  className="btn btn-link p-0 position-absolute"
+                  style={{ top: 12, right: 12 }}
+                  title="Edit Trip Info"
+                  onClick={() => navigate('/search-cab', { state: { pickup, drop, datetime, hours } })}
+                >
+                  <i className="bi bi-pencil-square fs-5 text-primary"></i>
+                </button>
+                <div className="mb-2 d-flex align-items-center gap-2">
+                  <i className="bi bi-geo-alt-fill text-primary fs-5"></i>
+                  <div>
+                    <div className="text-muted small">Pickup</div>
+                    <div className="fw-semibold text-dark">{pickup}</div>
+                  </div>
+                </div>
+                <div className="mb-2 d-flex align-items-center gap-2">
+                  <i className="bi bi-geo-alt-fill text-danger fs-5"></i>
+                  <div>
+                    <div className="text-muted small">Drop</div>
+                    <div className="fw-semibold text-dark">{drop}</div>
+                  </div>
+                </div>
+                <div className="mb-2 d-flex align-items-center gap-2">
+                  <i className="bi bi-calendar-event text-primary fs-5"></i>
+                  <div>
+                    <div className="text-muted small">Pickup Date & Time</div>
+                    <div className="fw-semibold text-dark">{datetime}</div>
+                  </div>
+                </div>
+                <div className="d-flex align-items-center gap-2">
+                  <i className="bi bi-clock text-primary fs-5"></i>
+                  <div>
+                    <div className="text-muted small">Hours</div>
+                    <div className="fw-semibold text-dark">{hours}</div>
+                  </div>
+                </div>
+                <div className="mb-2 d-flex align-items-center gap-2">
+                  <i className="bi bi-arrow-repeat text-success fs-5"></i>
+                  <div>
+                    <div className="text-muted small">Trip Type</div>
+                    <div className="fw-semibold text-success">Round Trip</div>
+                  </div>
+                </div>
+              </div>
+              {/* Desktop: Filter in sidebar */}
+              <div className="cablist-sidebar d-none d-md-block">
+                <div className="bg-white shadow rounded-4 p-3 p-md-4">
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <h5 className="fw-bold mb-0" style={{ color: '#333', fontSize: 18 }}>Select Cab Types</h5>
+                  </div>
+                  <div className="d-flex flex-column gap-2 gap-md-3">
+                    {['All', ...cabTypes].map(type => (
+                      <button
+                        key={type}
+                        className={`d-flex align-items-center px-3 px-md-4 py-2 py-md-3 fw-semibold text-start shadow-sm ${selectedTypes.includes(type) ? 'bg-light border-primary' : 'bg-white border'
+                          }`}
+                        style={{
+                          borderRadius: 12,
+                          borderWidth: selectedTypes.includes(type) ? 2 : 1,
+                          borderColor: selectedTypes.includes(type) ? '#1976d2' : '#e3e6ed',
+                          color: selectedTypes.includes(type) ? '#1976d2' : '#444',
+                          fontSize: 16,
+                          outline: 'none',
+                          transition: 'all 0.15s',
+                          cursor: 'pointer'
+                        }}
+                        onClick={() => handleTypeClick(type)}
+                        type="button"
+                      >
+                        {cabTypeIcons[type] || <i className="bi bi-car-front-fill me-2" style={{ fontSize: 24 }}></i>}
+                        {type.toUpperCase()}
+                        {selectedTypes.includes(type) && type !== 'All' && (
+                          <i className="bi bi-check-circle-fill ms-2 text-primary"></i>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* Main Content */}
+            <div className="col-12 col-md-8 col-lg-9 order-0 order-md-1">
+              <div className="d-flex flex-column align-items-center justify-content-center" style={{ minHeight: 340 }}>
+                <div
+                  style={{
+                    fontSize: 44,
+                    fontWeight: 700,
+                    color: "#e57368",
+                    marginBottom: 12,
+                    lineHeight: 1,
+                  }}
+                >
+                  <i className="bi bi-emoji-frown" style={{ fontSize: 54, verticalAlign: "middle" }}></i>
+                </div>
+                <h2 style={{ fontWeight: 700, color: "#23272f", marginBottom: 10, textAlign: "center" }}>
+                  Oops! No cabs available
+                </h2>
+                <div
+                  style={{
+                    background: "#fff3cd",
+                    color: "#856404",
+                    borderRadius: 16,
+                    padding: "18px 22px",
+                    fontSize: 18,
+                    fontWeight: 500,
+                    boxShadow: "0 2px 12px #ffe5e0",
+                    marginBottom: 18,
+                    textAlign: "center",
+                    maxWidth: 480,
+                  }}
+                >
+                  We’re expanding our cab network every day to cover more locations.<br />
+                  <span style={{ color: "#e57368", fontWeight: 700 }}>
+                    Stay tuned, we’ll be available in your area soon!
+                  </span>
+                </div>
+                <div className="mt-2 text-muted" style={{ fontSize: 16, textAlign: "center" }}>
+                  Can’t wait?{" "}
+                  <a href="/contact" style={{ color: "#e57368", textDecoration: "underline", fontWeight: 600 }}>
+                    Contact us
+                  </a>{" "}
+                  and let us know where you need a cab!
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
